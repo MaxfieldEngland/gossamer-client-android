@@ -9,11 +9,11 @@ Currently working on:
 Implementing user management via account creation.
 
 
-#Tasks remaining on backlog:
+# Tasks remaining on backlog:
 
-##High Priority:
+## High Priority:
 
-######Backend:
+###### Backend:
 * Setup user table with register protocol
 * Setup login protocol for existing users
 * Create post table with write protocol
@@ -21,7 +21,7 @@ Implementing user management via account creation.
 * Create getProfile protocol to view user profiles
 * Create editProfile protocol to change profile text, tags and displayname
 
-######Frontend:
+###### Frontend:
 * Create login screen with email and password
 * Create register screen with username, email and password
 * Create main screen featuring at least chronological posts
@@ -30,14 +30,14 @@ Implementing user management via account creation.
 * Create edit profile page allowing 
 
 
-##Medium Priority:
-######Backend:
+## Medium Priority:
+###### Backend:
 * Create post delete protocol to remove posts from the table
 * Create comment table with add and delete protocols
 * Create protocol to read comments from a particular PostID
 * Create post get protocol searching based on both PostsTags and PostBody
 
-######Frontend:
+###### Frontend:
 * Include anonymous post option to store posts as anonymous
 * Read posts flagged as anonymous without the poster information
 * Include post comment button and implementation
@@ -45,8 +45,8 @@ Implementing user management via account creation.
 * Search posts based on PostBody and PostTags. 
 
 
-##Low Priority:
-######Backend:
+## Low Priority:
+###### Backend:
 * Create field for administrative users in Users table that has universal access to post deletion
 * Create user search protocol based on display name and/or UsersTags
 * Implement Events table with EventAdd and EventDelete protocols
@@ -57,7 +57,7 @@ Implementing user management via account creation.
 * Create a DailyMessages table, with add and get protocols. Configure selection protocol to first search for a designated day, and otherwise pick at random specifically from undated messages.
 * Find a way to coordinate random DailyMessage selection in a manner that’s consistent for all users.
 
-######Frontend:
+###### Frontend:
 * Include administrative user delete options on posts. 
 * Search posts based on DisplayName and/or UserTags.
 * Create an Event calendar to display upcoming events. 
