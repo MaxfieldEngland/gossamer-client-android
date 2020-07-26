@@ -11,5 +11,10 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.sign_in_fragment_id, new LoginFragment())
+                .commit();
     }
 }
