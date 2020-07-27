@@ -29,7 +29,7 @@ public class LoginFragment extends Fragment {
      * Interface for Login functionality
      */
     public interface LoginFragmentListener {
-        void register();
+        void createAccount();
         public void login(String email, String pwd);
     }
 
@@ -58,7 +58,7 @@ public class LoginFragment extends Fragment {
         registerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((LoginFragmentListener) getActivity()).register();
+                ((LoginFragmentListener) getActivity()).createAccount();
             }
         });
 

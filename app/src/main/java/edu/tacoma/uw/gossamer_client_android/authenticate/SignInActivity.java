@@ -9,7 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener {
+public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener,
+                            RegisterFragment.RegisterFragmentListener {
 
     private SharedPreferences mSharedPreferences;
 
@@ -36,7 +37,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     }
 
     @Override
-    public void register() {
+    public void createAccount() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.sign_in_fragment_id, new RegisterFragment())
@@ -50,6 +51,14 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .apply();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void register(String username, String email, String pwd) {
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

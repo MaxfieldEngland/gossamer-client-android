@@ -7,14 +7,22 @@
     <string name="login_button">Login</string>
     <string name="create_account">Create Account</string>
 
+    <!-- Register Fragment Strings -->
+    <string name="username_text">Enter a Username</string>
+    <string name="new_pwd_text">Enter a password</string>
+    <string name="pwd_length_hint">Password must be longer than 6 characters</string>
+    <string name="register_welcome_message">Welcome to Gossamer</string>
+    <string name="registration_button">Register</string>
+
+
     <!-- Shared Preferences Strings -->
     <string name="LOGIN_PREFS">edu.tacoma.uw.gossamer_client_android.PREFS</string>
     <string name="LOGGEDIN">loggedin</string>
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 
 
 </resources>
