@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="register">https://gossamer-backend.herokuapp.com/register</string>
+    <string name="login">https://gossamer-backend.herokuapp.com/login</string>
+    <string name="addpost">https://gossamer-backend.herokuapp.com/posts/addpost</string>
+    <string name="posts">https://gossamer-backend.herokuapp.com/posts/posts</string>
+    <string name="addposttag">https://gossamer-backend.herokuapp.com/posts/addposttag</string>
+    <string name="getposttags">https://gossamer-backend.herokuapp.com/posts/getposttags</string>
+</resources>
