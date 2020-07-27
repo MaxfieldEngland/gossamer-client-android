@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Gossamer</string>
+
+    <!-- Login Fragment Strings -->
+    <string name="email_hint">Enter your email</string>
+    <string name="pwd_hint">Enter your password</string>
+    <string name="login_button">Login</string>
+    <string name="create_account">Create Account</string>
+
+    <!-- Shared Preferences Strings -->
+    <string name="LOGIN_PREFS">edu.tacoma.uw.gossamer_client_android.PREFS</string>
+    <string name="LOGGEDIN">loggedin</string>
+
+    <!-- Strings for the Menu -->
+    <string name="action_logout">Sign Out</string>
+
+
+
+
 </resources>
