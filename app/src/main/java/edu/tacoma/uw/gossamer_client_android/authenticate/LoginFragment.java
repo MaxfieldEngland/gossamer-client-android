@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.tacoma.uw.gossamer_client_android.R;
@@ -28,6 +29,7 @@ public class LoginFragment extends Fragment {
      * Interface for Login functionality
      */
     public interface LoginFragmentListener {
+        void register();
         public void login(String email, String pwd);
     }
 
@@ -50,6 +52,16 @@ public class LoginFragment extends Fragment {
 
         final EditText emailText = view.findViewById(R.id.email_edit_text);
         final EditText pwdText = view.findViewById(R.id.pwd_edit_text);
+
+
+        final TextView registerText = view.findViewById(R.id.register_text_view);
+        registerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((LoginFragmentListener) getActivity()).register();
+            }
+        });
+
 
         Button loginButton = view.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +86,10 @@ public class LoginFragment extends Fragment {
                             .show();
                     pwdText.requestFocus();
                 }
-
                 mLoginFragmentListener.login(emailText.getText().toString(), pwdText.getText().toString());
             }
         });
+
         return view;
     }
 }

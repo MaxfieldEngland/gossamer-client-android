@@ -35,7 +35,13 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         }
     }
 
-
+    @Override
+    public void register() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.sign_in_fragment_id, new RegisterFragment())
+                .commit();
+    }
 
     public void login(String email, String pwd) {
         //TODO - Validate Email and Password against user info stored in database.
