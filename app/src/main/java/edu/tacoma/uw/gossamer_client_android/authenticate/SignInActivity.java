@@ -102,6 +102,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     @Override
     public void register(String username, String email, String pwd) {
         //TODO - Send new user information to database.
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
