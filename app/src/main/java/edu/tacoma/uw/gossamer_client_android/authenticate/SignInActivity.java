@@ -71,6 +71,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 , Context.MODE_PRIVATE);
 
         if (!mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false)) {
+
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.sign_in_fragment_id, new LoginFragment())
@@ -102,24 +103,26 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      */
     @Override
     public void login(String email, String pwd) {
-        //TODO - Validate Email and Password against user info stored in database.
 
         StringBuilder url = new StringBuilder(getString(R.string.login));
         loginJSON = new JSONObject();
-        Log.i("LOGINPROC", "JSON Creation begun");
         try {
             loginJSON.put("email", email);
             loginJSON.put("password", pwd);
             new LoginAsyncTask().execute(url.toString());
-            Log.i("LOGINPROC", "AsyncTask executed, JSON creation successful");
         } catch (JSONException e) {
             //If something went wrong with the JSON, show an error on the screen
-            Log.e("LOGINERROR", "JSON Creation failed: " + e.getMessage());
             Toast.makeText(this, "Error with JSON creation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        //Logs that the user has logged in IFF login procedure has completed successfully.
 
-        //TODO: note login before this point; we need a check here that login succeeded
-        //Logs that the user has logged in.
+    }
+
+    /**
+     * Only on verified login, the user's sharedPreferences are made to reflect their login status,
+     * and they are put through to the main activity.
+     */
+    public void startMainActivity() {
         mSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
@@ -162,8 +165,6 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     OutputStreamWriter wr =
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
-                    // For Debugging
-                    Log.i("LOGINJSON", loginJSON.toString());
                     wr.write(loginJSON.toString());
                     wr.flush();
                     wr.close();
@@ -177,7 +178,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     }
 
                 } catch (Exception e) {
-                    Log.i("LOGINERROR", e.getMessage());
+                    Log.e("LOGINERROR", e.getMessage());
                     response = "Unable to login, Reason: "
                             + e.getMessage();
                 } finally {
@@ -186,6 +187,28 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 }
             }
             return response;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s.startsWith("Unable to login")) {
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                if (jsonObject.getBoolean("success")) {
+                    //SUCCESSFUL LOGIN
+                    startMainActivity();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
+                            Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "JSON Parsing error on login"
+                        + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 }
