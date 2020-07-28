@@ -21,8 +21,8 @@
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>
-
-
+    <string name="title_post_list">Posts</string>
+    <string name="title_post_detail">Post Detail</string>
 
 
 </resources>

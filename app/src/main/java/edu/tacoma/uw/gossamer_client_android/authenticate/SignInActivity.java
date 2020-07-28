@@ -10,7 +10,7 @@ package edu.tacoma.uw.gossamer_client_android.authenticate;
 
 import androidx.appcompat.app.AppCompatActivity;
 import edu.tacoma.uw.gossamer_client_android.R;
-import edu.tacoma.uw.gossamer_client_android.home.MainActivity;
+import edu.tacoma.uw.gossamer_client_android.home.PostListActivity;
 
 import android.content.Context;
 
@@ -54,7 +54,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     .add(R.id.sign_in_fragment_id, new LoginFragment())
                     .commit();
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, PostListActivity.class);
             startActivity(intent);
             finish();
         }
@@ -86,7 +86,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .apply();
         //Starts a new the main home activity after user logs in.
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, PostListActivity.class);
         startActivity(intent);
         finish();
     }
@@ -103,7 +103,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     public void register(String username, String email, String pwd) {
         //TODO - Send new user information to database.
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, PostListActivity.class);
         startActivity(intent);
         finish();
     }
