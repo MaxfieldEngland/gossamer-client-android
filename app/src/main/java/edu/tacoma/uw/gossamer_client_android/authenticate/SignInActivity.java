@@ -195,15 +195,26 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 return;
             }
+            //Try to read JSON response
             try {
                 JSONObject jsonObject = new JSONObject(s);
+                //If we get 'sucess' back from our post, we can move on to the main screen and save login data.
                 if (jsonObject.getBoolean("success")) {
                     //SUCCESSFUL LOGIN
                     startMainActivity();
                 }
+                //Else, we did not have a successful login:
                 else {
-                    Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
-                            Toast.LENGTH_LONG).show();
+                    //If we get back that we did not succeed, we can tell them that the login request was bad.
+                    if (!jsonObject.getBoolean("success")) {
+                        Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                    //If the response didn't include 'success', something else went wrong; display to user
+                    else {
+                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
+                    }
+
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Parsing error on login"
