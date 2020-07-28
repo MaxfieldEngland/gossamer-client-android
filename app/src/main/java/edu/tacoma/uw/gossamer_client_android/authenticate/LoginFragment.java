@@ -101,10 +101,10 @@ public class LoginFragment extends Fragment {
                 }
                 //Validate Password
                 else if (TextUtils.isEmpty(pwd) || pwd.length() < 6) {
-                    Toast.makeText(view.getContext(), "Enter valid password (at least 6 characters"
-                    , Toast.LENGTH_SHORT)
-                            .show();
-                    pwdText.requestFocus();
+//                    Toast.makeText(view.getContext(), "Enter valid password (at least 6 characters"
+//                    , Toast.LENGTH_SHORT)
+//                            .show();
+//                    pwdText.requestFocus();
                 }
                 //Sends user information to the SignInActivity.
                 mLoginFragmentListener.login(emailText.getText().toString(), pwdText.getText().toString());

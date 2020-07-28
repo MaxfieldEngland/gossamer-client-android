@@ -16,7 +16,22 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Sign-In activity that launches the Login & Register Fragments. Connects to
@@ -30,8 +45,15 @@ import android.os.Bundle;
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener,
                             RegisterFragment.RegisterFragmentListener {
 
-    /** Used to save login status. */
+    /**
+     * Used to save login status.
+     */
     private SharedPreferences mSharedPreferences;
+
+    /**
+     * Used to send credential check attempts to the server.
+     */
+    private JSONObject loginJSON;
 
     /**
      * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
@@ -46,7 +68,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         setContentView(R.layout.activity_sign_in);
 
         mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS)
-                                    , Context.MODE_PRIVATE);
+                , Context.MODE_PRIVATE);
 
         if (!mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false)) {
             getSupportFragmentManager()
@@ -76,10 +98,27 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      * LoginFragmentListener interface method.
      *
      * @param email input from user.
-     * @param pwd input from user.
+     * @param pwd   input from user.
      */
+    @Override
     public void login(String email, String pwd) {
         //TODO - Validate Email and Password against user info stored in database.
+
+        StringBuilder url = new StringBuilder(getString(R.string.login));
+        loginJSON = new JSONObject();
+        Log.i("LOGINPROC", "JSON Creation begun");
+        try {
+            loginJSON.put("email", email);
+            loginJSON.put("password", pwd);
+            new LoginAsyncTask().execute(url.toString());
+            Log.i("LOGINPROC", "AsyncTask executed, JSON creation successful");
+        } catch (JSONException e) {
+            //If something went wrong with the JSON, show an error on the screen
+            Log.e("LOGINERROR", "JSON Creation failed: " + e.getMessage());
+            Toast.makeText(this, "Error with JSON creation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        //TODO: note login before this point; we need a check here that login succeeded
         //Logs that the user has logged in.
         mSharedPreferences
                 .edit()
@@ -96,8 +135,8 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      * obtained from Register Fragment.
      *
      * @param username , new users preferred name.
-     * @param email , new users unique email.
-     * @param pwd , new users password.
+     * @param email    , new users unique email.
+     * @param pwd      , new users password.
      */
     @Override
     public void register(String username, String email, String pwd) {
@@ -106,5 +145,47 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private class LoginAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            String response = "";
+            HttpURLConnection urlConnection = null;
+            for (String url : urls) {
+                try {
+                    URL urlObject = new URL(url);
+                    urlConnection = (HttpURLConnection) urlObject.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setDoOutput(true);
+                    OutputStreamWriter wr =
+                            new OutputStreamWriter(urlConnection.getOutputStream());
+
+                    // For Debugging
+                    Log.i("LOGINJSON", loginJSON.toString());
+                    wr.write(loginJSON.toString());
+                    wr.flush();
+                    wr.close();
+
+                    InputStream content = urlConnection.getInputStream();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    Log.i("LOGINERROR", e.getMessage());
+                    response = "Unable to login, Reason: "
+                            + e.getMessage();
+                } finally {
+                    if (urlConnection != null)
+                        urlConnection.disconnect();
+                }
+            }
+            return response;
+        }
     }
 }
