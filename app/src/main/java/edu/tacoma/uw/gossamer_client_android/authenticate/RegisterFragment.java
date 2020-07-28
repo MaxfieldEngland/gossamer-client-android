@@ -70,8 +70,8 @@ public class RegisterFragment extends Fragment {
         final EditText userNameEText = view.findViewById(R.id.username_edit_text);
         final EditText emailEText = view.findViewById(R.id.email_edit_text);
         final EditText pwdEText = view.findViewById(R.id.password_edit_text);
-
-        Button registerButton = view.findViewById(R.id.registration_button);
+        final Button registerButton = view.findViewById(R.id.registration_button);
+        //Adds functionality to button and sends data to SignInActivity.
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

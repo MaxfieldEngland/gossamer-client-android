@@ -30,19 +30,34 @@ import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
  */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Default onCreate, sets the layout of the main home view.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
 
-
+    /**
+     * Creates menu layout.
+     *
+     * @param menu layout for menu.
+     * @return true
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /**
+     * Allows sign out functionality.
+     *
+     * @param item (MenuItem)
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
@@ -51,10 +66,10 @@ public class MainActivity extends AppCompatActivity {
 
             sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false).apply();
 
+            //Navigates to SignInActivity.
             Intent intent = new Intent(this, SignInActivity.class);
             startActivity(intent);
             finish();
-
         }
         return super.onOptionsItemSelected(item);
     }

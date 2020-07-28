@@ -30,9 +30,16 @@ import android.os.Bundle;
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener,
                             RegisterFragment.RegisterFragmentListener {
 
+    /** Used to save login status. */
     private SharedPreferences mSharedPreferences;
 
-
+    /**
+     * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
+     * to determine whether user has previously logged in, if so then navigates user to home view.
+     * If user has not logged in previously, then navigate to login page.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +49,6 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                                     , Context.MODE_PRIVATE);
 
         if (!mSharedPreferences.getBoolean(getString(R.string.LOGGEDIN), false)) {
-
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.sign_in_fragment_id, new LoginFragment())
@@ -54,6 +60,10 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         }
     }
 
+    /**
+     * LoginFragmentListener interface method. Replaces previous fragment with
+     * a Register fragment that allows user to register.
+     */
     @Override
     public void createAccount() {
         getSupportFragmentManager()
@@ -62,22 +72,36 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 .commit();
     }
 
+    /**
+     * LoginFragmentListener interface method.
+     *
+     * @param email input from user.
+     * @param pwd input from user.
+     */
     public void login(String email, String pwd) {
         //TODO - Validate Email and Password against user info stored in database.
-
+        //Logs that the user has logged in.
         mSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .apply();
-
+        //Starts a new the main home activity after user logs in.
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * RegisterFragmentListener method, registers a new user. Information
+     * obtained from Register Fragment.
+     *
+     * @param username , new users preferred name.
+     * @param email , new users unique email.
+     * @param pwd , new users password.
+     */
     @Override
     public void register(String username, String email, String pwd) {
-
+        //TODO - Send new user information to database.
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

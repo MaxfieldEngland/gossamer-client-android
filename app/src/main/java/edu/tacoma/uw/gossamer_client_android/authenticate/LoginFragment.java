@@ -37,18 +37,19 @@ public class LoginFragment extends Fragment {
     /** Member variable for the listener.*/
     private LoginFragmentListener mLoginFragmentListener;
 
-    /**
-     * Interface for Login functionality
-     */
+    /** Interface for Login functionality. */
     public interface LoginFragmentListener {
         void createAccount();
-        public void login(String email, String pwd);
+        void login(String email, String pwd);
     }
 
-    public LoginFragment() {
-        // Required empty public constructor
-    }
+    /** Required Constructor. */
+    public LoginFragment() {}
 
+    /**
+     * Default onCreate method.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,11 +58,10 @@ public class LoginFragment extends Fragment {
     /**
      * Responsible for inflating the the Login Fragment. Adds functionality to the login button
      * and text view.
-     *
      * @param inflater
      * @param container
      * @param savedInstanceState
-     * @return
+     * @return view object
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,8 +72,10 @@ public class LoginFragment extends Fragment {
 
         final EditText emailText = view.findViewById(R.id.email_edit_text);
         final EditText pwdText = view.findViewById(R.id.pwd_edit_text);
-
         final TextView registerText = view.findViewById(R.id.register_text_view);
+        final Button loginButton = view.findViewById(R.id.login_button);
+
+        //Adds Click functionality for the TextView.
         registerText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,12 +83,12 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        Button loginButton = view.findViewById(R.id.login_button);
+        //Retrieves input information upon button click, sends to SignInActivity.
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                //Get values
+                //Get input values
                 String email = emailText.getText().toString();
                 String pwd = pwdText.getText().toString();
 
