@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.authenticate;
 
 import android.os.Bundle;
@@ -13,30 +20,44 @@ import android.widget.EditText;
 import edu.tacoma.uw.gossamer_client_android.R;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RegisterFragment} factory method to
- * create an instance of this fragment.
+ * Registration Fragment that is required to allow a new user to
+ * register a new account. Launched by SignInActivity.
+ * @author elijah freeman
+ * @author maxfield england
+ *
+ * @version 1.0 (July 27, 2020)
  */
 public class RegisterFragment extends Fragment {
 
+    /** Member variable for listener. */
     private RegisterFragmentListener mRegisterFragmentListener;
 
+    /** Listener used to send data from Register Fragment to SignInActivity. */
     public interface RegisterFragmentListener {
-        public void register(String username, String email, String pwd);
+        void register(String username, String email, String pwd);
     }
 
+    /** Required empty constructor. */
+    public RegisterFragment() {}
 
-    public RegisterFragment() {
-        // Required empty public constructor
-
-    }
-
-
+    /**
+     * Initiates the activity.
+     * @param savedInstanceState , saved information.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Responsible for inflating the register fragment. Retrieves and sends input information
+     * from user to the sign-in activity.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return View object.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,7 +79,8 @@ public class RegisterFragment extends Fragment {
                 String userName = userNameEText.getText().toString();
                 String email = emailEText.getText().toString();
                 String pwd = pwdEText.getText().toString();
-             mRegisterFragmentListener.register(userName, email, pwd);
+                //Sends information to the SignInActivity.
+                mRegisterFragmentListener.register(userName, email, pwd);
             }
         });
         return view;

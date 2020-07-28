@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import androidx.annotation.NonNull;
@@ -13,6 +20,14 @@ import android.view.MenuItem;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 
+/**
+ * Represents the Main Activity for the application home screen.
+ *
+ * @author elijah freeman
+ * @author maxfield england
+ *
+ * @version 1.0 (July 27, 2020)
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override

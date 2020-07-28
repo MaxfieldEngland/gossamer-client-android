@@ -1,3 +1,11 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
+
 package edu.tacoma.uw.gossamer_client_android.authenticate;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -5,10 +13,20 @@ import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.MainActivity;
 
 import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+/**
+ * Sign-In activity that launches the Login & Register Fragments. Connects to
+ * database to store/validate user email and password. Uses SharedPreferences API.
+ *
+ * @author elijah freeman
+ * @author maxfield england
+ *
+ * @version 1.0 (July 27, 2020)
+ */
 public class SignInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener,
                             RegisterFragment.RegisterFragmentListener {
 

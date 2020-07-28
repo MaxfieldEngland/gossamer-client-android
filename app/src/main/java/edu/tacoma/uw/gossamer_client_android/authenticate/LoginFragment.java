@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.authenticate;
 
 import android.os.Bundle;
@@ -19,6 +26,11 @@ import edu.tacoma.uw.gossamer_client_android.R;
  * A simple {@link Fragment} subclass.
  * Use the {@link LoginFragment#} factory method to
  * create an instance of this fragment.
+ *
+ * @author elijah freeman
+ * @author maxfield england
+ *
+ * @version 1.0 (July 27, 2020)
  */
 public class LoginFragment extends Fragment {
 
@@ -42,17 +54,24 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Responsible for inflating the the Login Fragment. Adds functionality to the login button
+     * and text view.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         mLoginFragmentListener = (LoginFragmentListener) getActivity();
 
         final EditText emailText = view.findViewById(R.id.email_edit_text);
         final EditText pwdText = view.findViewById(R.id.pwd_edit_text);
-
 
         final TextView registerText = view.findViewById(R.id.register_text_view);
         registerText.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +80,6 @@ public class LoginFragment extends Fragment {
                 ((LoginFragmentListener) getActivity()).createAccount();
             }
         });
-
 
         Button loginButton = view.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -72,24 +90,24 @@ public class LoginFragment extends Fragment {
                 String email = emailText.getText().toString();
                 String pwd = pwdText.getText().toString();
 
-                //ValidateEmail
+                //Validate Email
                 if (TextUtils.isEmpty(email) || !email.contains("@")) {
                     Toast.makeText(view.getContext(), "Enter valid email address"
                             , Toast.LENGTH_SHORT)
                             .show();
                     emailText.requestFocus();
                 }
-
+                //Validate Password
                 else if (TextUtils.isEmpty(pwd) || pwd.length() < 6) {
                     Toast.makeText(view.getContext(), "Enter valid password (at least 6 characters"
                     , Toast.LENGTH_SHORT)
                             .show();
                     pwdText.requestFocus();
                 }
+                //Sends user information to the SignInActivity.
                 mLoginFragmentListener.login(emailText.getText().toString(), pwdText.getText().toString());
             }
         });
-
         return view;
     }
 }
