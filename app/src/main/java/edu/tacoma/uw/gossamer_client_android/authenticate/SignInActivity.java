@@ -61,6 +61,11 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     private JSONObject registerJSON;
 
     /**
+     * Used to track whether we're attempting login or registration;
+     */
+    private boolean isRegister;
+
+    /**
      * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
      * to determine whether user has previously logged in, if so then navigates user to home view.
      * If user has not logged in previously, then navigate to login page.
@@ -84,6 +89,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         } else {
             Intent intent = new Intent(this, PostListActivity.class);
             startActivity(intent);
+
             finish();
         }
     }
@@ -111,6 +117,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
 
         StringBuilder url = new StringBuilder(getString(R.string.login));
         loginJSON = new JSONObject();
+        isRegister = false;
         try {
             loginJSON.put("email", email);
             loginJSON.put("password", pwd);
@@ -133,6 +140,11 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .apply();
         //Starts a new the main home activity after user logs in.
+
+        if (isRegister)
+            Toast.makeText(getBaseContext(), "Registration successful. Welcome to Gossamer!",
+                    Toast.LENGTH_LONG).show();
+
         Intent intent = new Intent(this, PostListActivity.class);
         startActivity(intent);
         finish();
@@ -148,10 +160,10 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      */
     @Override
     public void register(String username, String email, String pwd) {
-        //TODO - Send new user information to database.
 
         StringBuilder url = new StringBuilder(getString(R.string.register));
         loginJSON = new JSONObject();
+        isRegister = true;
         try {
             loginJSON.put("displayname", username);
             loginJSON.put("email", email);
@@ -234,9 +246,8 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     //If we get back that we did not succeed, we can tell them that the login/register.
                     if (!jsonObject.getBoolean("success")) {
 
-                        //If the success:false returns with an error beginning with a key issue, we know it's
                         //a registration problem: tell them that the email is already taken.
-                        if (jsonObject.getJSONObject("error").getString("detail").startsWith("Key (email)")) {
+                        if (isRegister) {
                             Toast.makeText(getApplicationContext(), "Email already registered. Please choose another email.",
                                     Toast.LENGTH_LONG).show();
                         }
