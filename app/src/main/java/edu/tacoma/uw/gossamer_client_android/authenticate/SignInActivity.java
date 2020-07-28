@@ -56,6 +56,11 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     private JSONObject loginJSON;
 
     /**
+     * Used to send registration attempts to the server.
+     */
+    private JSONObject registerJSON;
+
+    /**
      * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
      * to determine whether user has previously logged in, if so then navigates user to home view.
      * If user has not logged in previously, then navigate to login page.
@@ -145,12 +150,29 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     public void register(String username, String email, String pwd) {
         //TODO - Send new user information to database.
 
-        Intent intent = new Intent(this, PostListActivity.class);
-        startActivity(intent);
-        finish();
+        StringBuilder url = new StringBuilder(getString(R.string.register));
+        loginJSON = new JSONObject();
+        try {
+            loginJSON.put("displayname", username);
+            loginJSON.put("email", email);
+            loginJSON.put("password", pwd);
+            new LoginAsyncTask().execute(url.toString());
+        } catch (JSONException e) {
+            //If something went wrong with the JSON, show an error on the screen
+            Toast.makeText(this, "Error with JSON creation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /**
+     * Handles the login and register requests and responses.
+     */
     private class LoginAsyncTask extends AsyncTask<String, Void, String> {
+
+        /**
+         * Handles HTTP requests sent from the app.
+         * @param urls A set of URLS to send requests to (in our case, typically one)
+         * @return Server response.
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -178,8 +200,8 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                     }
 
                 } catch (Exception e) {
-                    Log.e("LOGINERROR", e.getMessage());
-                    response = "Unable to login, Reason: "
+                    Log.e("LOGIN_REG_ERROR", e.getMessage());
+                    response = "Unable to login/register, Reason: "
                             + e.getMessage();
                 } finally {
                     if (urlConnection != null)
@@ -189,6 +211,10 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
             return response;
         }
 
+        /**
+         * Response handler determining whether login is successful.
+         * @param s The server response to the login POST request
+         */
         @Override
         protected void onPostExecute(String s) {
             if (s.startsWith("Unable to login")) {
@@ -198,17 +224,28 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
             //Try to read JSON response
             try {
                 JSONObject jsonObject = new JSONObject(s);
-                //If we get 'sucess' back from our post, we can move on to the main screen and save login data.
+                //If we get 'success' back from our post, we can move on to the main screen and save login data.
                 if (jsonObject.getBoolean("success")) {
                     //SUCCESSFUL LOGIN
                     startMainActivity();
                 }
                 //Else, we did not have a successful login:
                 else {
-                    //If we get back that we did not succeed, we can tell them that the login request was bad.
+                    //If we get back that we did not succeed, we can tell them that the login/register.
                     if (!jsonObject.getBoolean("success")) {
-                        Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
-                                Toast.LENGTH_LONG).show();
+
+                        //If the success:false returns with an error beginning with a key issue, we know it's
+                        //a registration problem: tell them that the email is already taken.
+                        if (jsonObject.getJSONObject("error").getString("detail").startsWith("Key (email)")) {
+                            Toast.makeText(getApplicationContext(), "Email already registered. Please choose another email.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        //Otherwise, it's a login issue; tell the user that the login info was not
+                        //a match.
+                        else {
+                            Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
                     //If the response didn't include 'success', something else went wrong; display to user
                     else {
@@ -217,7 +254,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
 
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "JSON Parsing error on login"
+                Toast.makeText(getApplicationContext(), "JSON Parsing error: "
                         + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
