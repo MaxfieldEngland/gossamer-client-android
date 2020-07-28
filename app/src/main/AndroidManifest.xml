@@ -9,14 +9,25 @@
         android:roundIcon="@mipmap/app_image_gossamer"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".home.PostListActivity"
+            android:label="@string/title_post_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".home.PostDetailActivity"
+            android:label="@string/title_post_detail"
+            android:parentActivityName=".home.PostListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.tacoma.uw.gossamer_client_android.home.PostListActivity" />
+        </activity>
         <activity android:name=".authenticate.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".home.MainActivity">
         </activity>
     </application>
 

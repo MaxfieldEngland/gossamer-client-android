@@ -21,8 +21,10 @@
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>
-
-
+    <string name="title_post_list">Posts</string>
+    <string name="title_post_detail">Post Detail</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sem
+        dui, lobortis nec orci vel, mattis euismod urna. Lorem ipsum dolor sit amet</string>
 
 
 </resources>
