@@ -103,6 +103,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.sign_in_fragment_id, new RegisterFragment())
+                .addToBackStack(null)
                 .commit();
     }
 

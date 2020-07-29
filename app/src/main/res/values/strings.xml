@@ -13,6 +13,7 @@
     <string name="pwd_length_hint">Password must be longer than 6 characters</string>
     <string name="register_welcome_message">Welcome to Gossamer</string>
     <string name="registration_button">Register</string>
+    <string name="confirm_pwd_text">Confirm password</string>
 
 
     <!-- Shared Preferences Strings -->
