@@ -19,6 +19,7 @@
     <!-- Shared Preferences Strings -->
     <string name="LOGIN_PREFS">edu.tacoma.uw.gossamer_client_android.PREFS</string>
     <string name="LOGGEDIN">loggedin</string>
+    <string name="EMAIL">email</string>
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>

@@ -56,14 +56,14 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     private JSONObject loginJSON;
 
     /**
-     * Used to send registration attempts to the server.
-     */
-    private JSONObject registerJSON;
-
-    /**
      * Used to track whether we're attempting login or registration;
      */
     private boolean isRegister;
+
+    /**
+     * Stored to pass on to loginPrefs upon successful login or registration.
+     */
+    private String loginEmail;
 
     /**
      * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
@@ -76,6 +76,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        loginEmail = "";
 
         mSharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS)
                 , Context.MODE_PRIVATE);
@@ -119,6 +120,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         StringBuilder url = new StringBuilder(getString(R.string.login));
         loginJSON = new JSONObject();
         isRegister = false;
+        loginEmail = email;
         try {
             loginJSON.put("email", email);
             loginJSON.put("password", pwd);
@@ -139,13 +141,15 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         mSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
+                .putString(getString(R.string.EMAIL), loginEmail)
                 .apply();
-        //Starts a new the main home activity after user logs in.
 
+        //If we're just registering, let the user know their registration was successful
         if (isRegister)
             Toast.makeText(getBaseContext(), "Registration successful. Welcome to Gossamer!",
                     Toast.LENGTH_LONG).show();
 
+        //Starts a new the main home activity after user logs in.
         Intent intent = new Intent(this, PostListActivity.class);
         startActivity(intent);
         finish();
@@ -165,6 +169,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         StringBuilder url = new StringBuilder(getString(R.string.register));
         loginJSON = new JSONObject();
         isRegister = true;
+        loginEmail = email;
         try {
             loginJSON.put("displayname", username);
             loginJSON.put("email", email);
