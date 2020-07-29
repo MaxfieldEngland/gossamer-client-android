@@ -13,6 +13,7 @@
     <string name="pwd_length_hint">Password must be longer than 6 characters</string>
     <string name="register_welcome_message">Welcome to Gossamer</string>
     <string name="registration_button">Register</string>
+    <string name="confirm_pwd_text">Confirm password</string>
 
 
     <!-- Shared Preferences Strings -->
@@ -21,10 +22,16 @@
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>
+
+
+    <!-- Strings for the home view -->
     <string name="title_post_list">Posts</string>
     <string name="title_post_detail">Post Detail</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sem
         dui, lobortis nec orci vel, mattis euismod urna. Lorem ipsum dolor sit amet</string>
+    <string name="daily_message_title">Daily Message Title </string>
+
+
 
 
 </resources>
