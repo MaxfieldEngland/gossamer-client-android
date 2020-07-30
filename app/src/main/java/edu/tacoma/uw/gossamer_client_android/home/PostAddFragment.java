@@ -17,7 +17,7 @@ import java.util.Calendar;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
-public class PostAddFragment extends Fragment {
+public class  PostAddFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
