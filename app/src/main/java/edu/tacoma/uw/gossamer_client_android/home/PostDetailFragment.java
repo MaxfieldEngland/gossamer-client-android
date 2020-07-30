@@ -49,7 +49,7 @@ public class PostDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mPost.getmEmail());//TODO: Replace with username.
+                appBarLayout.setTitle(mPost.getmDisplayName());
             }
         }
     }
@@ -61,13 +61,17 @@ public class PostDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mPost != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail_id)).setText(mPost.getmEmail()); //TODO: Make conditional on isAnonymous
+            //If not anonymous, show the displayname
+            if (!mPost.mIsAnonymous())
+            ((TextView) rootView.findViewById(R.id.item_detail_id)).setText(mPost.getmDisplayName()); //TODO: Make conditional on isAnonymous
+            else
+                ((TextView) rootView.findViewById(R.id.item_detail_id)).setText("Anonymous");
             ((TextView) rootView.findViewById(R.id.item_detail_short_desc))
                     .setText(mPost.getmPostBody());
             ((TextView) rootView.findViewById(R.id.item_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
-            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually
+            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right?
 
         }
         return rootView;

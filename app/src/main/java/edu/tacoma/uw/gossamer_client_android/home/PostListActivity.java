@@ -92,6 +92,8 @@ public class PostListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        new PostsTask().execute(getString(R.string.posts));
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
@@ -113,8 +115,7 @@ public class PostListActivity extends AppCompatActivity {
         }
     }
 
-
-    private class CoursesTask extends AsyncTask<String, Void, String> {
+    private class PostsTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -133,7 +134,7 @@ public class PostListActivity extends AppCompatActivity {
                         response += s;
                     }
                 } catch (Exception e) {
-                    response = "Unable ot download the list of courses, Reason: " + e.getMessage();
+                    response = "Unable to download posts; Reason: " + e.getMessage();
                 } finally {
                     if (urlConnection != null)
                         urlConnection.disconnect();
@@ -211,12 +212,20 @@ public class PostListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mIdView.setText(mValues.get(position).getmEmail()); //TODO: Replace here with getting the username>
+            //If not anonymous, show the displayname
+            if (!mValues.get(position).mIsAnonymous())
+                holder.mIdView.setText(mValues.get(position).getmDisplayName());
+            //If anonymous, hide the displayname
+            else
+                holder.mIdView.setText("Anonymous");
+
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
+
+
 
         @Override
         public int getItemCount() {

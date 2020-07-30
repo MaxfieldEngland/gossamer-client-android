@@ -79,9 +79,7 @@ public class  PostAddFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //TODO: Implement sharedpreferences here....
-                // it doesn't seem to like this, is it because it's a fragment?
-                SharedPreferences pref = getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
 
                         , Context.MODE_PRIVATE);
 
@@ -97,6 +95,7 @@ public class  PostAddFragment extends Fragment {
                 String postDateTime = Calendar.getInstance().getTime().toString();
 
                 boolean isAnonymous = false; //Need to add functionality here!
+
 
                 Post post = new Post(email, postBody, postDateTime, isAnonymous);
                 if (mAddListener != null) {
