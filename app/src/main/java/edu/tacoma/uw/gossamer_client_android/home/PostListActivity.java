@@ -50,7 +50,7 @@ public class PostListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
-    private List<Post> mCourseList;
+    private List<Post> mPostList;
     private RecyclerView mRecyclerView;
 
     //TODO: Match references to layout elements with elements created in the actual layout.
@@ -66,13 +66,13 @@ public class PostListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-        toolbar.setTitle(getTitle());
+        toolbar.setTitle(getTitle()); //TODO: Yo does anyone know why this is called twice (let's fire Max lol)
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchCourseAddFragment();
+                launchPostAddFragment();
             }
         });
 
@@ -97,17 +97,17 @@ public class PostListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
-        if (mCourseList != null) {
+        if (mPostList != null) {
             mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
-                    (this, mCourseList, mTwoPane));
+                    (this, mPostList, mTwoPane));
         }
     }
 
-    private void launchCourseAddFragment() {
-        PostAddFragment courseAddFragment = new PostAddFragment();
+    private void launchPostAddFragment() {
+        PostAddFragment postAddFragment = new PostAddFragment();
         if (mTwoPane) {
             getSupportFragmentManager().beginTransaction().replace(
-                    R.id.item_detail_container, courseAddFragment).commit();
+                    R.id.item_detail_container, postAddFragment).commit();
         } else {
             Intent intent = new Intent(this, PostDetailActivity.class);
             //intent.putExtra(PostDetailActivity.ADD_POST, true);
@@ -153,10 +153,10 @@ public class PostListActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-                    mCourseList = Post.parsePostJson(
+                    mPostList = Post.parsePostJson(
                             jsonObject.getString("posts"));
 
-                    if (!mCourseList.isEmpty()) {
+                    if (!mPostList.isEmpty()) {
                         setupRecyclerView((RecyclerView) mRecyclerView);
                     }
                 }
@@ -188,7 +188,7 @@ public class PostListActivity extends AppCompatActivity {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item); //TODO: We gotta figure out what's going on here, if we uh, need it
+                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item); //TODO: This one's mad :(
 
                     context.startActivity(intent);
                 }

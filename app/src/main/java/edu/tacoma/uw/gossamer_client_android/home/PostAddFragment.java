@@ -44,7 +44,7 @@ public class  PostAddFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CourseAddFragment.
+     * @return A new instance of fragment PostAddFragment.
      */
     // TODO: Rename and change types and number of parameters
     public static PostAddFragment newInstance(String param1, String param2) {
@@ -66,14 +66,14 @@ public class  PostAddFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_course_add, container, false);
-        getActivity().setTitle("Add a New Course");
+        View v = inflater.inflate(R.layout.fragment_post_add, container, false);
+        getActivity().setTitle("Write a New Post");
 
         //TODO: Get the user's email and set it here for a new post.
         final EditText postBodyEditText =
-                v.findViewById(R.id.add_course_post_body);
+                v.findViewById(R.id.add_post_post_body);
 
-        Button addButton = v.findViewById(R.id.btn_add_course);
+        Button addButton = v.findViewById(R.id.btn_add_post);
         //TODO: Add isAnonymous toggle
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
