@@ -53,7 +53,7 @@ public class Post implements Serializable {
     public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName) {
         mEmail = email;
         mPostBody = postBody;
-        mPostDateTime = postDateTime;
+        mPostDateTime = postDateTime.substring(0, 10);
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
     }
