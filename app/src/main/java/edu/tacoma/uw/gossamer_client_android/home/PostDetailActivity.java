@@ -41,6 +41,7 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener {
 
     public static final String ADD_POST = "ADD_POST";
+
     private JSONObject mPostJSON;
 
     @Override
@@ -50,6 +51,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
+
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -70,21 +72,13 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            if (getIntent().getSerializableExtra(PostDetailFragment.ARG_ITEM_ID) != null) {
-                arguments.putSerializable(PostDetailFragment.ARG_ITEM_ID,
-                        getIntent().getSerializableExtra(PostDetailFragment.ARG_ITEM_ID));
-                PostDetailFragment fragment = new PostDetailFragment();
-                fragment.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.post_detail_container, fragment)
-                        .commit();
-            }
-            else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
-                PostAddFragment fragment = new PostAddFragment();
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.post_detail_container, fragment).commit();
-            }
-
+            arguments.putString(PostDetailFragment.ARG_ITEM_ID,
+                    getIntent().getStringExtra(PostDetailFragment.ARG_ITEM_ID));
+            PostDetailFragment fragment = new PostDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.post_detail_container, fragment)
+                    .commit();
         }
     }
 
