@@ -97,7 +97,6 @@ public class  PostAddFragment extends Fragment {
 
                 boolean isAnonymous = false; //Need to add functionality here!
 
-
                 Post post = new Post(email, postBody, postDateTime, isAnonymous);
                 if (mAddListener != null) {
                     mAddListener.addPost(post);

@@ -71,6 +71,7 @@ public class Post implements Serializable {
         mPostBody = postBody;
         mPostDateTime = postDateTime;
         mIsAnonymous = isAnonymous;
+        mDisplayName = "WriteMode";
     }
 
     public static List<Post> parsePostJson(String postJson) throws JSONException {

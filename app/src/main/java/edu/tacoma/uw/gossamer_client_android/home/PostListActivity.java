@@ -109,7 +109,7 @@ public class PostListActivity extends AppCompatActivity {
                     R.id.post_detail_container, postAddFragment).commit();
         } else {
             Intent intent = new Intent(this, PostDetailActivity.class);
-            //intent.putExtra(PostDetailActivity.ADD_POST, true);
+            intent.putExtra(PostDetailActivity.ADD_POST, true);
             startActivity(intent);
         }
     }
