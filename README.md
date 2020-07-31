@@ -14,20 +14,15 @@ Implementing user management via account creation.
 ## High Priority:
 
 ###### Backend:
-* Setup user table with register protocol
-* Setup login protocol for existing users
-* Create post table with write protocol
-* Create get protocol to view posts
 * Create getProfile protocol to view user profiles
 * Create editProfile protocol to change profile text, tags and displayname
 
 ###### Frontend:
-* Create login screen with email and password
-* Create register screen with username, email and password
+
 * Create main screen featuring at least chronological posts
 * Create sidebar with access to user’s profile
 * Create profile page displaying at least name, profile
-* Create edit profile page allowing 
+* Create edit profile page 
 
 
 ## Medium Priority:
