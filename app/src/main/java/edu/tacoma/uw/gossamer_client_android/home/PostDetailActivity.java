@@ -110,7 +110,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
     @Override
     public void addPost(Post post) {
 
-        String url = getString(R.string.addpost);
+        StringBuilder url = new StringBuilder(getString(R.string.addpost));
 
         mPostJSON = new JSONObject();
 
@@ -119,11 +119,13 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mPostJSON.put("PostBody", post.getmPostBody());
             mPostJSON.put("PostDateTime", post.getmPostDateTime());
             mPostJSON.put("isAnonymous", post.mIsAnonymous());
+            new AddPostAsyncTask().execute(url.toString());
         }
         catch (Exception e) {
             Toast.makeText(this, "Error with JSON creation on adding a post: "
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        finish();
 
     }
 

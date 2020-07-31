@@ -81,7 +81,6 @@ public class  PostAddFragment extends Fragment {
             public void onClick(View v) {
 
                 SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
-
                         , Context.MODE_PRIVATE);
 
                 String email = pref.getString(getString(R.string.EMAIL), null);
@@ -98,9 +97,12 @@ public class  PostAddFragment extends Fragment {
                 boolean isAnonymous = false; //Need to add functionality here!
 
                 Post post = new Post(email, postBody, postDateTime, isAnonymous);
-                if (mAddListener != null) {
+                if (mAddListener != null && !postBody.equals("")) {
                     mAddListener.addPost(post);
                 }
+                if (postBody.equals(""))
+                    Toast.makeText(getContext(), "You cannot submit empty posts!", Toast.LENGTH_SHORT)
+                    .show();
             }
         });
         return v;
