@@ -60,23 +60,22 @@ public class PostListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_list);
+        setContentView(R.layout.activity_post_list);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-        toolbar.setTitle(getTitle()); //TODO: Yo does anyone know why this is called twice (let's fire Max lol)
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchPostAddFragment();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                launchPostAddFragment();
+//            }
+//        });
 
-        if (findViewById(R.id.item_detail_container) != null) {
+        if (findViewById(R.id.post_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
@@ -84,7 +83,7 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        mRecyclerView = findViewById(R.id.item_list);
+        mRecyclerView = findViewById(R.id.post_list);
         assert mRecyclerView != null;
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
@@ -107,7 +106,7 @@ public class PostListActivity extends AppCompatActivity {
         PostAddFragment postAddFragment = new PostAddFragment();
         if (mTwoPane) {
             getSupportFragmentManager().beginTransaction().replace(
-                    R.id.item_detail_container, postAddFragment).commit();
+                    R.id.post_detail_container, postAddFragment).commit();
         } else {
             Intent intent = new Intent(this, PostDetailActivity.class);
             //intent.putExtra(PostDetailActivity.ADD_POST, true);
@@ -183,7 +182,7 @@ public class PostListActivity extends AppCompatActivity {
                     PostDetailFragment fragment = new PostDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.item_detail_container, fragment)
+                            .replace(R.id.post_detail_container, fragment)
                             .commit();
                 } else {
                     Context context = view.getContext();
@@ -206,7 +205,7 @@ public class PostListActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_list_content, parent, false);
+                    .inflate(R.layout.post_list_content, parent, false);
             return new ViewHolder(view);
         }
 
