@@ -119,6 +119,8 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mPostJSON.put("PostBody", post.getmPostBody());
             mPostJSON.put("PostDateTime", post.getmPostDateTime());
             mPostJSON.put("isAnonymous", post.mIsAnonymous());
+            new AddPostAsyncTask().execute(url);
+
         }
         catch (Exception e) {
             Toast.makeText(this, "Error with JSON creation on adding a post: "
