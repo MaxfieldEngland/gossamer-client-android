@@ -65,6 +65,8 @@ public class PostListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //TODO - To be determined.
         //toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -106,10 +108,11 @@ public class PostListActivity extends AppCompatActivity {
         PostAddFragment postAddFragment = new PostAddFragment();
         if (mTwoPane) {
             getSupportFragmentManager().beginTransaction().replace(
-                    R.id.post_detail_container, postAddFragment).commit();
+                    R.id.post_detail_container, postAddFragment)
+                    .commit();
         } else {
             Intent intent = new Intent(this, PostDetailActivity.class);
-            //intent.putExtra(PostDetailActivity.ADD_POST, true);
+            intent.putExtra(PostDetailActivity.ADD_POST, true);
             startActivity(intent);
         }
     }
