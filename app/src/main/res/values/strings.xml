@@ -32,4 +32,8 @@
         dui, lobortis nec orci vel, mattis euismod urna. Lorem ipsum dolor sit amet</string>
     <string name="daily_message_title">Daily Message Title </string>
 
+
+    <!-- Strings for Add Post Fragment -->
+    <string name="add_post_button">Post</string>
+
 </resources>

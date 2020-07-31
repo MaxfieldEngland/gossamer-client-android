@@ -57,18 +57,18 @@ public class PostDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.item_detail, container, false);
+        View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
         // Show the dummy content as text in a TextView.
         if (mPost != null) {
-            //If not anonymous, show the displayname
+           //If not anonymous, show the displayname
             if (!mPost.mIsAnonymous())
-            ((TextView) rootView.findViewById(R.id.item_detail_id)).setText(mPost.getmDisplayName()); //TODO: Make conditional on isAnonymous
+            ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName()); //TODO: Make conditional on isAnonymous
             else
-                ((TextView) rootView.findViewById(R.id.item_detail_id)).setText("Anonymous");
-            ((TextView) rootView.findViewById(R.id.item_detail_short_desc))
+                ((TextView) rootView.findViewById(R.id.post_detail_id)).setText("Anonymous");
+            ((TextView) rootView.findViewById(R.id.post_detail_short_desc))
                     .setText(mPost.getmPostBody());
-            ((TextView) rootView.findViewById(R.id.item_detail_long_desc))
+            ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
             //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right?

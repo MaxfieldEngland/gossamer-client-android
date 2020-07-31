@@ -69,11 +69,12 @@ public class  PostAddFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_post_add, container, false);
         getActivity().setTitle("Write a New Post");
 
+        //TODO - Not sure why these R.id tags cannot be found.
         //TODO: Get the user's email and set it here for a new post.
-        final EditText postBodyEditText =
-                v.findViewById(R.id.add_post_post_body);
+        EditText postBodyEditText =
+                v.findViewById(R.id.add_post_body);
 
-        Button addButton = v.findViewById(R.id.btn_add_post);
+        Button addButton = v.findViewById(R.id.add_post_button);
         //TODO: Add isAnonymous toggle
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
