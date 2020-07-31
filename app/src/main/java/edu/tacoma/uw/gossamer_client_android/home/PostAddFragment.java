@@ -19,6 +19,8 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 public class  PostAddFragment extends Fragment {
 
+    private AddListener mAddListener;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,7 +30,6 @@ public class  PostAddFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private AddListener mAddListener;
 
     public interface AddListener {
         public void addPost(Post post);
@@ -71,10 +72,9 @@ public class  PostAddFragment extends Fragment {
 
         //TODO - Not sure why these R.id tags cannot be found.
         //TODO: Get the user's email and set it here for a new post.
-        EditText postBodyEditText =
-                v.findViewById(R.id.add_post_body);
+        final EditText postBodyEditText = v.findViewById(R.id.add_post_body);
 
-        Button addButton = v.findViewById(R.id.add_post_button);
+        final Button addButton = v.findViewById(R.id.add_post_button);
         //TODO: Add isAnonymous toggle
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
