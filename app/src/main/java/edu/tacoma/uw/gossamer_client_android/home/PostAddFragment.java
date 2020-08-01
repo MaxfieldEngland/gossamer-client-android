@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -72,7 +73,7 @@ public class  PostAddFragment extends Fragment {
 
         //TODO - Not sure why these R.id tags cannot be found.
         //TODO: Get the user's email and set it here for a new post.
-        final EditText postBodyEditText = v.findViewById(R.id.add_post_body);
+        final TextView postBodyEditText = v.findViewById(R.id.add_post_body);
 
         final Button addButton = v.findViewById(R.id.add_post_button);
         //TODO: Add isAnonymous toggle
