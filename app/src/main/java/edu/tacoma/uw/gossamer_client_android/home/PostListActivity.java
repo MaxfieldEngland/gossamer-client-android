@@ -67,6 +67,7 @@ public class PostListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //TODO - To be determined.
+        //toolbar.setTitle("Hello");
         //toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -226,7 +227,6 @@ public class PostListActivity extends AppCompatActivity {
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
-
 
 
         @Override
