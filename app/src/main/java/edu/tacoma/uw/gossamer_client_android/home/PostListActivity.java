@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -53,22 +54,15 @@ public class PostListActivity extends AppCompatActivity {
     private List<Post> mPostList;
     private RecyclerView mRecyclerView;
 
-    //TODO: Match references to layout elements with elements created in the actual layout.
-    // Layout details here match the courses details from the lab, and do not reflect the current
-    // project at all.
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_list);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
+        toolbar.setTitle(getTitle());
 
-        //TODO - To be determined.
-        //toolbar.setTitle("Hello");
-        //toolbar.setTitle(getTitle());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
