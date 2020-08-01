@@ -90,7 +90,6 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         } else {
             Intent intent = new Intent(this, PostListActivity.class);
             startActivity(intent);
-
             finish();
         }
     }
