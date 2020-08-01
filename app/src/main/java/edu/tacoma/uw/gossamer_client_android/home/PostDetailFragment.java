@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import edu.tacoma.uw.gossamer_client_android.R;
-import edu.tacoma.uw.gossamer_client_android.home.dummy.DummyContent;
+import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 /**
  * A fragment representing a single Post detail screen.
@@ -22,16 +22,12 @@ import edu.tacoma.uw.gossamer_client_android.home.dummy.DummyContent;
  * on handsets.
  */
 public class PostDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Post mPost;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -48,13 +44,13 @@ public class PostDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mPost = (Post) getArguments().getSerializable(ARG_ITEM_ID);
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
-            }
+//            if (appBarLayout != null) {
+//                appBarLayout.setTitle(mPost.getmDisplayName());
+//            }
         }
     }
 
@@ -64,10 +60,20 @@ public class PostDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.post_detail)).setText(mItem.details);
-        }
+        if (mPost != null) {
+           //If not anonymous, show the displayname
+            if (!mPost.mIsAnonymous())
+            ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName()); //TODO: Make conditional on isAnonymous
+            else
+                ((TextView) rootView.findViewById(R.id.post_detail_id)).setText("Anonymous");
+            ((TextView) rootView.findViewById(R.id.post_detail_short_desc))
+                    .setText(mPost.getmPostBody());
+            ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
+                    .setText(mPost.getmPostDateTime());
 
+            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right?
+
+        }
         return rootView;
     }
 }

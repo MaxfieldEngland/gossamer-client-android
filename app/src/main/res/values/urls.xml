@@ -6,4 +6,5 @@
     <string name="posts">https://gossamer-backend.herokuapp.com/posts/posts</string>
     <string name="addposttag">https://gossamer-backend.herokuapp.com/posts/addposttag</string>
     <string name="getposttags">https://gossamer-backend.herokuapp.com/posts/getposttags</string>
+    <string name ="get">https://gossamer-backend.herokuapp.com/getdisplayname</string>
 </resources>

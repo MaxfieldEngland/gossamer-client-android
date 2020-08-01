@@ -19,6 +19,7 @@
     <!-- Shared Preferences Strings -->
     <string name="LOGIN_PREFS">edu.tacoma.uw.gossamer_client_android.PREFS</string>
     <string name="LOGGEDIN">loggedin</string>
+    <string name="EMAIL">email</string>
 
     <!-- Strings for the Menu -->
     <string name="action_logout">Sign Out</string>
@@ -30,5 +31,9 @@
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam sem
         dui, lobortis nec orci vel, mattis euismod urna. Lorem ipsum dolor sit amet</string>
     <string name="daily_message_title">Daily Message Title </string>
+
+
+    <!-- Strings for Add Post Fragment -->
+    <string name="add_post_button">Post</string>
 
 </resources>
