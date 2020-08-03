@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:toolbarId="@+id/toolbar">
 
             <androidx.appcompat.widget.Toolbar
@@ -46,7 +46,7 @@
                     app:layout_constraintVertical_bias="0.273" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/daily_message"
                     android:layout_width="177dp"
                     android:layout_height="169dp"
                     android:layout_marginStart="16dp"
@@ -67,8 +67,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/daily_message_title"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toTopOf="@+id/textView2"
-                    app:layout_constraintEnd_toEndOf="@+id/textView2"
+                    app:layout_constraintBottom_toTopOf="@+id/daily_message"
+                    app:layout_constraintEnd_toEndOf="@+id/daily_message"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.84" />
