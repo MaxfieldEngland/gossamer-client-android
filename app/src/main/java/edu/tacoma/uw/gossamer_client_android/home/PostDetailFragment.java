@@ -47,10 +47,15 @@ public class PostDetailFragment extends Fragment {
             mPost = (Post) getArguments().getSerializable(ARG_ITEM_ID);
 
             Activity activity = this.getActivity();
+            assert activity != null;
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                appBarLayout.setTitle(mPost.getmDisplayName());
-//            }
+            if (appBarLayout != null) {
+                if (!mPost.mIsAnonymous()) {
+                    appBarLayout.setTitle(mPost.getmDisplayName());
+                } else {
+                    appBarLayout.setTitle("Anonymous");
+                }
+            }
         }
     }
 
@@ -71,7 +76,7 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
-            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right?
+            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right? (yes)
 
         }
         return rootView;

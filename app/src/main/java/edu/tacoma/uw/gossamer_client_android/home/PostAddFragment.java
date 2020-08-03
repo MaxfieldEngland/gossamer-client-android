@@ -1,17 +1,23 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.Calendar;
 
@@ -20,7 +26,9 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 public class  PostAddFragment extends Fragment {
 
+
     private AddListener mAddListener;
+    private Post mPost;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +38,8 @@ public class  PostAddFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private boolean isAnonymous;
 
 
     public interface AddListener {
@@ -62,6 +72,14 @@ public class  PostAddFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAddListener = (AddListener) getActivity();
+
+
+        Activity activity = this.getActivity();
+        assert activity != null;
+        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+        if (appBarLayout != null) {
+            appBarLayout.setTitle("Username"); //TODO - Change to reflect actual username.
+        }
     }
 
     @Override
@@ -69,18 +87,18 @@ public class  PostAddFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_post_add, container, false);
-        getActivity().setTitle("Write a New Post");
+        getActivity().setTitle("Create Post");
 
-        //TODO - Not sure why these R.id tags cannot be found.
+
+
         //TODO: Get the user's email and set it here for a new post.
         final TextView postBodyEditText = v.findViewById(R.id.add_post_body);
-
         final Button addButton = v.findViewById(R.id.add_post_button);
-        //TODO: Add isAnonymous toggle
+        final Switch anonToggle = (Switch) v.findViewById(R.id.anon_toggle);
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
                         , Context.MODE_PRIVATE);
 
@@ -95,7 +113,7 @@ public class  PostAddFragment extends Fragment {
 
                 String postDateTime = Calendar.getInstance().getTime().toString();
 
-                boolean isAnonymous = false; //Need to add functionality here!
+                isAnonymous = anonToggle.isChecked();
 
                 Post post = new Post(email, postBody, postDateTime, isAnonymous);
                 if (mAddListener != null && !postBody.equals("")) {
