@@ -54,7 +54,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         setContentView(R.layout.activity_post_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();

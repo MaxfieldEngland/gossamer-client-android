@@ -62,10 +62,11 @@ public class PostListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_list);
+        setTitle("Gossamer");
 
 
         CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
-        toolbar.setTitle(getTitle());
+        toolbar.setTitle("Posts");
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -204,6 +205,7 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = twoPane;
         }
 
+        @NonNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
@@ -242,6 +244,28 @@ public class PostListActivity extends AppCompatActivity {
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    /*
+    This is responsible for the logout action.
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS),
+                    Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false).commit();
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
