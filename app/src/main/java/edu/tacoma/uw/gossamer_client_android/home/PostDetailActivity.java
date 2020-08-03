@@ -1,20 +1,19 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
-import android.view.Menu;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
@@ -34,7 +33,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import edu.tacoma.uw.gossamer_client_android.R;
-import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 /**
@@ -42,12 +40,22 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
  * in a {@link PostListActivity}.
+ *
+ * @author elijah freeman
+ * @author maxfield england
  */
 public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener {
 
+    /** Constant required for adding a post */
     public static final String ADD_POST = "ADD_POST";
+    /** Member variable for a JSON Post object. */
     private JSONObject mPostJSON;
 
+    /**
+     * Default onCreate view required to instantiating the Post Detail layout,
+     * and inflating associated fragment.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,11 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
     }
 
+    /**
+     * Allows user to return to previous activity.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -106,17 +119,19 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
             NavUtils.navigateUpTo(this, new Intent(this, PostListActivity.class));
-
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Sends a JSON post object which is sent to the database.
+     * @param post
+     */
     @Override
     public void addPost(Post post) {
 
         StringBuilder url = new StringBuilder(getString(R.string.addpost));
-
         mPostJSON = new JSONObject();
 
         try {
@@ -131,9 +146,11 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         finish();
-
     }
 
+    /**
+     * Adds the post to the database.
+     */
     private class AddPostAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -174,6 +191,10 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             return response;
         }
 
+        /**
+         * Response handler determining whether adding the post is successful.
+         * @param s The server response to the addPost POST request
+         */
         @Override
         protected void onPostExecute(String s) {
             if (s.startsWith("Unable to add the new post")) {
@@ -193,5 +214,4 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
 
     }
-
 }

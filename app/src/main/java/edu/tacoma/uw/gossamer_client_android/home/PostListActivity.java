@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.content.Context;
@@ -46,6 +53,9 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  * lead to a {@link PostDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
+ *
+ * @author elijah freeman
+ * @author maxfield england
  */
 public class PostListActivity extends AppCompatActivity {
 
@@ -54,20 +64,24 @@ public class PostListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
-
+    /** A list of Post objects to be added to the feed. */
     private List<Post> mPostList;
+    /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
 
+    /**
+     *  Default onCreate method. Provides functionality to the
+     *  addPostFragment.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_list);
         setTitle("Gossamer");
 
-
         CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
         toolbar.setTitle("Posts");
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +104,7 @@ public class PostListActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
+    /** Retrieves the posts when this activity is resumed. */
     @Override
     protected void onResume() {
         super.onResume();
@@ -97,6 +112,10 @@ public class PostListActivity extends AppCompatActivity {
         new PostsTask().execute(getString(R.string.posts));
     }
 
+    /**
+     * Sets up the recyclerview for the Posts.
+     * @param recyclerView
+     */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
         if (mPostList != null) {
             mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
@@ -104,6 +123,9 @@ public class PostListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Launches the PostAddFragment layout.
+     */
     private void launchPostAddFragment() {
         PostAddFragment postAddFragment = new PostAddFragment();
         if (mTwoPane) {
@@ -117,6 +139,9 @@ public class PostListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the post.
+     */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -145,6 +170,10 @@ public class PostListActivity extends AppCompatActivity {
             return response;
         }
 
+        /**
+         * Creates a Get request to retrieve the posts from the database.
+         * @param s
+         */
         @Override
         protected void onPostExecute(String s){
             if (s.startsWith("Unable to")) {
@@ -169,6 +198,9 @@ public class PostListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Allows views to be recycled.
+     */
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
@@ -205,6 +237,12 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = twoPane;
         }
 
+        /**
+         * Inflates the view for each posts.
+         * @param parent
+         * @param viewType
+         * @return
+         */
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -213,6 +251,11 @@ public class PostListActivity extends AppCompatActivity {
             return new ViewHolder(view);
         }
 
+        /**
+         * Responsible for binding the ViewHolder.
+         * @param holder
+         * @param position
+         */
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             //If not anonymous, show the displayname
@@ -228,12 +271,18 @@ public class PostListActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(mOnClickListener);
         }
 
-
+        /**
+         * Returns the number of posts.
+         * @return
+         */
         @Override
         public int getItemCount() {
             return mValues.size();
         }
 
+        /**
+         * View holder that contains the information present in the Recycler view.
+         */
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
@@ -246,6 +295,11 @@ public class PostListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates a menu for the toolbar.
+     * @param menu , Menu item.
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -267,6 +321,4 @@ public class PostListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }

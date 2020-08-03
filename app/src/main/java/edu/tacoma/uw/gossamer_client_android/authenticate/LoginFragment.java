@@ -25,7 +25,7 @@ import edu.tacoma.uw.gossamer_client_android.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LoginFragment#} factory method to
+ * Use the {@link LoginFragment} factory method to
  * create an instance of this fragment.
  *
  * @author elijah freeman
@@ -101,13 +101,6 @@ public class LoginFragment extends Fragment {
                             , Toast.LENGTH_SHORT)
                             .show();
                     emailText.requestFocus();
-                }
-                //Validate Password
-                else if (TextUtils.isEmpty(pwd) || pwd.length() < 6) {
-//                    Toast.makeText(view.getContext(), "Enter valid password (at least 6 characters"
-//                    , Toast.LENGTH_SHORT)
-//                            .show();
-//                    pwdText.requestFocus();
                 }
                 //Sends user information to the SignInActivity.
                 mLoginFragmentListener.login(emailText.getText().toString(), pwdText.getText().toString());

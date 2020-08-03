@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.Activity;
@@ -20,22 +27,26 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  * This fragment is either contained in a {@link PostListActivity}
  * in two-pane mode (on tablets) or a {@link PostDetailActivity}
  * on handsets.
+ *
+ * @author elijah freeman
+ * @author maxfield england
  */
 public class PostDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
+    /** The dummy content this fragment is presenting. */
     private Post mPost;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PostDetailFragment() {
-    }
+    public PostDetailFragment() {}
 
+    /**
+     * Default onCreate method.
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +57,8 @@ public class PostDetailFragment extends Fragment {
             // to load content from a content provider.
             mPost = (Post) getArguments().getSerializable(ARG_ITEM_ID);
 
+            //Changes the title of the collapsing toolbar to reflect the name of the username
+            // of the post.
             Activity activity = this.getActivity();
             assert activity != null;
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -59,6 +72,14 @@ public class PostDetailFragment extends Fragment {
         }
     }
 
+    /**
+     * Inflates the Post detail fragment layout. Displays information about
+     * the selected users posts.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

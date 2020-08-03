@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home.model;
 
 import org.json.JSONArray;
@@ -12,10 +19,10 @@ public class Post implements Serializable {
 
     //TODO: We use email as key to get displayname of the user in the database.
     // This probably requires writing a specific webservice.
+    /** Email of the user.  */
     private String mEmail;
-
+    /** Display Name of user. */
     private String mDisplayName;
-
     /** The text that makes up the bulk of a post.*/
     private String mPostBody;
     /** The date and time that the post was published.*/
@@ -74,6 +81,13 @@ public class Post implements Serializable {
         mDisplayName = "WriteMode";
     }
 
+    /**
+     * Receives a JSON object that contains posts and related information and converts it into
+     * a list of Post objects.
+     * @param postJson post information stored in the database.
+     * @return postList, a list of Post objects.
+     * @throws JSONException exception
+     */
     public static List<Post> parsePostJson(String postJson) throws JSONException {
         List<Post> postList = new ArrayList<>();
         if (postJson != null) {
