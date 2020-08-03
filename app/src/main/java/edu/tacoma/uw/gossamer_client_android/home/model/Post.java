@@ -15,10 +15,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents the Post object, of every shareable text submission from users of Gossamer.
+ * Includes the displayname, in the case that the post is viewable by users; the email (hidden from users)
+ * associated with the post, the date and time that it was published, the text itself, and whether
+ * the post should be published anonymously.
+ */
 public class Post implements Serializable {
 
-    //TODO: We use email as key to get displayname of the user in the database.
-    // This probably requires writing a specific webservice.
     /** Email of the user.  */
     private String mEmail;
     /** Display Name of user. */
