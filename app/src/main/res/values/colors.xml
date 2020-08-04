@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">@color/persianPink</color>
+    <color name="colorPrimaryDark">@color/kobi</color>
+    <color name="colorAccent">@color/maxBlue</color>
+
+    <!-- App colors (suggest): decided with coolers.co -->
+    <color name="kobi">#F699CD</color>
+    <color name="persianPink">#F58CC9</color>
+    <color name="jet">#343434</color>
+    <color name="maxBlue">#53B3CB</color>
+    <color name="lightYellow">#FEFEE3</color>
+    <color name="eggshell">#F9F5E3</color>
+
+
 </resources>

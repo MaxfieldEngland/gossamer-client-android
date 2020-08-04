@@ -92,10 +92,10 @@ public class  PostAddFragment extends Fragment {
         //Change the title of the collapsing toolbar.
         Activity activity = this.getActivity();
         assert activity != null;
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-        if (appBarLayout != null) {
-            appBarLayout.setTitle("Username"); //TODO - Change to reflect actual username.
-        }
+        //CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+        //if (appBarLayout != null) {
+        //    appBarLayout.setTitle("Write a new post");
+        //}
     }
 
     /**
@@ -114,7 +114,6 @@ public class  PostAddFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_post_add, container, false);
         getActivity().setTitle("Create Post");
 
-        //TODO: Get the user's email and set it here for a new post.
         final TextView postBodyEditText = v.findViewById(R.id.add_post_body);
         final Button addButton = v.findViewById(R.id.add_post_button);
         final Switch anonToggle = (Switch) v.findViewById(R.id.anon_toggle);
