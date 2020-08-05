@@ -34,6 +34,9 @@ public class Post implements Serializable {
     /** Whether or not the post was set to be anonymous (without their name attached).*/
     private boolean mIsAnonymous;
 
+    /** The ID of the post, used to find associated comments. */
+    private int mPostID;
+
     public String getmEmail() {
         return mEmail;
     }
@@ -49,6 +52,9 @@ public class Post implements Serializable {
     public boolean mIsAnonymous() {
         return mIsAnonymous;
     }
+    public int getmPostID() {
+        return mPostID;
+    }
 
 
     /**
@@ -61,12 +67,13 @@ public class Post implements Serializable {
      * @param isAnonymous Whether or not the post is to be displayed anonymously.
      * @param displayName The profile name of the user who displays the post.
      */
-    public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName) {
+    public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName, int postID) {
         mEmail = email;
         mPostBody = postBody;
         mPostDateTime = postDateTime.substring(0, 10);
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
+        mPostID = postID;
     }
 
     /**
@@ -100,7 +107,7 @@ public class Post implements Serializable {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 Post post = new Post(obj.getString("email"), obj.getString("postbody"),
-                        obj.getString("postdatetime"), obj.getBoolean("isanonymous"), obj.getString("displayname"));
+                        obj.getString("postdatetime"), obj.getBoolean("isanonymous"), obj.getString("displayname"), obj.getInt("postid"));
                 postList.add(post);
             }
         }

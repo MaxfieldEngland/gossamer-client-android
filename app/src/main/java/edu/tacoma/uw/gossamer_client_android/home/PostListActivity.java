@@ -226,7 +226,7 @@ public class PostListActivity extends AppCompatActivity {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item); //TODO: This one's mad :(
+                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
 
                     context.startActivity(intent);
                 }
@@ -328,7 +328,7 @@ public class PostListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class VerticalSpaceItem extends RecyclerView.ItemDecoration {
+    public static class VerticalSpaceItem extends RecyclerView.ItemDecoration {
         private final int space;
 
         public VerticalSpaceItem(int sp) {

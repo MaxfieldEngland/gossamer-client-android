@@ -33,5 +33,11 @@
         android:padding="16dp"
         android:textIsSelectable="true" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/detRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/comment_list" />
+
 
 </LinearLayout>

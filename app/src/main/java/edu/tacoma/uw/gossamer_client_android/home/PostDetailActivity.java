@@ -7,10 +7,12 @@
  */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
@@ -18,8 +20,13 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.NavUtils;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -31,8 +38,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
+import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 /**
@@ -44,16 +53,22 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  * @author elijah freeman
  * @author maxfield england
  */
-public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener {
+public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener, PostDetailFragment.AddListener {
 
-    /** Constant required for adding a post */
+    /**
+     * Constant required for adding a post
+     */
     public static final String ADD_POST = "ADD_POST";
-    /** Member variable for a JSON Post object. */
+    /**
+     * Member variable for a JSON Post object.
+     */
     private JSONObject mPostJSON;
+    private JSONObject mCommentJSON;
 
     /**
      * Default onCreate view required to instantiating the Post Detail layout,
      * and inflating associated fragment.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -91,8 +106,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment)
                         .commit();
-            }
-            else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
+            } else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
                 PostAddFragment fragment = new PostAddFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment).commit();
@@ -103,6 +117,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
     /**
      * Allows user to return to previous activity.
+     *
      * @param item
      * @return
      */
@@ -126,6 +141,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
     /**
      * Sends a JSON post object which is sent to the database.
+     *
      * @param post
      */
     @Override
@@ -140,16 +156,34 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mPostJSON.put("PostDateTime", post.getmPostDateTime());
             mPostJSON.put("isAnonymous", post.mIsAnonymous());
             new AddPostAsyncTask().execute(url.toString());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Error with JSON creation on adding a post: "
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         finish();
     }
 
+    @Override
+    public void addComment(Comment comment) {
+
+        StringBuilder url = new StringBuilder(getString(R.string.addpostcomment));
+        mCommentJSON = new JSONObject();
+
+        try {
+            mCommentJSON.put("Email", comment.getmEmail());
+            mCommentJSON.put("CommentBody", comment.getmCommentBody());
+            mCommentJSON.put("CommentDateTime", comment.getmCommentDateTime());
+            mCommentJSON.put("PostID", comment.getmPostID());
+
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation on adding a comment: "
+                    + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     /**
-     * Adds the post to the database.
+     * Adds the post to the database. Also used to add comments.
      */
     private class AddPostAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -193,6 +227,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         /**
          * Response handler determining whether adding the post is successful.
+         *
          * @param s The server response to the addPost POST request
          */
         @Override
@@ -212,6 +247,83 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                         + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+
+    }
+
+
+    public static class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
+        private final PostDetailActivity mParentActivity;
+        private final List<Comment> mValues;
+        private final boolean mTwoPane;
+
+        DetItemRecyclerViewAdapter(PostDetailActivity parent,
+                                      List<Comment> items,
+                                      boolean twoPane) {
+            mValues = items;
+            mParentActivity = parent;
+            mTwoPane = twoPane;
+        }
+
+        /**
+         * Inflates the view for each posts.
+         *
+         * @param parent
+         * @param viewType
+         * @return
+         */
+        @NonNull
+        @Override
+        public PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.comment_list_content, parent, false);
+            return new PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder(view);
+        }
+
+        /**
+         * Responsible for binding the ViewHolder.
+         *
+         * @param holder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(final PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
+            //If not anonymous, show the displayname
+
+            holder.mIdView.setText(mValues.get(position).getmDisplayName());
+
+            holder.mContentView.setText(mValues.get(position).getmCommentBody());
+
+            holder.mDateView.setText(mValues.get(position).getmCommentDateTime());
+
+            holder.itemView.setTag(mValues.get(position));
+        }
+
+        /**
+         * Returns the number of comments.
+         *
+         * @return
+         */
+        @Override
+        public int getItemCount() {
+            return mValues.size();
+        }
+
+        /**
+         * View holder that contains the information present in the Recycler view.
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView mIdView;
+            final TextView mContentView;
+            final TextView mDateView;
+
+            ViewHolder(View view) {
+                super(view);
+                mIdView = (TextView) view.findViewById(R.id.id_text);
+                mContentView = (TextView) view.findViewById(R.id.content);
+                mDateView = (TextView) view.findViewById(R.id.datetime);
+            }
+        }
+
 
     }
 }
