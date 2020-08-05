@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -113,18 +114,19 @@ public class PostDetailFragment extends Fragment {
 //            }
         }
 
-        mRecyclerView = getActivity().findViewById(R.id.detRecyclerView);
+
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        mRecyclerView = getView().findViewById(R.id.detRecyclerView);
         assert mRecyclerView != null;
         //mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24)); TODO enable
         //Get comments before we setup recycler view!
 
         setupRecyclerView((RecyclerView) mRecyclerView);
 
-
-    }
-
-    public void onResume() {
-        super.onResume();
         new CommentsTask().execute(getString(R.string.getpostcomments) + "?PostID=" + mPost.getmPostID());
     }
 
@@ -135,7 +137,7 @@ public class PostDetailFragment extends Fragment {
     private void setupRecyclerView(@NonNull RecyclerView recyclerview){
 
         if (mCommentList != null) {
-            mRecyclerView.setAdapter(new PostDetailActivity.DetItemRecyclerViewAdapter
+            mRecyclerView.setAdapter(new DetItemRecyclerViewAdapter
                     ((PostDetailActivity) getActivity(), mCommentList, mTwoPane));
         }
     }
@@ -165,10 +167,8 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
-            //TODO: Edit view to display comments? We're gonna need another recyclerview eventually for that, right? (yes)
-
-
         }
+
         return rootView;
     }
 
@@ -222,6 +222,79 @@ public class PostDetailFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
+        private final PostDetailActivity mParentActivity;
+        private final List<Comment> mValues;
+        private final boolean mTwoPane;
+
+        DetItemRecyclerViewAdapter(PostDetailActivity parent,
+                                   List<Comment> items,
+                                   boolean twoPane) {
+            mValues = items;
+            mParentActivity = parent;
+            mTwoPane = twoPane;
+        }
+
+        /**
+         * Inflates the view for each posts.
+         *
+         * @param parent
+         * @param viewType
+         * @return
+         */
+        @NonNull
+        @Override
+        public DetItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.comment_list_content, parent, false);
+            return new DetItemRecyclerViewAdapter.ViewHolder(view);
+        }
+
+        /**
+         * Responsible for binding the ViewHolder.
+         *
+         * @param holder
+         * @param position
+         */
+        @Override
+        public void onBindViewHolder(final DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
+            //If not anonymous, show the displayname
+
+            holder.mIdView.setText(mValues.get(position).getmDisplayName());
+            holder.mContentView.setText(mValues.get(position).getmCommentBody());
+            holder.mDateView.setText(mValues.get(position).getmCommentDateTime());
+            holder.itemView.setTag(mValues.get(position));
+        }
+
+        /**
+         * Returns the number of comments.
+         *
+         * @return
+         */
+        @Override
+        public int getItemCount() {
+            return mValues.size();
+        }
+
+        /**
+         * View holder that contains the information present in the Recycler view.
+         */
+        class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView mIdView;
+            final TextView mContentView;
+            final TextView mDateView;
+
+            ViewHolder(View view) {
+                super(view);
+                mIdView = (TextView) view.findViewById(R.id.id_text);
+                mContentView = (TextView) view.findViewById(R.id.content);
+                mDateView = (TextView) view.findViewById(R.id.datetime);
+            }
+        }
+
+
     }
 
 

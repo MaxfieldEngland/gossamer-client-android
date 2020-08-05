@@ -183,7 +183,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
 
     /**
-     * Adds the post to the database. Also used to add comments.
+     * Adds the post to the database. Also will be used to add comments.
      */
     private class AddPostAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -250,80 +250,4 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
     }
 
-
-    public static class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
-        private final PostDetailActivity mParentActivity;
-        private final List<Comment> mValues;
-        private final boolean mTwoPane;
-
-        DetItemRecyclerViewAdapter(PostDetailActivity parent,
-                                      List<Comment> items,
-                                      boolean twoPane) {
-            mValues = items;
-            mParentActivity = parent;
-            mTwoPane = twoPane;
-        }
-
-        /**
-         * Inflates the view for each posts.
-         *
-         * @param parent
-         * @param viewType
-         * @return
-         */
-        @NonNull
-        @Override
-        public PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.comment_list_content, parent, false);
-            return new PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder(view);
-        }
-
-        /**
-         * Responsible for binding the ViewHolder.
-         *
-         * @param holder
-         * @param position
-         */
-        @Override
-        public void onBindViewHolder(final PostDetailActivity.DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            //If not anonymous, show the displayname
-
-            holder.mIdView.setText(mValues.get(position).getmDisplayName());
-
-            holder.mContentView.setText(mValues.get(position).getmCommentBody());
-
-            holder.mDateView.setText(mValues.get(position).getmCommentDateTime());
-
-            holder.itemView.setTag(mValues.get(position));
-        }
-
-        /**
-         * Returns the number of comments.
-         *
-         * @return
-         */
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
-
-        /**
-         * View holder that contains the information present in the Recycler view.
-         */
-        class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView mIdView;
-            final TextView mContentView;
-            final TextView mDateView;
-
-            ViewHolder(View view) {
-                super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
-                mDateView = (TextView) view.findViewById(R.id.datetime);
-            }
-        }
-
-
-    }
 }

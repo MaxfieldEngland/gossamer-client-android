@@ -1,5 +1,7 @@
 package edu.tacoma.uw.gossamer_client_android.home.model;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,6 +96,7 @@ public class Comment implements Serializable {
                 commentList.add(c);
             }
         }
+        Log.e("CommentsRead", commentList.toString());
         return commentList;
     }
 
