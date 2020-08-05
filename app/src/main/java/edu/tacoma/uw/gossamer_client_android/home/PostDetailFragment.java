@@ -16,6 +16,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -120,14 +121,8 @@ public class PostDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mRecyclerView = getView().findViewById(R.id.detRecyclerView);
-        assert mRecyclerView != null;
-        //mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24)); TODO enable
-        //Get comments before we setup recycler view!
-
-        setupRecyclerView((RecyclerView) mRecyclerView);
-
         new CommentsTask().execute(getString(R.string.getpostcomments) + "?PostID=" + mPost.getmPostID());
+
     }
 
     /**
@@ -138,7 +133,8 @@ public class PostDetailFragment extends Fragment {
 
         if (mCommentList != null) {
             mRecyclerView.setAdapter(new DetItemRecyclerViewAdapter
-                    ((PostDetailActivity) getActivity(), mCommentList, mTwoPane));
+                    (this, mCommentList, mTwoPane));
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         }
     }
 
@@ -172,6 +168,18 @@ public class PostDetailFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = getView().findViewById(R.id.detRecyclerView);
+        assert mRecyclerView != null;
+        mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
+
+        setupRecyclerView((RecyclerView) mRecyclerView);
+
+
+    }
     private class CommentsTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -225,11 +233,11 @@ public class PostDetailFragment extends Fragment {
     }
 
     public class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
-        private final PostDetailActivity mParentActivity;
+        private final PostDetailFragment mParentActivity;
         private final List<Comment> mValues;
         private final boolean mTwoPane;
 
-        DetItemRecyclerViewAdapter(PostDetailActivity parent,
+        DetItemRecyclerViewAdapter(PostDetailFragment parent,
                                    List<Comment> items,
                                    boolean twoPane) {
             mValues = items;
@@ -271,7 +279,7 @@ public class PostDetailFragment extends Fragment {
         /**
          * Returns the number of comments.
          *
-         * @return
+         * @return Size of comment list (i.e. num of comments)
          */
         @Override
         public int getItemCount() {
