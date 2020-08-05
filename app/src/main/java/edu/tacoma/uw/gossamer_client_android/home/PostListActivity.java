@@ -11,19 +11,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
+
+
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -79,9 +78,9 @@ public class PostListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_list);
-        getSupportActionBar().setIcon(R.drawable.gos1); //TODO: Make this work! I think the collapsing toolbar complicates things a bit. What can we do to work around it?
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
         setTitle("Gossamer");
 
         CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
