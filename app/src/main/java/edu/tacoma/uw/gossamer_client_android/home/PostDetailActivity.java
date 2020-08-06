@@ -64,6 +64,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
      */
     private JSONObject mPostJSON;
     private JSONObject mCommentJSON;
+    private boolean writeComment = false;
 
     /**
      * Default onCreate view required to instantiating the Post Detail layout,
@@ -149,6 +150,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         StringBuilder url = new StringBuilder(getString(R.string.addpost));
         mPostJSON = new JSONObject();
+        writeComment = false;
 
         try {
             mPostJSON.put("Email", post.getmEmail());
@@ -168,12 +170,14 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         StringBuilder url = new StringBuilder(getString(R.string.addpostcomment));
         mCommentJSON = new JSONObject();
+        writeComment = true;
 
         try {
             mCommentJSON.put("Email", comment.getmEmail());
             mCommentJSON.put("CommentBody", comment.getmCommentBody());
             mCommentJSON.put("CommentDateTime", comment.getmCommentDateTime());
             mCommentJSON.put("PostID", comment.getmPostID());
+            new AddPostAsyncTask().execute(url.toString());
 
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation on adding a comment: "
@@ -201,8 +205,15 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
                     // For Debugging
-                    Log.i(ADD_POST, mPostJSON.toString());
-                    wr.write(mPostJSON.toString());
+
+                    if (writeComment) {
+                        Log.i("ADD_COMMENT", mCommentJSON.toString());
+                        wr.write(mCommentJSON.toString());
+                    }
+                    else {
+                        Log.i(ADD_POST, mPostJSON.toString());
+                        wr.write(mPostJSON.toString());
+                    }
                     wr.flush();
                     wr.close();
 
@@ -215,8 +226,9 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     }
 
                 } catch (Exception e) {
-                    response = "Unable to add the new post, Reason: "
-                            + e.getMessage();
+                    if (writeComment) response = "Unable to add the new comment, Reason: " + e.getMessage();
+
+                    else response = "Unable to add the new post, Reason: " + e.getMessage();
                 } finally {
                     if (urlConnection != null)
                         urlConnection.disconnect();
@@ -236,14 +248,25 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 return;
             }
+            else if (s.startsWith("Unable to add the new comment")) {
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-                    Toast.makeText(getApplicationContext(), "Post added! :)",
+                    String t;
+                    if (writeComment) t = "Comment added!";
+                    else t = "Post added!";
+
+                    Toast.makeText(getApplicationContext(), t,
                             Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding post"
+                String c;
+                if (writeComment) c = "comment";
+                else c = "post";
+                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding " + c + " "
                         + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }

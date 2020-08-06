@@ -8,6 +8,8 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -16,6 +18,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
@@ -73,6 +78,8 @@ public class PostDetailFragment extends Fragment {
      */
     private boolean mTwoPane;
 
+    PostDetailFragment thisFrag = this;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -93,6 +100,7 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAddListener = (AddListener) getActivity();
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -164,6 +172,46 @@ public class PostDetailFragment extends Fragment {
                     .setText(mPost.getmPostDateTime());
 
         }
+
+        //Get comment add fields
+        final Button commentButton = rootView.findViewById(R.id.add_comment_button);
+        final TextView commentBodyEditText = rootView.findViewById(R.id.add_comment_body);
+
+        commentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Use sharedpreferences to get the email address of the user
+                SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                        , Context.MODE_PRIVATE);
+
+                String email = pref.getString(getString(R.string.EMAIL), null);
+                //If we don't have an associated saved account, we can't make the post.
+                if (email == null) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Post error: Please sign out and sign in again."
+                            , Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //Collect comment info to send to server
+                String commentBody = commentBodyEditText.getText().toString();
+                String commentDateTime = Calendar.getInstance().getTime().toString();
+                int commentPostID = mPost.getmPostID();
+
+                Comment comment = new Comment(email, commentBody, commentDateTime, commentPostID);
+                if (mAddListener != null && !commentBody.equals("")) {
+                    mAddListener.addComment(comment);
+
+                    //Detach and reattach the fragment to reload after the comment was added.
+                    FragmentTransaction refresh = getFragmentManager().beginTransaction();
+                    refresh.detach(thisFrag).attach(thisFrag).commit();
+
+                }
+                if (commentBody.equals(""))
+                    Toast.makeText(getContext(), "You cannot submit empty comments!", Toast.LENGTH_SHORT)
+                            .show();
+
+                }
+            });
 
         return rootView;
     }
