@@ -3,6 +3,7 @@
     package="edu.tacoma.uw.gossamer_client_android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/app_image_gossamer"
@@ -10,6 +11,7 @@
         android:roundIcon="@mipmap/app_image_gossamer"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".userprofile.UserProfile"></activity>
         <activity
             android:name=".home.PostListActivity"
             android:label="@string/title_post_list"
@@ -30,6 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
+
 </manifest>

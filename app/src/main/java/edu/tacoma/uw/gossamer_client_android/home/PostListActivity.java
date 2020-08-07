@@ -45,6 +45,7 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfile;
 
 /**
  * An activity representing a list of Posts. This activity
@@ -211,9 +212,15 @@ public class PostListActivity extends AppCompatActivity {
         private final PostListActivity mParentActivity;
         private final List<Post> mValues;
         private final boolean mTwoPane;
+
+
+        //TODO - might go here.
+
+
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Post item = (Post) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
@@ -223,11 +230,11 @@ public class PostListActivity extends AppCompatActivity {
                     mParentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.post_detail_container, fragment)
                             .commit();
-                } else {
+                }
+                else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, PostDetailActivity.class);
                     intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item); //TODO: This one's mad :(
-
                     context.startActivity(intent);
                 }
             }
@@ -250,6 +257,8 @@ public class PostListActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.post_list_content, parent, false);
             return new ViewHolder(view);
@@ -262,6 +271,17 @@ public class PostListActivity extends AppCompatActivity {
          */
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+
+            holder.mIdView.setOnClickListener(new View.OnClickListener(){
+                Context context = holder.mIdView.getContext();
+               @Override
+                public void onClick(View view) {
+                   Intent intent = new Intent(context, UserProfile.class);
+                    context.startActivity(intent);
+               }
+            });
+
+
             //If not anonymous, show the displayname
             if (!mValues.get(position).mIsAnonymous())
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());

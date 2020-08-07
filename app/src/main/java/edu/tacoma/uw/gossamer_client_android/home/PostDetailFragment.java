@@ -8,6 +8,7 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfile;
 
 /**
  * A fragment representing a single Post detail screen.
@@ -61,14 +63,6 @@ public class PostDetailFragment extends Fragment {
             // of the post.
             Activity activity = this.getActivity();
             assert activity != null;
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                if (!mPost.mIsAnonymous()) {
-//                    appBarLayout.setTitle(mPost.getmDisplayName());
-//                } else {
-//                    appBarLayout.setTitle("Anonymous");
-//                }
-//            }
         }
     }
 
@@ -85,9 +79,19 @@ public class PostDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
+        final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
+
+        userProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UserProfile.class);
+                startActivity(intent);
+            }
+        });
+
         // Show the dummy content as text in a TextView.
         if (mPost != null) {
-           //If not anonymous, show the displayname
+           //If not anonymous, show thes displayname
             if (!mPost.mIsAnonymous())
             ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName()); //TODO: Make conditional on isAnonymous
             else
