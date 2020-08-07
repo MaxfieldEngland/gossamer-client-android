@@ -14,16 +14,12 @@ import android.os.AsyncTask;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +41,7 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
-import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfile;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 
 /**
  * A fragment representing a single Post detail screen.
@@ -167,7 +163,7 @@ public class PostDetailFragment extends Fragment {
         userProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), UserProfile.class);
+                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
                 startActivity(intent);
             }
         });

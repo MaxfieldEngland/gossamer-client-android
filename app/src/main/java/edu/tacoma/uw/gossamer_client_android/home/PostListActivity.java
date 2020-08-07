@@ -45,7 +45,7 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
-import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfile;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 
 /**
  * An activity representing a list of Posts. This activity
@@ -273,7 +273,7 @@ public class PostListActivity extends AppCompatActivity {
                 Context context = holder.mIdView.getContext();
                @Override
                 public void onClick(View view) {
-                   Intent intent = new Intent(context, UserProfile.class);
+                   Intent intent = new Intent(context, UserProfileActivity.class);
                     context.startActivity(intent);
                }
             });
