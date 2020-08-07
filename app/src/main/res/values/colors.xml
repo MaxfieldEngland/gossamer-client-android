@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/persianPink</color>
-    <color name="colorPrimaryDark">@color/kobi</color>
+    <color name="colorPrimaryDark">@color/persianPink</color>
     <color name="colorAccent">@color/maxBlue</color>
 
     <!-- App colors (suggest): decided with coolers.co -->

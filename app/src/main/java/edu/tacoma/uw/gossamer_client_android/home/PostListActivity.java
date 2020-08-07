@@ -220,7 +220,6 @@ public class PostListActivity extends AppCompatActivity {
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Post item = (Post) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
@@ -257,8 +256,6 @@ public class PostListActivity extends AppCompatActivity {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.post_list_content, parent, false);
             return new ViewHolder(view);
@@ -348,7 +345,7 @@ public class PostListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class VerticalSpaceItem extends RecyclerView.ItemDecoration {
+    public static class VerticalSpaceItem extends RecyclerView.ItemDecoration {
         private final int space;
 
         public VerticalSpaceItem(int sp) {
