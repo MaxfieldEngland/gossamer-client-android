@@ -38,5 +38,13 @@
         app:layout_constraintTop_toBottomOf="@+id/user_profile_name" />
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/detRecyclerView"
+        android:layout_width="414dp"
+        android:layout_height="486dp"
+        tools:layout_editor_absoluteY="337dp"
+        tools:listitem="@layout/user_post_list" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
