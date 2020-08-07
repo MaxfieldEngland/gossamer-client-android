@@ -34,6 +34,8 @@ public class Post implements Serializable {
     /** Whether or not the post was set to be anonymous (without their name attached).*/
     private boolean mIsAnonymous;
 
+    private ArrayList<Tag> tagList;
+
     /** The ID of the post, used to find associated comments. */
     private int mPostID;
 
@@ -74,6 +76,8 @@ public class Post implements Serializable {
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
         mPostID = postID;
+
+        tagList = new ArrayList<Tag>();
     }
 
     /**
@@ -90,6 +94,8 @@ public class Post implements Serializable {
         mPostDateTime = postDateTime;
         mIsAnonymous = isAnonymous;
         mDisplayName = "WriteMode";
+
+        tagList = new ArrayList<Tag>();
     }
 
     /**
@@ -113,5 +119,20 @@ public class Post implements Serializable {
         }
         return postList;
     }
+
+    public void addTag(Tag tag) {
+        tagList.add(tag);
+
+    }
+
+    public void clearTags() {
+        tagList.clear();
+    }
+
+    public ArrayList<Tag> getTags() {
+        return tagList;
+    }
+
+
 
 }

@@ -10,6 +10,7 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +43,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * An activity representing a list of Posts. This activity
@@ -68,6 +73,8 @@ public class PostListActivity extends AppCompatActivity {
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
+
+    private boolean tags = false;
 
     /**
      *  Default onCreate method. Provides functionality to the
@@ -113,7 +120,10 @@ public class PostListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        tags = false;
         new PostsTask().execute(getString(R.string.posts));
+        tags = true;
+        new PostsTask().execute(getString(R.string.getposttags));
     }
 
     /**
@@ -185,14 +195,23 @@ public class PostListActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
+            //If we succeeded, behavior depends on whether we're getting posts or getting tags
             try {
                 JSONObject jsonObject = new JSONObject(s);
-                if (jsonObject.getBoolean("success")) {
-                    mPostList = Post.parsePostJson(
-                            jsonObject.getString("posts"));
+                if (!tags) {
+                        if (jsonObject.getBoolean("success")) {
+                        mPostList = Post.parsePostJson(
+                                jsonObject.getString("posts"));
+                    }
+                }
+                else {
+                    if (jsonObject.getBoolean("success")) {
 
-                    if (!mPostList.isEmpty()) {
-                        setupRecyclerView((RecyclerView) mRecyclerView);
+                        Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+
+                        if (!mPostList.isEmpty()) {
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
                     }
                 }
             } catch (JSONException e) {
@@ -271,6 +290,18 @@ public class PostListActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
+            ArrayList<Tag> tags = mValues.get(position).getTags();
+            LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            for (Tag tag : tags) {
+                Button tagButton;
+                tagButton = new Button(mParentActivity);
+                tagButton.setText(tag.getName());
+                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+                holder.mTagContainer.addView(tagButton, tagLayout);
+            }
+
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -290,10 +321,12 @@ public class PostListActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            final LinearLayout mTagContainer;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
+                mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }
