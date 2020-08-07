@@ -37,5 +37,6 @@
     <string name="add_post_button">Post</string>
     <string name="anon_toggle_switch">Anonymous</string>
     <string name="share_your_story">Share your story...</string>
+    <string name="share_your_comment">"Add a comment</string>
 
 </resources>

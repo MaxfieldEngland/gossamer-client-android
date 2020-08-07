@@ -7,10 +7,12 @@
  */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
@@ -18,8 +20,13 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.NavUtils;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -31,8 +38,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
+import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 /**
@@ -44,16 +53,23 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  * @author elijah freeman
  * @author maxfield england
  */
-public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener {
+public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener, PostDetailFragment.AddListener {
 
-    /** Constant required for adding a post */
+    /**
+     * Constant required for adding a post
+     */
     public static final String ADD_POST = "ADD_POST";
-    /** Member variable for a JSON Post object. */
+    /**
+     * Member variable for a JSON Post object.
+     */
     private JSONObject mPostJSON;
+    private JSONObject mCommentJSON;
+    private boolean writeComment = false;
 
     /**
      * Default onCreate view required to instantiating the Post Detail layout,
      * and inflating associated fragment.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -91,8 +107,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment)
                         .commit();
-            }
-            else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
+            } else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
                 PostAddFragment fragment = new PostAddFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment).commit();
@@ -103,6 +118,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
     /**
      * Allows user to return to previous activity.
+     *
      * @param item
      * @return
      */
@@ -126,6 +142,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
     /**
      * Sends a JSON post object which is sent to the database.
+     *
      * @param post
      */
     @Override
@@ -133,6 +150,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         StringBuilder url = new StringBuilder(getString(R.string.addpost));
         mPostJSON = new JSONObject();
+        writeComment = false;
 
         try {
             mPostJSON.put("Email", post.getmEmail());
@@ -140,16 +158,36 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mPostJSON.put("PostDateTime", post.getmPostDateTime());
             mPostJSON.put("isAnonymous", post.mIsAnonymous());
             new AddPostAsyncTask().execute(url.toString());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Toast.makeText(this, "Error with JSON creation on adding a post: "
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         finish();
     }
 
+    @Override
+    public void addComment(Comment comment) {
+
+        StringBuilder url = new StringBuilder(getString(R.string.addpostcomment));
+        mCommentJSON = new JSONObject();
+        writeComment = true;
+
+        try {
+            mCommentJSON.put("Email", comment.getmEmail());
+            mCommentJSON.put("CommentBody", comment.getmCommentBody());
+            mCommentJSON.put("CommentDateTime", comment.getmCommentDateTime());
+            mCommentJSON.put("PostID", comment.getmPostID());
+            new AddPostAsyncTask().execute(url.toString());
+
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation on adding a comment: "
+                    + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     /**
-     * Adds the post to the database.
+     * Adds the post to the database. Also will be used to add comments.
      */
     private class AddPostAsyncTask extends AsyncTask<String, Void, String> {
         @Override
@@ -167,8 +205,15 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
                     // For Debugging
-                    Log.i(ADD_POST, mPostJSON.toString());
-                    wr.write(mPostJSON.toString());
+
+                    if (writeComment) {
+                        Log.i("ADD_COMMENT", mCommentJSON.toString());
+                        wr.write(mCommentJSON.toString());
+                    }
+                    else {
+                        Log.i(ADD_POST, mPostJSON.toString());
+                        wr.write(mPostJSON.toString());
+                    }
                     wr.flush();
                     wr.close();
 
@@ -181,8 +226,9 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     }
 
                 } catch (Exception e) {
-                    response = "Unable to add the new post, Reason: "
-                            + e.getMessage();
+                    if (writeComment) response = "Unable to add the new comment, Reason: " + e.getMessage();
+
+                    else response = "Unable to add the new post, Reason: " + e.getMessage();
                 } finally {
                     if (urlConnection != null)
                         urlConnection.disconnect();
@@ -193,6 +239,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         /**
          * Response handler determining whether adding the post is successful.
+         *
          * @param s The server response to the addPost POST request
          */
         @Override
@@ -201,17 +248,29 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 return;
             }
+            else if (s.startsWith("Unable to add the new comment")) {
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                return;
+            }
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-                    Toast.makeText(getApplicationContext(), "Post added! :)",
+                    String t;
+                    if (writeComment) t = "Comment added!";
+                    else t = "Post added!";
+
+                    Toast.makeText(getApplicationContext(), t,
                             Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding post"
+                String c;
+                if (writeComment) c = "comment";
+                else c = "post";
+                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding " + c + " "
                         + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
 
     }
+
 }
