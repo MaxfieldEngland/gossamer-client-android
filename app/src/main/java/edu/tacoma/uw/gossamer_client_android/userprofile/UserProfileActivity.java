@@ -2,16 +2,21 @@ package edu.tacoma.uw.gossamer_client_android.userprofile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +33,7 @@ import java.net.URL;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
-import edu.tacoma.uw.gossamer_client_android.home.PostListActivity;
+import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -39,35 +44,57 @@ public class UserProfileActivity extends AppCompatActivity {
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
 
+    private String mUserEmail;
+    private String mUser;
+
+    private TextView mAboutMe;
+    private Button mEditButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            mUserEmail = (String) bundle.get("email");
+            mUser = (String) bundle.get("username");
+        }
+        setTitle("Profile");
 
+        TextView userName = findViewById(R.id.user_profile_name);
+        userName.setText(mUser);
 
+        mAboutMe = findViewById(R.id.user_profile_abt_me);
+        mAboutMe.setEnabled(false);
 
+        mEditButton = findViewById(R.id.edit_done);
+        mEditButton.setVisibility(View.GONE);
+
+        mEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAboutMe.setEnabled(false);
+                mEditButton.setVisibility(View.GONE);
+            }
+        });
 
         mRecyclerView = findViewById(R.id.user_profile_RecyclerView);
-
-
         assert mRecyclerView != null;
-
         mRecyclerView.addItemDecoration(new UserProfileActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
 
-
-
-    /** Retrieves the posts when this activity is resumed. */
+    /** Retrieves the user posts when this activity is resumed. */
     @Override
     protected void onResume() {
         super.onResume();
-        new PostsTask().execute(getString(R.string.posts));
+        new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
     }
 
     /**
-     * Sets up the recyclerview for the Posts.
+     * Sets up the recyclerview for the user's posts.
      * @param recyclerView
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
@@ -110,7 +137,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         /**
-         * Creates a Get request to retrieve the posts from the database.
+         * Creates a Get request to retrieve the user's posts from the database.
          * @param s
          */
         @Override
@@ -222,5 +249,36 @@ public class UserProfileActivity extends AppCompatActivity {
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             outRect.bottom = space;
         }
+    }
+
+
+    /**
+     * Creates a menu for the toolbar.
+     * @param menu , Menu item.
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.userprofile_menu, menu);
+        return true;
+    }
+
+    /*
+    This is responsible for the logout action.
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS),
+                    Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false).commit();
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (item.getItemId() == R.id.edit_userprofile) {
+            mAboutMe.setEnabled(true);
+            mEditButton.setVisibility(View.VISIBLE);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

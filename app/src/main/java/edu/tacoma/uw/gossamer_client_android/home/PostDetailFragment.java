@@ -111,17 +111,7 @@ public class PostDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             assert activity != null;
 
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                if (!mPost.mIsAnonymous()) {
-//                    appBarLayout.setTitle(mPost.getmDisplayName());
-//                } else {
-//                    appBarLayout.setTitle("Anonymous");
-//                }
-//            }
         }
-
-
     }
 
     public void onResume() {

@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/app_image_gossamer"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".userprofile.UserProfileActivity"></activity>
+        <activity android:name=".userprofile.UserProfileActivity"
+
+            android:windowSoftInputMode="adjustPan"> ></activity>
         <activity
             android:name=".home.PostListActivity"
             android:label="@string/title_post_list"

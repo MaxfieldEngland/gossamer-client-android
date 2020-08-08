@@ -214,9 +214,6 @@ public class PostListActivity extends AppCompatActivity {
         private final boolean mTwoPane;
 
 
-        //TODO - might go here.
-
-
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,7 +230,7 @@ public class PostListActivity extends AppCompatActivity {
                 else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item); //TODO: This one's mad :(
+                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
                     context.startActivity(intent);
                 }
             }
@@ -267,17 +264,23 @@ public class PostListActivity extends AppCompatActivity {
          * @param position
          */
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-            holder.mIdView.setOnClickListener(new View.OnClickListener(){
-                Context context = holder.mIdView.getContext();
-               @Override
-                public void onClick(View view) {
-                   Intent intent = new Intent(context, UserProfileActivity.class);
-                    context.startActivity(intent);
-               }
-            });
+            if (!mValues.get(position).mIsAnonymous()) {
+                holder.mIdView.setOnClickListener(new View.OnClickListener() {
+                    Context context = holder.mIdView.getContext();
 
+                    @Override
+                    public void onClick(View view) {
+                        String e = mValues.get(position).getmEmail();
+                        String u = mValues.get(position).getmDisplayName();
+                        Intent intent = new Intent(context, UserProfileActivity.class);
+                        intent.putExtra("email", e);
+                        intent.putExtra("username", u);
+                        context.startActivity(intent);
+                    }
+                });
+            }
 
             //If not anonymous, show the displayname
             if (!mValues.get(position).mIsAnonymous())
@@ -314,8 +317,6 @@ public class PostListActivity extends AppCompatActivity {
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }
-
-
     }
 
     /**
