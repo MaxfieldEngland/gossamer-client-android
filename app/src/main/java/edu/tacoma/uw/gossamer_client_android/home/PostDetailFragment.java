@@ -150,13 +150,19 @@ public class PostDetailFragment extends Fragment {
         //Get post content
         final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
 
-        userProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-                startActivity(intent);
-            }
-        });
+        if (!mPost.mIsAnonymous()) {
+            userProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String e = mPost.getmEmail();
+                    String u = mPost.getmDisplayName();
+                    Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                    intent.putExtra("email", e);
+                    intent.putExtra("username", u);
+                    startActivity(intent);
+                }
+            });
+        }
 
         // Show the dummy content as text in a TextView.
         if (mPost != null) {
