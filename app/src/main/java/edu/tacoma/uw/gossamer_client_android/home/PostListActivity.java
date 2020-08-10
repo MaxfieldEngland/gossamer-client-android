@@ -10,6 +10,7 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -149,6 +151,8 @@ public class PostListActivity extends AppCompatActivity {
      */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
+        ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.postList_progressB);
+
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -162,6 +166,7 @@ public class PostListActivity extends AppCompatActivity {
 
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
                     String s = "";
+                    publishProgress();
                     while ((s = buffer.readLine()) != null) {
                         response += s;
                     }
@@ -175,12 +180,21 @@ public class PostListActivity extends AppCompatActivity {
             return response;
         }
 
+        @Override
+        protected void onProgressUpdate(Void... progress) {
+            mProgressBar.setProgress(10);
+            mProgressBar.setBackgroundColor(Color.BLACK);
+
+        }
+
         /**
          * Creates a Get request to retrieve the posts from the database.
          * @param s
          */
         @Override
         protected void onPostExecute(String s){
+            mProgressBar.setVisibility(View.GONE);
+
             if (s.startsWith("Unable to")) {
                 Toast.makeText(getApplicationContext(), "Unable to download" + s,
                         Toast.LENGTH_SHORT).show();
