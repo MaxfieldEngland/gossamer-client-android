@@ -9,7 +9,8 @@
     android:padding="16dp"
     android:textIsSelectable="true"
     tools:context=".home.PostDetailFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp">
 
 
     <TextView
@@ -20,21 +21,44 @@
         android:padding="16dp"
         android:textIsSelectable="true" />
 
-    <TextView
-        android:id="@+id/post_detail_short_desc"
-        style="?android:attr/textAppearanceLarge"
+    <LinearLayout
+        android:id="@+id/det_tagContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textIsSelectable="true" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"></LinearLayout>
 
-    <TextView
-        android:id="@+id/post_detail_long_desc"
-        style="?android:attr/textAppearanceLarge"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textIsSelectable="true" />
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/lightYellow"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:cardMaxElevation="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/post_detail_short_desc"
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textIsSelectable="true" />
+
+            <TextView
+                android:id="@+id/post_detail_long_desc"
+                style="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:textIsSelectable="true" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/detRecyclerView"

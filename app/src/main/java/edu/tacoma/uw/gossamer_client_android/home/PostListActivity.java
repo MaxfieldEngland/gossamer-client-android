@@ -10,9 +10,15 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.content.res.Resources;
+
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,15 +31,21 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+
+import android.widget.Button;
+import android.widget.LinearLayout;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,12 +54,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
+
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * An activity representing a list of Posts. This activity
@@ -71,6 +86,15 @@ public class PostListActivity extends AppCompatActivity {
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
+
+    /** AsyncTask boolean to determine whether we're getting tags or posts. */
+    private boolean tags = false;
+
+    /** AsyncTask boolean to determine whether we're downloading the list of Tag names.*/
+    private boolean init;
+
+    //The array of downloaded string IDs
+    public ArrayList<String> tagIDs;
 
     /**
      *  Default onCreate method. Provides functionality to the
@@ -105,6 +129,8 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
+        init = true;
+
         mRecyclerView = findViewById(R.id.post_list);
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new VerticalSpaceItem(24));
@@ -116,7 +142,11 @@ public class PostListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        tagIDs = new ArrayList<String>();
+        new PostsTask().execute(getString(R.string.taglist));
+        tags = false;
         new PostsTask().execute(getString(R.string.posts));
+
     }
 
     /**
@@ -142,6 +172,8 @@ public class PostListActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent(this, PostDetailActivity.class);
             intent.putExtra(PostDetailActivity.ADD_POST, true);
+
+            intent.putExtra("TAG_LIST", tagIDs);
             startActivity(intent);
         }
     }
@@ -171,7 +203,7 @@ public class PostListActivity extends AppCompatActivity {
                         response += s;
                     }
                 } catch (Exception e) {
-                    response = "Unable to download posts; Reason: " + e.getMessage();
+                    response = "Unable to download; Reason: " + e.getMessage();
                 } finally {
                     if (urlConnection != null)
                         urlConnection.disconnect();
@@ -200,14 +232,46 @@ public class PostListActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
+            //If we succeeded, there are three behavior branches: taglist retrieval, retrieving posts,
+            // and retrieving posttags
             try {
                 JSONObject jsonObject = new JSONObject(s);
-                if (jsonObject.getBoolean("success")) {
-                    mPostList = Post.parsePostJson(
-                            jsonObject.getString("posts"));
 
-                    if (!mPostList.isEmpty()) {
-                        setupRecyclerView((RecyclerView) mRecyclerView);
+                //If we're initializing, we only download the tag names.
+                if (init) {
+                    init = false;
+
+                    if (jsonObject.getBoolean("success")) {
+
+                        //Add to local database
+                        tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Tag download failed.", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
+
+                //Branch 2: Downloading posts
+                if (!tags) {
+                        if (jsonObject.getBoolean("success")) {
+                        mPostList = Post.parsePostJson(
+                                jsonObject.getString("posts"));
+
+                            //Start tag retrieval
+                            tags = true;
+                            new PostsTask().execute(getString(R.string.getposttags));
+                    }
+                }
+                //We come here after we get posts, to get the post tags.
+                else {
+                    if (jsonObject.getBoolean("success")) {
+
+                        Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+
+                        if (!mPostList.isEmpty()) {
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
                     }
                 }
             } catch (JSONException e) {
@@ -305,6 +369,37 @@ public class PostListActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
+            ArrayList<Tag> tags = mValues.get(position).getTags();
+            LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            tagLayout.setMargins(0, 0, 10, 0);
+
+            for (Tag tag : tags) {
+                Button tagButton;
+                tagButton = new Button(mParentActivity);
+                tagButton.setText(tag.getName());
+                tagButton.setTextSize(10);
+                tagButton.setMinHeight(10);
+                tagButton.setMinimumHeight(10);
+                tagButton.setMinWidth(100);
+                tagButton.setMinimumWidth(200);
+                //Adding some graphical features that are build version dependent:
+                //Get rid of the tag button shadows by getting rid of the state list animator
+                if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);
+
+                //Change the shape to be more capsule or rounded rectangle.
+                if (Build.VERSION.SDK_INT>=16) {
+                    GradientDrawable tagShape = new GradientDrawable();
+                    tagShape.setCornerRadius(100);
+                    tagShape.setColor(Color.parseColor(tag.getColor()));
+                    tagButton.setBackground(tagShape);
+                }
+                else {
+                    tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+                }
+                holder.mTagContainer.addView(tagButton, tagLayout);
+            }
+
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -324,10 +419,12 @@ public class PostListActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            final LinearLayout mTagContainer;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
+                mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }

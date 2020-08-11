@@ -29,6 +29,12 @@
                 android:textColor="@color/maxBlue"
                 android:textSize="18sp" />
 
+            <LinearLayout
+                android:id="@+id/tagContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
+
             <TextView
                 android:id="@+id/content"
                 android:layout_width="match_parent"

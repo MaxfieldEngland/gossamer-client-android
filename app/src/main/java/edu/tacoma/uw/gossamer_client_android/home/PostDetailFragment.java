@@ -10,8 +10,13 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.content.Intent;
+
+import android.os.Build;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +47,8 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
-import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * A fragment representing a single Post detail screen.
@@ -176,6 +183,39 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
+            LinearLayout tagCon = (LinearLayout) rootView.findViewById(R.id.det_tagContainer);
+
+            LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            tagLayout.setMargins(0, 0, 10, 0);
+
+            //Populate det_tagContainer with tags
+            for (Tag tag: mPost.getTags()){
+                Button tagButton;
+                tagButton = new Button(getActivity());
+                tagButton.setText(tag.getName());
+                tagButton.setTextSize(10);
+                tagButton.setMinHeight(10);
+                tagButton.setMinimumHeight(10);
+                tagButton.setMinWidth(100);
+                tagButton.setMinimumWidth(200);
+                //Adding some graphical features that are build version dependent:
+                //Get rid of the tag button shadows by getting rid of the state list animator
+                if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);
+
+                //Change the shape to be more capsule or rounded rectangle.
+                if (Build.VERSION.SDK_INT>=16) {
+                    GradientDrawable tagShape = new GradientDrawable();
+                    tagShape.setCornerRadius(100);
+                    tagShape.setColor(Color.parseColor(tag.getColor()));
+                    tagButton.setBackground(tagShape);
+                }
+                else {
+                    tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+                }
+                tagCon.addView(tagButton, tagLayout);
+            }
+
         }
 
         //Get comment add fields
@@ -205,6 +245,7 @@ public class PostDetailFragment extends Fragment {
                 Comment comment = new Comment(email, commentBody, commentDateTime, commentPostID);
                 if (mAddListener != null && !commentBody.equals("")) {
                     mAddListener.addComment(comment);
+                    commentBodyEditText.setText("");
 
                     //Detach and reattach the fragment to reload after the comment was added.
                     FragmentTransaction refresh = getFragmentManager().beginTransaction();
