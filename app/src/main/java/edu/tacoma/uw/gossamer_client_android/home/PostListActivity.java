@@ -10,42 +10,30 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
-import android.content.res.Resources;
-
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
-
-
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import android.widget.Button;
 import android.widget.LinearLayout;
-
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,9 +48,8 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
-import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
-
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 
 /**
  * An activity representing a list of Posts. This activity
@@ -87,11 +74,8 @@ public class PostListActivity extends AppCompatActivity {
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
 
-    /** AsyncTask boolean to determine whether we're getting tags or posts. */
-    private boolean tags = false;
-
-    /** AsyncTask boolean to determine whether we're downloading the list of Tag names.*/
-    private boolean init;
+    //Daily message details
+    private String dmTopic, dmBody = ""; //dmLink
 
     //The array of downloaded string IDs
     public ArrayList<String> tagIDs;
@@ -129,7 +113,8 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        init = true;
+        new PostsTask().execute(getString(R.string.dailymessage));
+
 
         mRecyclerView = findViewById(R.id.post_list);
         assert mRecyclerView != null;
@@ -144,8 +129,13 @@ public class PostListActivity extends AppCompatActivity {
 
         tagIDs = new ArrayList<String>();
         new PostsTask().execute(getString(R.string.taglist));
-        tags = false;
         new PostsTask().execute(getString(R.string.posts));
+
+        if (!dmBody.isEmpty() && !dmTopic.isEmpty()){
+            ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
+            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
+        }
+        //else new PostsTask().execute(getString(R.string.dailymessage));
 
     }
 
@@ -237,42 +227,97 @@ public class PostListActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(s);
 
-                //If we're initializing, we only download the tag names.
-                if (init) {
-                    init = false;
+                if(jsonObject.getBoolean("success")) {
 
-                    if (jsonObject.getBoolean("success")) {
 
-                        //Add to local database
-                        tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), "Tag download failed.", Toast.LENGTH_LONG).show();
-                    }
-                    return;
-                }
+                    int state;
 
-                //Branch 2: Downloading posts
-                if (!tags) {
-                        if (jsonObject.getBoolean("success")) {
-                        mPostList = Post.parsePostJson(
-                                jsonObject.getString("posts"));
+                    if (jsonObject.has("tagnames")) state = 0; //Get tag list state (init)
+                    else if (jsonObject.has("posts")) state = 1; //Get all posts state
+                    else if (jsonObject.has("tags")) state = 2; //Get all post tags state
+                    else if (jsonObject.has("message")) state = 3;//Get daily message state
+                    else state = -1;
 
-                            //Start tag retrieval
-                            tags = true;
+                    switch (state) {
+
+                        //Getting tag list
+                        case 0:
+                            tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
+                            break;
+
+                        //Getting post list, and then initializing posttags
+                        case 1:
+                            mPostList = Post.parsePostJson(jsonObject.getString("posts"));
                             new PostsTask().execute(getString(R.string.getposttags));
-                    }
-                }
-                //We come here after we get posts, to get the post tags.
-                else {
-                    if (jsonObject.getBoolean("success")) {
 
-                        Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+                            break;
 
-                        if (!mPostList.isEmpty()) {
-                            setupRecyclerView((RecyclerView) mRecyclerView);
-                        }
+                        //Getting posttags
+                        case 2:
+                            Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+                            if (!mPostList.isEmpty()) {
+                                setupRecyclerView((RecyclerView) mRecyclerView);
+                            }
+                            break;
+
+                        //Getting daily message
+                        case 3:
+                            //Set our fields so we can reload them if possible
+                            dmBody = jsonObject.getJSONObject("message").getString("messagebody");
+                            dmTopic = jsonObject.getJSONObject("message").getString("messagetopic");
+
+                            //Then make them appear properly in the app
+                            ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
+                            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
+                            break;
+
+                        //We didn't get anything we wanted!
+                        case -1:
+                            Toast.makeText(getApplicationContext(), "Web retrieval error." +
+                                            " Please reload the app and try again.",
+                                    Toast.LENGTH_LONG).show();
+                            break;
+
+
+
                     }
+
+                    //If we're initializing, we only download the tag names.
+//                    if (state == 1) {
+//                        init = false;
+//
+//                        if (jsonObject.getBoolean("success")) {
+//
+//                            //Add to local database
+//                            tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Tag download failed.", Toast.LENGTH_LONG).show();
+//                        }
+//                        return;
+//                    }
+
+                    //Branch 2: Downloading posts
+//                    if (!tags & !init) {
+//                        if (jsonObject.getBoolean("success")) {
+//                            mPostList = Post.parsePostJson(
+//                                    jsonObject.getString("posts"));
+//
+//                            //Start tag retrieval
+//                            tags = true;
+//                            new PostsTask().execute(getString(R.string.getposttags));
+//                        }
+//                    }
+                    //We come here after we get posts, to get the post tags.
+//                    else {
+//                        if (jsonObject.getBoolean("success")) {
+//
+//                            Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+//
+//                            if (!mPostList.isEmpty()) {
+//                                setupRecyclerView((RecyclerView) mRecyclerView);
+//                            }
+//                        }
+//                    }
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),

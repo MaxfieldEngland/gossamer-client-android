@@ -47,7 +47,7 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
-import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
