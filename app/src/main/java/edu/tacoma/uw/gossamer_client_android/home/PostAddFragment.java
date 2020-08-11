@@ -44,10 +44,8 @@ public class  PostAddFragment extends Fragment {
     /** A post and related information. */
     private Post mPost;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    /** Current text in post body (saved when tags are selected) */
+    private String currPostBody;
 
     /** Determines whether a post is anonymous. */
     private boolean isAnonymous;
@@ -61,24 +59,6 @@ public class  PostAddFragment extends Fragment {
 
     /** Required empty constructor. */
     public PostAddFragment() {}
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PostAddFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PostAddFragment newInstance(String param1, String param2) {
-        PostAddFragment fragment = new PostAddFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     /**
      * Default onCreate method.
@@ -96,6 +76,17 @@ public class  PostAddFragment extends Fragment {
         //if (appBarLayout != null) {
         //    appBarLayout.setTitle("Write a new post");
         //}
+    }
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        if (currPostBody != null) {
+            TextView postBody = (TextView) getView().findViewById(R.id.add_post_body);
+            postBody.setText(currPostBody);
+
+        }
     }
 
     /**
@@ -116,7 +107,24 @@ public class  PostAddFragment extends Fragment {
 
         final TextView postBodyEditText = v.findViewById(R.id.add_post_body);
         final Button addButton = v.findViewById(R.id.add_post_button);
+        final Button addTagButton = v.findViewById(R.id.launchAddTagsFragmentButton);
         final Switch anonToggle = (Switch) v.findViewById(R.id.anon_toggle);
+
+        //Launch the tag selection fragment, and be sure to save the post body.
+        addTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                currPostBody = postBodyEditText.getText().toString();
+
+                PostAddTagsFragment fragment = new PostAddTagsFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.post_detail_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
 
         //Allows user to Post to the main feed.
         addButton.setOnClickListener(new View.OnClickListener() {

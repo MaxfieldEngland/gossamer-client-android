@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
@@ -59,23 +60,38 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
      * Constant required for adding a post
      */
     public static final String ADD_POST = "ADD_POST";
+
+    /**
+     * Constant required for receiving tag list
+     */
+    public static final String TAG_LIST = "TAG_LIST";
+
     /**
      * Member variable for a JSON Post object.
      */
     private JSONObject mPostJSON;
+    private ArrayList<JSONObject> mTagJSON;
     private JSONObject mCommentJSON;
     private boolean writeComment = false;
+    private boolean addTags = false;
+    private boolean lastTag = false;
+
+    private int tagsProcessed = 0;
+
+    public ArrayList<String> tagList;
+    public ArrayList<String> selectedTags;
 
     /**
      * Default onCreate view required to instantiating the Post Detail layout,
      * and inflating associated fragment.
      *
-     * @param savedInstanceState
-     */
+     * @param savedInstanceState     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+        selectedTags = new ArrayList<String>();
+        mTagJSON = new ArrayList<JSONObject>();
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
 //        toolbar.setTitle(getTitle());
@@ -108,6 +124,10 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                         .add(R.id.post_detail_container, fragment)
                         .commit();
             } else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
+
+                if (getIntent().getSerializableExtra(PostDetailActivity.TAG_LIST) != null)
+                    tagList = (ArrayList<String>) getIntent().getSerializableExtra(PostDetailActivity.TAG_LIST);
+
                 PostAddFragment fragment = new PostAddFragment();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment).commit();
@@ -165,12 +185,36 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         finish();
     }
 
+    public void commitTag(String tagName, int PostID) {
+
+        Log.e("COMMITTAG","ENTERING COMMIT TAG LOOP");
+
+        String url = (getString(R.string.addposttag));
+        JSONObject tagJSON = new JSONObject();
+        writeComment = false;
+        addTags = true;
+
+        try {
+            tagJSON.put("TagID", tagName);
+            tagJSON.put("PostID", PostID);
+            mTagJSON.add(tagJSON);
+            new AddPostAsyncTask().execute(url);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error with JSON creation on adding tags: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        if (lastTag) finish();
+
+    }
+
     @Override
     public void addComment(Comment comment) {
 
         StringBuilder url = new StringBuilder(getString(R.string.addpostcomment));
         mCommentJSON = new JSONObject();
         writeComment = true;
+        addTags = false;
 
         try {
             mCommentJSON.put("Email", comment.getmEmail());
@@ -190,6 +234,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
      * Adds the post to the database. Also will be used to add comments.
      */
     private class AddPostAsyncTask extends AsyncTask<String, Void, String> {
+
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -204,15 +249,18 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     OutputStreamWriter wr =
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
-                    // For Debugging
-
                     if (writeComment) {
                         Log.i("ADD_COMMENT", mCommentJSON.toString());
                         wr.write(mCommentJSON.toString());
                     }
                     else {
-                        Log.i(ADD_POST, mPostJSON.toString());
-                        wr.write(mPostJSON.toString());
+                        if (addTags) {
+                            Log.i("ADD_TAG", mTagJSON.get(tagsProcessed).toString());
+                            wr.write(mTagJSON.get(tagsProcessed++).toString());
+                        } else {
+                            Log.i(ADD_POST, mPostJSON.toString());
+                            wr.write(mPostJSON.toString());
+                        }
                     }
                     wr.flush();
                     wr.close();
@@ -255,9 +303,33 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
+
+                    if (addTags){
+                        Log.v("TAGADDRESPONSE", s);
+                        return;
+                    }
+
                     String t;
                     if (writeComment) t = "Comment added!";
-                    else t = "Post added!";
+
+                    //Post adding: since we successfully added the post, extract the post id returned
+                    //So we can add any relevant tags to the post!
+                    else {
+                        t = "Post added!";
+
+                        //TODO: Look here if it doesn't work. PostID is nested, so we look inside the returned object here:
+                        //"postid": {
+                            //"postid" :23
+                        //}
+                        JSONObject data = jsonObject.getJSONObject("postid");
+                        int postid = data.getInt("postid");
+                        int counter = 0;
+                        for (String tagName : selectedTags) {
+                            Log.v("TAGADD", " " + counter++);
+                            commitTag(tagName, postid);
+                        }
+                        lastTag = true;
+                    }
 
                     Toast.makeText(getApplicationContext(), t,
                             Toast.LENGTH_SHORT).show();

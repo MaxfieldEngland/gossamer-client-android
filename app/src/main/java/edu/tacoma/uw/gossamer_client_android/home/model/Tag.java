@@ -1,18 +1,22 @@
 package edu.tacoma.uw.gossamer_client_android.home.model;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Tags refer to app specific identifiers based on gender and sexual identity. These are designated
  * in the database, with a color and string text, used for both posts and profiles to identify
  * the poster and the content therein.
  */
-public class Tag {
+public class Tag implements Serializable {
 
     private String mColor;
     private String mTagName;
@@ -60,6 +64,22 @@ public class Tag {
             }
         }
 
+    }
+
+    public static ArrayList<String> parseTagIDJson(String tagJson) throws JSONException {
+
+        ArrayList<String> tags = new ArrayList<String>();
+
+        if (tagJson != null) {
+            JSONArray arr = new JSONArray(tagJson);
+
+            for (int i =0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+
+                tags.add(obj.getString("tagid"));
+            }
+        }
+        return tags;
     }
 
 }
