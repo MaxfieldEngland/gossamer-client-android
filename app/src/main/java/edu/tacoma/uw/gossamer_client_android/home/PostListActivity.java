@@ -10,7 +10,9 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.content.res.Resources;
+
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -35,8 +37,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
 import android.widget.Button;
 import android.widget.LinearLayout;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +60,8 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
+
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
@@ -176,6 +183,8 @@ public class PostListActivity extends AppCompatActivity {
      */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
+        ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.postList_progressB);
+
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -189,6 +198,7 @@ public class PostListActivity extends AppCompatActivity {
 
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
                     String s = "";
+                    publishProgress();
                     while ((s = buffer.readLine()) != null) {
                         response += s;
                     }
@@ -202,12 +212,21 @@ public class PostListActivity extends AppCompatActivity {
             return response;
         }
 
+        @Override
+        protected void onProgressUpdate(Void... progress) {
+            mProgressBar.setProgress(10);
+            mProgressBar.setBackgroundColor(Color.BLACK);
+
+        }
+
         /**
          * Creates a Get request to retrieve the posts from the database.
          * @param s
          */
         @Override
         protected void onPostExecute(String s){
+            mProgressBar.setVisibility(View.GONE);
+
             if (s.startsWith("Unable to")) {
                 Toast.makeText(getApplicationContext(), "Unable to download" + s,
                         Toast.LENGTH_SHORT).show();
@@ -271,6 +290,8 @@ public class PostListActivity extends AppCompatActivity {
         private final PostListActivity mParentActivity;
         private final List<Post> mValues;
         private final boolean mTwoPane;
+
+
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -283,7 +304,8 @@ public class PostListActivity extends AppCompatActivity {
                     mParentActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.post_detail_container, fragment)
                             .commit();
-                } else {
+                }
+                else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, PostDetailActivity.class);
                     intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
@@ -320,7 +342,24 @@ public class PostListActivity extends AppCompatActivity {
          * @param position
          */
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
+
+            if (!mValues.get(position).mIsAnonymous()) {
+                holder.mIdView.setOnClickListener(new View.OnClickListener() {
+                    Context context = holder.mIdView.getContext();
+
+                    @Override
+                    public void onClick(View view) {
+                        String e = mValues.get(position).getmEmail();
+                        String u = mValues.get(position).getmDisplayName();
+                        Intent intent = new Intent(context, UserProfileActivity.class);
+                        intent.putExtra("email", e);
+                        intent.putExtra("username", u);
+                        context.startActivity(intent);
+                    }
+                });
+            }
+
             //If not anonymous, show the displayname
             if (!mValues.get(position).mIsAnonymous())
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());
@@ -389,7 +428,6 @@ public class PostListActivity extends AppCompatActivity {
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }
-
     }
 
     /**

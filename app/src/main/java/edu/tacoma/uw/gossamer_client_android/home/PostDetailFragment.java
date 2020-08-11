@@ -13,19 +13,18 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
+import android.content.Intent;
+
 import android.os.Build;
+
 import android.os.Bundle;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +47,7 @@ import java.util.List;
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
@@ -118,17 +118,7 @@ public class PostDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             assert activity != null;
 
-//            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-//            if (appBarLayout != null) {
-//                if (!mPost.mIsAnonymous()) {
-//                    appBarLayout.setTitle(mPost.getmDisplayName());
-//                } else {
-//                    appBarLayout.setTitle("Anonymous");
-//                }
-//            }
         }
-
-
     }
 
     public void onResume() {
@@ -165,8 +155,25 @@ public class PostDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
         //Get post content
+        final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
+
+        if (!mPost.mIsAnonymous()) {
+            userProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String e = mPost.getmEmail();
+                    String u = mPost.getmDisplayName();
+                    Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                    intent.putExtra("email", e);
+                    intent.putExtra("username", u);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // Show the dummy content as text in a TextView.
         if (mPost != null) {
-           //If not anonymous, show the displayname
+           //If not anonymous, show thes displayname
             if (!mPost.mIsAnonymous())
             ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName());
             else

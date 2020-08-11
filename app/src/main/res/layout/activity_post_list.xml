@@ -89,6 +89,21 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include layout="@layout/post_list" />
+
+
+
+        <ProgressBar
+            android:id="@+id/postList_progressB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="50"
+            android:background="#000"
+            android:padding="20dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"
+            />
+
     </FrameLayout>
 
 
