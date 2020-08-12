@@ -14,12 +14,9 @@ Implementing user management via account creation.
 ## High Priority:
 
 ###### Backend:
-* Create getProfile service to view user profiles
-* Create editProfile service to change profile text, tags and displayname
 
 ###### Frontend:
 
-* Create main screen featuring at least chronological posts
 * Create sidebar with access to user’s profile
 * Create profile page displaying at least name, profile
 * Create edit profile page 
@@ -28,16 +25,9 @@ Implementing user management via account creation.
 ## Medium Priority:
 ###### Backend:
 * Create post delete service to remove posts from the table
-* Create comment table with add and delete services
-* Create service to read comments from a particular PostID
-* Create post get service searching based on both PostsTags and PostBody
+* Create comment delete services
 
 ###### Frontend:
-* Read posts flagged as anonymous without the poster information
-* Include post comment button and implementation
-* Load comments that correspond to a particular Post
-* Search posts based on PostBody and PostTags. 
-
 
 ## Low Priority:
 ###### Backend:
@@ -48,19 +38,17 @@ Implementing user management via account creation.
 * Implement UsersSavedPosts table to link users and posts
 * Implement some form of location data to Events table
 * Implement images in profiles and posts…. somehow
-* Create a DailyMessages table, with add and get services. Configure selection service to first search for a designated day, and otherwise pick at random specifically from undated messages.
 * Find a way to coordinate random DailyMessage selection in a manner that’s consistent for all users.
 
 ###### Frontend:
 * Include administrative user delete options on posts. 
-* Search posts based on DisplayName and/or UserTags.
+* Search profiles based on DisplayName and/or UserTags.
 * Create an Event calendar to display upcoming events. 
 * Create a location button to filter events based on location. 
 * Create a settings panel with toggle for light/dark theme. 
 * Create an Event screen with a post new event button. 
 * Create an option to save posts. 
-* Allow pictures to be appended to text posts. 
-* Create a daily message view on the main screen. 
+* Allow pictures to be appended to text posts.  
 * Create a direct messaging screen with messaging ability. 
 * Create an option to add image to profile page. 
 

@@ -11,6 +11,10 @@
         android:roundIcon="@mipmap/app_image_gossamer"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
+
         <activity android:name=".userprofile.UserProfileActivity"
 
             android:windowSoftInputMode="adjustPan"> ></activity>
@@ -27,6 +31,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.tacoma.uw.gossamer_client_android.home.PostListActivity" />
         </activity>
+
+        <activity
+            android:name=".home.SearchActivity"
+            android:label="Search"
+            android:parentActivityName=".home.PostListActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.tacoma.uw.gossamer_client_android.home.PostListActivity" />
+        </activity>
+
         <activity android:name=".authenticate.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
