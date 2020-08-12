@@ -28,8 +28,6 @@ Implementing user management via account creation.
 * Create comment delete services
 
 ###### Frontend:
-* Search posts based on PostBody and PostTags. 
-
 
 ## Low Priority:
 ###### Backend:
@@ -40,12 +38,11 @@ Implementing user management via account creation.
 * Implement UsersSavedPosts table to link users and posts
 * Implement some form of location data to Events table
 * Implement images in profiles and posts…. somehow
-* Create a DailyMessages table, with add and get services. Configure selection service to first search for a designated day, and otherwise pick at random specifically from undated message.
 * Find a way to coordinate random DailyMessage selection in a manner that’s consistent for all users.
 
 ###### Frontend:
 * Include administrative user delete options on posts. 
-* Search posts based on DisplayName and/or UserTags.
+* Search profiles based on DisplayName and/or UserTags.
 * Create an Event calendar to display upcoming events. 
 * Create a location button to filter events based on location. 
 * Create a settings panel with toggle for light/dark theme. 
