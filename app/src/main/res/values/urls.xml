@@ -11,6 +11,8 @@
     <string name="addpostcomment">https://gossamer-backend.herokuapp.com/posts/addpostcomment</string>
     <string name="getpostcomments">https://gossamer-backend.herokuapp.com/posts/getpostcomments</string>
     <string name="getuserposts">https://gossamer-backend.herokuapp.com/posts/userposts</string>
+    <string name="postsearch">https://gossamer-backend.herokuapp.com/posts/search</string>
+    <string name="profilesearch">https://gossamer-backend.herokuapp.com/profiles/search</string>
 
 
 </resources>

@@ -1,12 +1,6 @@
-/*
- * Elijah Freeman
- * Maxfield England
- *
- * TCSS 450 - Mobile App Programming
- * Gossamer
- */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,7 +28,6 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,60 +46,35 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 
-/**
- * An activity representing a list of Posts. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link PostDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- *
- * @author elijah freeman
- * @author maxfield england
- */
-public class PostListActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
     private boolean mTwoPane;
     /** A list of Post objects to be added to the feed. */
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
 
-    //Daily message details
-    private String dmTopic, dmBody = ""; //dmLink
+    /** The actual query received to use to search to filter posts/profiles */
+    private String searchQuery;
 
-    //The array of downloaded string IDs
-    public ArrayList<String> tagIDs;
+    /**Key for putExtra to give us the query. */
+    public static final String SEARCH_QUERY = "SEARCH_QUERY";
 
-    /**
-     *  Default onCreate method. Provides functionality to the
-     *  addPostFragment.
-     * @param savedInstanceState
-     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_list);
+        setContentView(R.layout.activity_search);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
-        setTitle("Gossamer");
+        //getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
 
-        CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
-        toolbar.setTitle("Posts");
+        searchQuery = getIntent().getStringExtra(SEARCH_QUERY);
+        setTitle("Search: " + searchQuery);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchPostAddFragment();
-            }
-        });
-
+        //CollapsingToolbarLayout toolbar = findViewById(R.id.toolbar_layout);
+        //toolbar.setTitle("Search - " + searchQuery);
 
         if (findViewById(R.id.post_detail_container) != null) {
             // The detail container view will be present only in the
@@ -116,30 +84,19 @@ public class PostListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        new PostsTask().execute(getString(R.string.dailymessage));
-
-
         mRecyclerView = findViewById(R.id.post_list);
         assert mRecyclerView != null;
-        mRecyclerView.addItemDecoration(new VerticalSpaceItem(24));
+        mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
-    /** Retrieves the posts when this activity is resumed. */
     @Override
     protected void onResume() {
         super.onResume();
 
-        tagIDs = new ArrayList<String>();
-        new PostsTask().execute(getString(R.string.taglist));
-        new PostsTask().execute(getString(R.string.posts));
-
-        if (!dmBody.isEmpty() && !dmTopic.isEmpty()){
-            ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
-            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
-        }
-        //else new PostsTask().execute(getString(R.string.dailymessage));
-
+        //Determine whether we're in profile search mode or post search mode
+        //if ()
+        new SearchTask().execute(getString(R.string.postsearch) + "?searchterm=" + searchQuery);
     }
 
     /**
@@ -154,24 +111,6 @@ public class PostListActivity extends AppCompatActivity {
     }
 
     /**
-     * Launches the PostAddFragment layout.
-     */
-    private void launchPostAddFragment() {
-        PostAddFragment postAddFragment = new PostAddFragment();
-        if (mTwoPane) {
-            getSupportFragmentManager().beginTransaction().replace(
-                    R.id.post_detail_container, postAddFragment)
-                    .commit();
-        } else {
-            Intent intent = new Intent(this, PostDetailActivity.class);
-            intent.putExtra(PostDetailActivity.ADD_POST, true);
-
-            intent.putExtra("TAG_LIST", tagIDs);
-            startActivity(intent);
-        }
-    }
-
-    /**
      * Launches the search activity, using whatever text is in the search bar.
      */
     private void launchSearchActivity(String theQuery) {
@@ -182,16 +121,14 @@ public class PostListActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * PostListActivity web task handler class.
-     */
-    private class PostsTask extends AsyncTask<String, Void, String> {
 
-        /** Loading bar to make the page less uncomfortable as posts are loaded. */
-        ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.postList_progressB);
+    private class SearchTask extends AsyncTask<String, Void, String> {
+
+        ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.search_progressB);
 
         @Override
         protected String doInBackground(String... urls) {
+
             String response = "";
             HttpURLConnection urlConnection = null;
             for (String url : urls) {
@@ -224,12 +161,8 @@ public class PostListActivity extends AppCompatActivity {
 
         }
 
-        /**
-         * Handles responses received from web service calls.
-         * @param s The response
-         */
         @Override
-        protected void onPostExecute(String s){
+        protected void onPostExecute(String s) {
             mProgressBar.setVisibility(View.GONE);
 
             if (s.startsWith("Unable to")) {
@@ -237,68 +170,43 @@ public class PostListActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            //If we succeeded, there are three behavior branches: taglist retrieval, retrieving posts,
-            // and retrieving posttags
             try {
                 JSONObject jsonObject = new JSONObject(s);
+                if (jsonObject.getBoolean("success")) {
 
-                if(jsonObject.getBoolean("success")) {
+                    if (jsonObject.has("posts")) {
 
-                    int state;
+                        mPostList = Post.parsePostJson(jsonObject.getString("posts"));
+                        new SearchTask().execute(getString(R.string.getposttags));
 
-                    if (jsonObject.has("tagnames")) state = 0; //Get tag list state (init)
-                    else if (jsonObject.has("posts")) state = 1; //Get all posts state
-                    else if (jsonObject.has("tags")) state = 2; //Get all post tags state
-                    else if (jsonObject.has("message")) state = 3;//Get daily message state
-                    else state = -1;
+                    }
+                    if (jsonObject.has("tags")) {
 
-                    switch (state) {
+                        Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+                        if (!mPostList.isEmpty()) {
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
+                        else {
+                            mPostList.add(new Post("NULL", "No search results matched that query.", "             ", false, "Oops!", -1));
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
 
-                        //Getting tag list
-                        case 0:
-                            tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
-                            break;
-
-                        //Getting post list, and then initializing posttags
-                        case 1:
-                            mPostList = Post.parsePostJson(jsonObject.getString("posts"));
-                            new PostsTask().execute(getString(R.string.getposttags));
-
-                            break;
-
-                        //Getting posttags
-                        case 2:
-                            Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
-                            if (!mPostList.isEmpty()) {
-                                setupRecyclerView((RecyclerView) mRecyclerView);
-                            }
-                            break;
-
-                        //Getting daily message
-                        case 3:
-                            //Set our fields so we can reload them if possible
-                            dmBody = jsonObject.getJSONObject("message").getString("messagebody");
-                            dmTopic = jsonObject.getJSONObject("message").getString("messagetopic");
-
-                            //Then make them appear properly in the app
-                            ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
-                            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
-                            break;
-
-                        //We didn't get anything we wanted!
-                        case -1:
-                            Toast.makeText(getApplicationContext(), "Web retrieval error." +
-                                            " Please reload the app and try again.",
-                                    Toast.LENGTH_LONG).show();
-                            break;
+                    }
+                    //Searching profiles
+                    else {
 
                     }
 
+
+
                 }
-            } catch (JSONException e) {
+            }
+            catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
+
             }
+
         }
     }
 
@@ -308,10 +216,9 @@ public class PostListActivity extends AppCompatActivity {
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final PostListActivity mParentActivity;
+        private final SearchActivity mParentActivity;
         private final List<Post> mValues;
         private final boolean mTwoPane;
-
 
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -335,7 +242,7 @@ public class PostListActivity extends AppCompatActivity {
             }
         };
 
-        SimpleItemRecyclerViewAdapter(PostListActivity parent,
+        SimpleItemRecyclerViewAdapter(SearchActivity parent,
                                       List<Post> items,
                                       boolean twoPane) {
             mValues = items;
@@ -351,7 +258,7 @@ public class PostListActivity extends AppCompatActivity {
          */
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.post_list_content, parent, false);
             return new ViewHolder(view);
@@ -384,7 +291,7 @@ public class PostListActivity extends AppCompatActivity {
             //If not anonymous, show the displayname
             if (!mValues.get(position).mIsAnonymous())
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());
-            //If anonymous, hide the displayname
+                //If anonymous, hide the displayname
             else
                 holder.mIdView.setText("Anonymous");
 
@@ -464,18 +371,30 @@ public class PostListActivity extends AppCompatActivity {
         final SearchView search = (SearchView) MenuItemCompat.getActionView(searchItem);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+            /**
+             * Makes a new post search based on the text currently in the search bar
+             *
+             * @param query The newly entered search term
+             * @return Whether we handle the submission via unique behavior (we do)
+             */
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                //String sq = search.getQuery().toString();
+                searchQuery = query;
+                setTitle("Search: " + searchQuery);
+
+                //searchQuery = ((SearchView) findViewById(R.id.app_bar_search)).getQuery().toString();
+                //new SearchTask().execute(getString(R.string.postsearch) + "?searchterm=" + searchQuery);
 
                 launchSearchActivity(query);
+
+
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return true;
+                return false;
             }
         });
 
@@ -510,4 +429,6 @@ public class PostListActivity extends AppCompatActivity {
             outRect.bottom = space;
         }
     }
+
+
 }
