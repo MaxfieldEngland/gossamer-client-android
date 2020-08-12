@@ -183,6 +183,8 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.getmPostDateTime());
 
+
+            //TODO - Something is going wrong with this resource value.
             LinearLayout tagCon = (LinearLayout) rootView.findViewById(R.id.det_tagContainer);
 
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
