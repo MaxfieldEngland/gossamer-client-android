@@ -7,7 +7,10 @@
  */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.NavUtils;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -72,9 +76,14 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
     private JSONObject mPostJSON;
     private ArrayList<JSONObject> mTagJSON;
     private JSONObject mCommentJSON;
+    private JSONObject deleteJSON;
     private boolean writeComment = false;
     private boolean addTags = false;
     private boolean lastTag = false;
+
+
+    public int deletePostID = -1;
+    public int deleteCommentID = -1;
 
     private int tagsProcessed = 0;
 
@@ -229,6 +238,47 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
     }
 
+    /**
+     * Uses parent fields to set up json to delete a post
+     */
+    public void deletePost() {
+
+        StringBuilder url = new StringBuilder(getString(R.string.deletepost));
+
+        deleteJSON = new JSONObject();
+        try {
+            deleteJSON.put("PostID", deletePostID);
+            new AddPostAsyncTask().execute(url.toString());
+        }
+        catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation on post deletion: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    /**
+     * Uses parent fields to set up json to delete a Comment
+     */
+    public void deleteComment() {
+
+        StringBuilder url = new StringBuilder(getString(R.string.deletecomment));
+
+        deleteJSON = new JSONObject();
+        try {
+            deleteJSON.put("CommentID", deleteCommentID);
+            new AddPostAsyncTask().execute(url.toString());
+        }
+        catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation on comment deletion: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+
 
     /**
      * Adds the post to the database. Also will be used to add comments.
@@ -249,17 +299,25 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     OutputStreamWriter wr =
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
-                    if (writeComment) {
-                        Log.i("ADD_COMMENT", mCommentJSON.toString());
-                        wr.write(mCommentJSON.toString());
+                    boolean deleting = false;
+                    if (url.contains("delete")) {
+                        Log.i("DELETEPOSTCOMMENT", ""+deleteCommentID);
+                        wr.write(deleteJSON.toString());
+                        deleting = true;
                     }
-                    else {
-                        if (addTags) {
-                            Log.i("ADD_TAG", mTagJSON.get(tagsProcessed).toString());
-                            wr.write(mTagJSON.get(tagsProcessed++).toString());
+
+                    if (!deleting) {
+                        if (writeComment) {
+                            Log.i("ADD_COMMENT", mCommentJSON.toString());
+                            wr.write(mCommentJSON.toString());
                         } else {
-                            Log.i(ADD_POST, mPostJSON.toString());
-                            wr.write(mPostJSON.toString());
+                            if (addTags) {
+                                Log.i("ADD_TAG", mTagJSON.get(tagsProcessed).toString());
+                                wr.write(mTagJSON.get(tagsProcessed++).toString());
+                            } else {
+                                Log.i(ADD_POST, mPostJSON.toString());
+                                wr.write(mPostJSON.toString());
+                            }
                         }
                     }
                     wr.flush();
@@ -271,6 +329,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     String s = "";
                     while ((s = buffer.readLine()) != null) {
                         response += s;
+                        Log.v("WEBRESPONSE:", s);
                     }
 
                 } catch (Exception e) {
@@ -304,45 +363,83 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
 
-                    if (addTags){
+                    if (jsonObject.has("deleteComment") || jsonObject.has("deletePost")) {
+                        Log.v("POSTCOMMENTDELETE", s);
+                        return;
+                    }
+
+                    if (addTags) {
                         Log.v("TAGADDRESPONSE", s);
                         return;
                     }
 
                     String t;
                     if (writeComment) t = "Comment added!";
-
-                    //Post adding: since we successfully added the post, extract the post id returned
-                    //So we can add any relevant tags to the post!
+                        //Post adding: since we successfully added the post, extract the post id returned
+                        //So we can add any relevant tags to the post!
                     else {
-                        t = "Post added!";
+                        if (!s.contains("delete")) {
+                            t = "Post added!";
 
-                        //TODO: Look here if it doesn't work. PostID is nested, so we look inside the returned object here:
-                        //"postid": {
-                            //"postid" :23
-                        //}
-                        JSONObject data = jsonObject.getJSONObject("postid");
-                        int postid = data.getInt("postid");
-                        int counter = 0;
-                        for (String tagName : selectedTags) {
-                            Log.v("TAGADD", " " + counter++);
-                            commitTag(tagName, postid);
+
+                            JSONObject data = jsonObject.getJSONObject("postid");
+                            int postid = data.getInt("postid");
+                            int counter = 0;
+                            for (String tagName : selectedTags) {
+                                Log.v("TAGADD", " " + counter++);
+                                commitTag(tagName, postid);
+                            }
+                            lastTag = true;
                         }
-                        lastTag = true;
-                    }
+                        else t = "Post deleted.";
 
-                    Toast.makeText(getApplicationContext(), t,
-                            Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), t,
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             } catch (JSONException e) {
                 String c;
                 if (writeComment) c = "comment";
                 else c = "post";
+
                 Toast.makeText(getApplicationContext(), "JSON Parsing error on adding " + c + " "
                         + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
 
+    }
+
+    public static class DeletePostConfirmDialog extends DialogFragment {
+
+        Post mPost;
+        PostDetailActivity parent;
+
+        public DeletePostConfirmDialog(Post p, PostDetailActivity par){
+            super();
+            mPost = p;
+            parent = par;
+
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder build = new AlertDialog.Builder(getActivity());
+            build.setMessage("Are you sure you want to delete the post?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            parent.deletePostID = mPost.getmPostID();
+                            parent.deletePost();
+                            parent.finish();
+
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            return build.create();
+        }
     }
 
 }

@@ -120,9 +120,9 @@ public class PostListActivity extends AppCompatActivity {
 
 
         mRecyclerView = findViewById(R.id.post_list);
-        assert mRecyclerView != null;
-        mRecyclerView.addItemDecoration(new VerticalSpaceItem(24));
-        setupRecyclerView((RecyclerView) mRecyclerView);
+//        assert mRecyclerView != null;
+        mRecyclerView.addItemDecoration(new VerticalSpaceItem(24)); //TODO if there's issues maybe move this one
+//        setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
     /** Retrieves the posts when this activity is resumed. */
@@ -147,10 +147,10 @@ public class PostListActivity extends AppCompatActivity {
      * @param recyclerView
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
-        if (mPostList != null) {
+//        if (mPostList != null) {
             mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
                     (this, mPostList, mTwoPane));
-        }
+//        }
     }
 
     /**

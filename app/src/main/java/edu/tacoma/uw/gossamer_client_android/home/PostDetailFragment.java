@@ -8,7 +8,10 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -20,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -154,6 +158,40 @@ public class PostDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
+
+
+        //Create contingent delete button
+
+        SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                , Context.MODE_PRIVATE);
+
+        String email = pref.getString(getString(R.string.EMAIL), null);
+        //Create a more robust admin email check; doing a hackier one for the time being.
+        boolean isPostMaster = mPost.getmEmail().equals(email) || mPost.getmEmail().equals("maxengl@uw.edu") || mPost.getmEmail().equals("elijahff@uw.edu");
+
+        //Create delete post button if the post is ours
+        if (isPostMaster) {
+            //Button deletePostButton = new Button(getActivity());
+            //deletePostButton.setBackgroundResource(R.drawable.ic_menu_delete_24dp);
+
+            Button deletePostButton = (Button) rootView.findViewById(R.id.deletePostButton);
+
+            final PostDetailActivity parent = (PostDetailActivity) getActivity();
+
+            deletePostButton.setVisibility(View.VISIBLE);
+            deletePostButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    PostDetailActivity.DeletePostConfirmDialog dpcd = new PostDetailActivity.DeletePostConfirmDialog(mPost, parent);
+                    dpcd.show(parent.getSupportFragmentManager(), "DeletePost");
+
+                }
+            });
+
+        }
+
+
         //Get post content
         final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
 
@@ -255,7 +293,6 @@ public class PostDetailFragment extends Fragment {
                 if (commentBody.equals(""))
                     Toast.makeText(getContext(), "You cannot submit empty comments!", Toast.LENGTH_SHORT)
                             .show();
-
                 }
             });
 
@@ -271,7 +308,6 @@ public class PostDetailFragment extends Fragment {
         mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
 
         setupRecyclerView((RecyclerView) mRecyclerView);
-
 
     }
     private class CommentsTask extends AsyncTask<String, Void, String> {
