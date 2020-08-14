@@ -1,3 +1,10 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.userprofile;
 
 import android.content.Context;
@@ -13,16 +20,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +36,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -38,19 +45,28 @@ import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
+/**
+ * Describes the user profile. Displays users previous posts, and editable profile
+ * description.
+ */
 public class UserProfileActivity extends AppCompatActivity {
-
 
     /** A list of Post objects to be added to the feed. */
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
-
+    /** Email of user. */
     private String mUserEmail;
+    /** Display name of user. */
     private String mUser;
-
-    private TextView mAboutMe;
+    /** Description of profile. */
+    private String profileDesc;
+    /** EditText view to display profile description. */
+    private EditText mAboutMe;
+    /** Done button. */
     private Button mEditButton;
+    /** Required for POST. */
+    private JSONObject mProfileJSON;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +92,8 @@ public class UserProfileActivity extends AppCompatActivity {
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                profileDesc = mAboutMe.getText().toString();
+                addProfile(mUser, profileDesc, mUserEmail);
                 mAboutMe.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
             }
@@ -87,12 +105,12 @@ public class UserProfileActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
-
     /** Retrieves the user posts when this activity is resumed. */
     @Override
     protected void onResume() {
         super.onResume();
         new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
+        new PostsTask().execute(getString(R.string.getprofile) + "?Email=" + mUserEmail);
     }
 
     /**
@@ -108,7 +126,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Post loading task.
+     * Used to retrieve user posts and profile description.
      */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
@@ -141,12 +159,14 @@ public class UserProfileActivity extends AppCompatActivity {
             return response;
         }
 
-
+        /**
+         * Required for the progress bar.
+         * @param progress
+         */
         @Override
         protected void onProgressUpdate(Void... progress) {
             mProgressBar.setProgress(10);
             mProgressBar.setBackgroundColor(Color.BLACK);
-
         }
 
         /**
@@ -159,22 +179,93 @@ public class UserProfileActivity extends AppCompatActivity {
 
             if (s.startsWith("Unable to")) {
                 Toast.makeText(getApplicationContext(), "Unable to download" + s,
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+
+                if (jsonObject.getBoolean("success")) {
+
+                    if (jsonObject.has("posts")) {
+                        mPostList = Post.parsePostJson(jsonObject.getString("posts"));
+                        if (!mPostList.isEmpty()) {
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
+                    } else if (jsonObject.has("profData")) {
+                        mAboutMe.setText(new JSONObject(jsonObject.getString("profData"))
+                                .getString("profiledescription"));
+                    }
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /**
+     * Adds the post to the database. Also will be used to add comments.
+     */
+    private class AddProfileAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String response = "";
+            HttpURLConnection urlConnection = null;
+            for (String url : urls) {
+                try {
+                    URL urlObject = new URL(url);
+                    urlConnection = (HttpURLConnection) urlObject.openConnection();
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setDoOutput(true);
+                    OutputStreamWriter wr =
+                            new OutputStreamWriter(urlConnection.getOutputStream());
+
+
+                    wr.write(mProfileJSON.toString());
+
+                    wr.flush();
+                    wr.close();
+
+                    InputStream content = urlConnection.getInputStream();
+
+                    BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
+                    String s = "";
+                    while ((s = buffer.readLine()) != null) {
+                        response += s;
+                    }
+
+                } catch (Exception e) {
+                    response = "Unable to add the new profile description, Reason: " + e.getMessage();
+                } finally {
+                    if (urlConnection != null)
+                        urlConnection.disconnect();
+                }
+            }
+            return response;
+        }
+
+        /**
+         * Response handler determining whether adding the profile is successful.
+         *
+         * @param s The server response to the setProfile POST request
+         */
+        @Override
+        protected void onPostExecute(String s) {
+            if (s.startsWith("Unable to add")) {
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 return;
             }
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-                    mPostList = Post.parsePostJson(
-                            jsonObject.getString("posts"));
 
-                    if (!mPostList.isEmpty()) {
-                        setupRecyclerView((RecyclerView) mRecyclerView);
-                    }
                 }
             } catch (JSONException e) {
-                Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding profile"
+                        + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -224,9 +315,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 holder.mIdView.setText("Anonymous");
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
-
             holder.itemView.setTag(mValues.get(position));
-
         }
 
         /**
@@ -253,6 +342,9 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Required modify view of card view.
+     */
     public static class VerticalSpaceItem extends RecyclerView.ItemDecoration {
         private final int space;
 
@@ -265,7 +357,6 @@ public class UserProfileActivity extends AppCompatActivity {
             outRect.bottom = space;
         }
     }
-
 
     /**
      * Creates a menu for the toolbar.
@@ -295,5 +386,25 @@ public class UserProfileActivity extends AppCompatActivity {
             mEditButton.setVisibility(View.VISIBLE);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Creates JSON object to send to database.
+     * @param username ,display name of user.
+     * @param profileDesc ,profile description of user.
+     * @param useremail ,email of user.
+     */
+    public void addProfile(String username, String profileDesc, String useremail) {
+        StringBuilder url = new StringBuilder(getString(R.string.setprofile));
+        mProfileJSON = new JSONObject();
+        try {
+            mProfileJSON.put("displayname", username);
+            mProfileJSON.put("profiledescription", profileDesc);
+            mProfileJSON.put("email", useremail);
+            new AddProfileAsyncTask().execute(url.toString());
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation for profile" + e.getMessage()
+                    , Toast.LENGTH_SHORT).show();
+        }
     }
 }
