@@ -74,6 +74,10 @@ public class UserProfileActivity extends AppCompatActivity {
     /** Required for POST. */
     private JSONObject mProfileJSON;
 
+    public ArrayList<String> tagIDs;
+
+
+
     /**
      * Default onCreate method. Provides functionality for to the UserProfile Activity.
      * @param savedInstanceState
@@ -81,6 +85,8 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_user_profile);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -113,6 +119,40 @@ public class UserProfileActivity extends AppCompatActivity {
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new UserProfileActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
+
+
+        LinearLayout tagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
+        ArrayList<Tag> tags = new ArrayList<>();
+        tags.add(new Tag("Hello", "red"));
+
+        LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        tagLayout.setMargins(0, 0, 10, 0);
+
+        for (Tag tag : tags) {
+            Button tagButton;
+            tagButton = new Button(this);
+            tagButton.setText(tag.getName());
+            tagButton.setTextSize(10);
+            tagButton.setMinHeight(10);
+            tagButton.setMinimumHeight(10);
+            tagButton.setMinWidth(100);
+            tagButton.setMinimumWidth(200);
+            //Adding some graphical features that are build version dependent:
+            //Get rid of the tag button shadows by getting rid of the state list animator
+            if (Build.VERSION.SDK_INT >= 21) tagButton.setStateListAnimator(null);
+
+            //Change the shape to be more capsule or rounded rectangle.
+            if (Build.VERSION.SDK_INT >= 16) {
+                GradientDrawable tagShape = new GradientDrawable();
+                tagShape.setCornerRadius(100);
+                tagShape.setColor(Color.parseColor(tag.getColor()));
+                tagButton.setBackground(tagShape);
+            } else {
+                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+            }
+            tagContainer.addView(tagButton, tagLayout);
+        }
     }
 
     /** Retrieves the user posts when this activity is resumed. */
@@ -120,6 +160,8 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //new PostsTask().execute(getString(R.string.getposttags));
+        tagIDs = new ArrayList<String>();
+        new PostsTask().execute(getString(R.string.taglist));
         new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
         new PostsTask().execute(getString(R.string.getprofile) + "?Email=" + mUserEmail);
     }
@@ -214,6 +256,8 @@ public class UserProfileActivity extends AppCompatActivity {
                         if (!mPostList. isEmpty()) {
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
+                    } else if (jsonObject.has("tagnames")) {
+                        tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
                     }
 
                 }
@@ -336,6 +380,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
+            LinearLayout tagContainer = (LinearLayout) mParentActivity.findViewById(R.id.profile_tagContainer);
             ArrayList<Tag> tags = mValues.get(position).getTags();
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -364,7 +409,9 @@ public class UserProfileActivity extends AppCompatActivity {
                 else {
                     tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
                 }
+                //tagContainer.addView(tagButton, tagLayout);
                 holder.mTagContainer.addView(tagButton, tagLayout);
+
             }
 
             holder.itemView.setTag(mValues.get(position));

@@ -86,7 +86,6 @@ public class PostAddTagsFragment extends Fragment {
         });
 
 
-
         return v;
     }
 
