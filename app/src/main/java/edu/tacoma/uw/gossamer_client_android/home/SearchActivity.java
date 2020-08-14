@@ -161,6 +161,7 @@ public class SearchActivity extends AppCompatActivity {
 
         }
 
+
         @Override
         protected void onPostExecute(String s) {
             mProgressBar.setVisibility(View.GONE);
