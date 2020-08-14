@@ -16,22 +16,15 @@ Implementing user management via account creation.
 ###### Backend:
 
 ###### Frontend:
-
-* Create sidebar with access to user’s profile
-* Create profile page displaying at least name, profile
-* Create edit profile page 
-
+* Post sharing to external social media.
 
 ## Medium Priority:
 ###### Backend:
-* Create post delete service to remove posts from the table
-* Create comment delete services
 
 ###### Frontend:
 
 ## Low Priority:
 ###### Backend:
-* Create field for administrative users in Users table that has universal access to post deletion
 * Create user search service based on display name and/or UsersTags
 * Implement Events table with EventAdd and EventDelete services
 * Implement EventGet service to get events (particularly by day).
