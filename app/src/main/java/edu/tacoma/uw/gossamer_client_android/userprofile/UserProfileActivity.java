@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,11 +42,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
+import edu.tacoma.uw.gossamer_client_android.home.PostListActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * Describes the user profile. Displays users previous posts, and editable profile
@@ -68,6 +74,10 @@ public class UserProfileActivity extends AppCompatActivity {
     /** Required for POST. */
     private JSONObject mProfileJSON;
 
+    /**
+     * Default onCreate method. Provides functionality for to the UserProfile Activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +119,7 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //new PostsTask().execute(getString(R.string.getposttags));
         new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
         new PostsTask().execute(getString(R.string.getprofile) + "?Email=" + mUserEmail);
     }
@@ -189,13 +200,22 @@ public class UserProfileActivity extends AppCompatActivity {
 
                     if (jsonObject.has("posts")) {
                         mPostList = Post.parsePostJson(jsonObject.getString("posts"));
-                        if (!mPostList.isEmpty()) {
-                            setupRecyclerView((RecyclerView) mRecyclerView);
-                        }
+                        new PostsTask().execute(getString(R.string.getposttags));
+//                        if (!mPostList.isEmpty()) {
+//                            setupRecyclerView((RecyclerView) mRecyclerView);
+//                        }
+
                     } else if (jsonObject.has("profData")) {
                         mAboutMe.setText(new JSONObject(jsonObject.getString("profData"))
                                 .getString("profiledescription"));
+
+                    } else if (jsonObject.has("tags")) {
+                        Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
+                        if (!mPostList. isEmpty()) {
+                            setupRecyclerView((RecyclerView) mRecyclerView);
+                        }
                     }
+
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
@@ -315,6 +335,38 @@ public class UserProfileActivity extends AppCompatActivity {
                 holder.mIdView.setText("Anonymous");
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
+
+            ArrayList<Tag> tags = mValues.get(position).getTags();
+            LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            tagLayout.setMargins(0, 0, 10, 0);
+
+            for (Tag tag : tags) {
+                Button tagButton;
+                tagButton = new Button(mParentActivity);
+                tagButton.setText(tag.getName());
+                tagButton.setTextSize(10);
+                tagButton.setMinHeight(10);
+                tagButton.setMinimumHeight(10);
+                tagButton.setMinWidth(100);
+                tagButton.setMinimumWidth(200);
+                //Adding some graphical features that are build version dependent:
+                //Get rid of the tag button shadows by getting rid of the state list animator
+                if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);
+
+                //Change the shape to be more capsule or rounded rectangle.
+                if (Build.VERSION.SDK_INT>=16) {
+                    GradientDrawable tagShape = new GradientDrawable();
+                    tagShape.setCornerRadius(100);
+                    tagShape.setColor(Color.parseColor(tag.getColor()));
+                    tagButton.setBackground(tagShape);
+                }
+                else {
+                    tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+                }
+                holder.mTagContainer.addView(tagButton, tagLayout);
+            }
+
             holder.itemView.setTag(mValues.get(position));
         }
 
@@ -333,10 +385,12 @@ public class UserProfileActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            final LinearLayout mTagContainer;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.userprofile_id_text);
+                mTagContainer = (LinearLayout) view.findViewById(R.id.user_tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.userprofile_content);
             }
         }

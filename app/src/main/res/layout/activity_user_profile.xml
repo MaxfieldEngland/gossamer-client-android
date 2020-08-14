@@ -23,13 +23,14 @@
 
     <EditText
         android:id="@+id/user_profile_abt_me"
-        android:layout_width="387dp"
-        android:layout_height="261dp"
+        android:layout_width="388dp"
+        android:layout_height="128dp"
         android:layout_marginBottom="180dp"
         android:autofillHints=""
         android:hint="About me... "
-        android:textColor="@color/jet"
         android:inputType="textMultiLine"
+        android:textColor="@color/jet"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/user_profile_RecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.625"
