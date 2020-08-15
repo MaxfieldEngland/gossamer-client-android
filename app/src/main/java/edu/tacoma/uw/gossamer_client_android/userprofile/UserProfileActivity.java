@@ -7,6 +7,7 @@
  */
 package edu.tacoma.uw.gossamer_client_android.userprofile;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -167,6 +168,8 @@ public class UserProfileActivity extends AppCompatActivity {
         mTagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
         mTagList = new ArrayList<>();
         mUserTags = new ArrayList<>();
+
+
     }
 
     /** Retrieves the user posts when this activity is resumed. */
@@ -491,6 +494,16 @@ public class UserProfileActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.userprofile_menu, menu);
 
+        SharedPreferences pref = getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                , Context.MODE_PRIVATE);
+
+        String email = pref.getString(getString(R.string.EMAIL), null);
+        boolean isProfileMaster = mUserEmail.equals(email) || pref.getBoolean(getString(R.string.isAdmin), false);
+
+        if (!isProfileMaster) {
+            MenuItem item = menu.findItem(R.id.edit_userprofile);
+            item.setVisible(false);
+        }
         return true;
     }
 
