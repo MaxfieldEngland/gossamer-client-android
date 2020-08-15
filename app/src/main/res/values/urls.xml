@@ -15,5 +15,6 @@
     <string name="profilesearch">https://gossamer-backend.herokuapp.com/profiles/search</string>
     <string name="setprofile">https://gossamer-backend.herokuapp.com/profiles/setprofile</string>
     <string name="getprofile">https://gossamer-backend.herokuapp.com/profiles/get</string>
-
+    <string name="getuserstags">https://gossamer-backend.herokuapp.com/profiles/getusertags</string>
+    <string name="adduserstags">https://gossamer-backend.herokuapp.com/profiles/addusertag</string>
 </resources>

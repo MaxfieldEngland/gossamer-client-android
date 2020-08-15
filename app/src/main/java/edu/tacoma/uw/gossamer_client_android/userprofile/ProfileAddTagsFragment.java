@@ -24,6 +24,7 @@ public class ProfileAddTagsFragment extends Fragment {
 
     private ArrayList<String> postTags;
 
+
     public ProfileAddTagsFragment() {
     }
 
@@ -66,6 +67,7 @@ public class ProfileAddTagsFragment extends Fragment {
         addTagsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                getActivity().findViewById(R.id.edit_done).setVisibility(View.VISIBLE);
                 for (CheckBox check : buttonList) {
                     if (check.isChecked())
                         postTags.add(check.getText().toString());

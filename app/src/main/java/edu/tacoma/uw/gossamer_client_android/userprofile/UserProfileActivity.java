@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,10 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
-import edu.tacoma.uw.gossamer_client_android.authenticate.LoginFragment;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
-import edu.tacoma.uw.gossamer_client_android.home.PostAddTagsFragment;
-import edu.tacoma.uw.gossamer_client_android.home.PostListActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
@@ -74,13 +70,19 @@ public class UserProfileActivity extends AppCompatActivity {
     private EditText mAboutMe;
     /** Done button. */
     private Button mEditButton;
+    /** Tag button. */
+    private Button mTagButton;
     /** Required for POST. */
     private JSONObject mProfileJSON;
 
     public ArrayList<String> tagIDs;
 
+    ArrayList<Tag> userTags;
+
     public ArrayList<String> tagList;
     public ArrayList<String> selectedTags;
+
+    private LinearLayout tagContainer;
 
 
 
@@ -111,6 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
         mEditButton = findViewById(R.id.edit_done);
         mEditButton.setVisibility(View.GONE);
 
+
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,27 +121,28 @@ public class UserProfileActivity extends AppCompatActivity {
                 addProfile(mUser, profileDesc, mUserEmail);
                 mAboutMe.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
+                mTagButton.setVisibility(View.GONE);
             }
         });
 
 
-        final Button addTagButton = findViewById(R.id.launchProfileAddTagsFragmentButton);
+        mTagButton = findViewById(R.id.launchProfileAddTagsFragmentButton);
+        mTagButton.setVisibility(View.GONE);
 
         //Launch the tag selection fragment, and be sure to save the post body.
-        addTagButton.setOnClickListener(new View.OnClickListener() {
+        mTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 ProfileAddTagsFragment frag = new ProfileAddTagsFragment();
-
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.linearLayout3, frag)
                         .addToBackStack(null)
                         .commit();
 
-                addTagButton.setVisibility(View.GONE);
-
+                mEditButton.setVisibility(View.GONE);
+                mTagButton.setVisibility(View.GONE);
             }
         });
 
@@ -149,41 +153,45 @@ public class UserProfileActivity extends AppCompatActivity {
 
         selectedTags = new ArrayList<String>();
 
-        LinearLayout tagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
-        ArrayList<Tag> tags = new ArrayList<>();
-        tags.add(new Tag("Hello", "red"));
+        tagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
+        //ArrayList<Tag> tags = new ArrayList<>();
+        //userTags.add(new Tag("Hello", "red"));
 
-        LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        tagLayout.setMargins(0, 0, 10, 0);
+        tagList = new ArrayList<String>();
+        userTags = new ArrayList<Tag>();
 
-        for (Tag tag : tags) {
-            Button tagButton;
-            tagButton = new Button(this);
-            tagButton.setText(tag.getName());
-            tagButton.setTextSize(10);
-            tagButton.setMinHeight(10);
-            tagButton.setMinimumHeight(10);
-            tagButton.setMinWidth(100);
-            tagButton.setMinimumWidth(200);
-            //Adding some graphical features that are build version dependent:
-            //Get rid of the tag button shadows by getting rid of the state list animator
-            if (Build.VERSION.SDK_INT >= 21) tagButton.setStateListAnimator(null);
-
-            //Change the shape to be more capsule or rounded rectangle.
-            if (Build.VERSION.SDK_INT >= 16) {
-                GradientDrawable tagShape = new GradientDrawable();
-                tagShape.setCornerRadius(100);
-                tagShape.setColor(Color.parseColor(tag.getColor()));
-                tagButton.setBackground(tagShape);
-            } else {
-                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
-            }
-            tagContainer.addView(tagButton, tagLayout);
-        }
-
-
-
+//        for (String s : tagList) {
+//            userTags.add(new Tag(s, "red"));
+//        }
+//
+//        LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+//                LinearLayout.LayoutParams.WRAP_CONTENT);
+//        tagLayout.setMargins(0, 0, 10, 0);
+//
+//        for (Tag tag : userTags) {
+//            Button tagButton;
+//            tagButton = new Button(this);
+//            tagButton.setText(tag.getName());
+//            tagButton.setTextSize(10);
+//            tagButton.setMinHeight(10);
+//            tagButton.setMinimumHeight(10);
+//            tagButton.setMinWidth(100);
+//            tagButton.setMinimumWidth(200);
+//            //Adding some graphical features that are build version dependent:
+//            //Get rid of the tag button shadows by getting rid of the state list animator
+//            if (Build.VERSION.SDK_INT >= 21) tagButton.setStateListAnimator(null);
+//
+//            //Change the shape to be more capsule or rounded rectangle.
+//            if (Build.VERSION.SDK_INT >= 16) {
+//                GradientDrawable tagShape = new GradientDrawable();
+//                tagShape.setCornerRadius(100);
+//                tagShape.setColor(Color.parseColor(tag.getColor()));
+//                tagButton.setBackground(tagShape);
+//            } else {
+//                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+//            }
+//            tagContainer.addView(tagButton, tagLayout);
+//        }
     }
 
     /** Retrieves the user posts when this activity is resumed. */
@@ -195,6 +203,7 @@ public class UserProfileActivity extends AppCompatActivity {
         new PostsTask().execute(getString(R.string.taglist));
         new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
         new PostsTask().execute(getString(R.string.getprofile) + "?Email=" + mUserEmail);
+        new PostsTask().execute(getString(R.string.getuserstags) + "?Email=" + mUserEmail);
     }
 
     /**
@@ -289,6 +298,9 @@ public class UserProfileActivity extends AppCompatActivity {
                         }
                     } else if (jsonObject.has("tagnames")) {
                         tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
+                    } else if (jsonObject.has("taglist")) {
+                        tagList = Tag.parseTagIDJson(jsonObject.getString("taglist"));
+                        displayUserTags();
                     }
 
                 }
@@ -517,6 +529,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.edit_userprofile) {
             mAboutMe.setEnabled(true);
             mEditButton.setVisibility(View.VISIBLE);
+            mTagButton.setVisibility(View.VISIBLE);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -538,6 +551,42 @@ public class UserProfileActivity extends AppCompatActivity {
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation for profile" + e.getMessage()
                     , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void displayUserTags() {
+
+        for (String s : tagList) {
+            userTags.add(new Tag(s, "red"));
+        }
+
+        LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        tagLayout.setMargins(0, 0, 10, 0);
+
+        for (Tag tag : userTags) {
+            Button tagButton;
+            tagButton = new Button(this);
+            tagButton.setText(tag.getName());
+            tagButton.setTextSize(10);
+            tagButton.setMinHeight(10);
+            tagButton.setMinimumHeight(10);
+            tagButton.setMinWidth(100);
+            tagButton.setMinimumWidth(200);
+            //Adding some graphical features that are build version dependent:
+            //Get rid of the tag button shadows by getting rid of the state list animator
+            if (Build.VERSION.SDK_INT >= 21) tagButton.setStateListAnimator(null);
+
+            //Change the shape to be more capsule or rounded rectangle.
+            if (Build.VERSION.SDK_INT >= 16) {
+                GradientDrawable tagShape = new GradientDrawable();
+                tagShape.setCornerRadius(100);
+                tagShape.setColor(Color.parseColor(tag.getColor()));
+                tagButton.setBackground(tagShape);
+            } else {
+                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
+            }
+            tagContainer.addView(tagButton, tagLayout);
         }
     }
 }
