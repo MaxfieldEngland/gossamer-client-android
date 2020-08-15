@@ -56,8 +56,18 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
  */
 public class UserProfileActivity extends AppCompatActivity {
 
-    /** A list of Post objects to be added to the feed. */
+    /** List of Post objects to be added to the feed. */
     private List<Post> mPostList;
+    /** List of user tags. */
+    private ArrayList<Tag> mUserTags;
+    /** List of TagIds. */
+    private ArrayList<String> mTagList;
+    /** List of tags the user selected. */
+    protected ArrayList<String> mSelectedTags;
+    /** List of TagIds. */
+    protected ArrayList<String> mTagIDs;
+    /** List of Tag JSON objects. */
+    private ArrayList<JSONObject> mTagJSON;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
     /** Email of user. */
@@ -65,35 +75,29 @@ public class UserProfileActivity extends AppCompatActivity {
     /** Display name of user. */
     private String mUser;
     /** Description of profile. */
-    private String profileDesc;
+    private String mProfileDescription;
     /** EditText view to display profile description. */
-    private EditText mAboutMe;
+    private EditText mDescriptionEditText;
     /** Done button. */
     private Button mEditButton;
     /** Tag button. */
     private Button mTagButton;
     /** Required for POST. */
     private JSONObject mProfileJSON;
-
-    public ArrayList<String> tagIDs;
-
-    ArrayList<Tag> userTags;
-
-    public ArrayList<String> tagList;
-    public ArrayList<String> selectedTags;
-
-    private LinearLayout tagContainer;
-
-
+    /** Layout for the tag container. */
+    private LinearLayout mTagContainer;
+    /** Flag value adding tags. */
+    private boolean mAddTags = false;
+    /** Number of tags that have been processed. */
+    private int mTagsProcessed = 0;
 
     /**
      * Default onCreate method. Provides functionality for to the UserProfile Activity.
-     * @param savedInstanceState
+     * @param savedInstanceState , saved state.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         setContentView(R.layout.activity_user_profile);
         Intent intent = getIntent();
@@ -104,32 +108,36 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         setTitle("Profile");
 
+        //Sets users name.
         TextView userName = findViewById(R.id.user_profile_name);
         userName.setText(mUser);
 
-        mAboutMe = findViewById(R.id.user_profile_abt_me);
-        mAboutMe.setEnabled(false);
+        //Profile Description EditText.
+        mDescriptionEditText = findViewById(R.id.user_profile_abt_me);
+        mDescriptionEditText.setEnabled(false);
 
+        // Done button - user presses they finish editing their profile.
         mEditButton = findViewById(R.id.edit_done);
         mEditButton.setVisibility(View.GONE);
-
-
         mEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profileDesc = mAboutMe.getText().toString();
-                addProfile(mUser, profileDesc, mUserEmail);
-                mAboutMe.setEnabled(false);
+                mProfileDescription = mDescriptionEditText.getText().toString();
+                addProfile(mUser, mProfileDescription, mUserEmail);
+                mDescriptionEditText.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
+
+                //TODO - We need to refresh this activity after we click the done button
+                // so that the new tag appears on the profile immediately.
             }
         });
 
-
+        //Tag button to select tags.
         mTagButton = findViewById(R.id.launchProfileAddTagsFragmentButton);
         mTagButton.setVisibility(View.GONE);
 
-        //Launch the tag selection fragment, and be sure to save the post body.
+        //Launches tag selection fragment.
         mTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,65 +149,31 @@ public class UserProfileActivity extends AppCompatActivity {
                         .addToBackStack(null)
                         .commit();
 
+                //Hide buttons.
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
             }
         });
 
+        //Set up the recycler view for the users posts.
         mRecyclerView = findViewById(R.id.user_profile_RecyclerView);
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new UserProfileActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
 
-        selectedTags = new ArrayList<String>();
-
-        tagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
-        //ArrayList<Tag> tags = new ArrayList<>();
-        //userTags.add(new Tag("Hello", "red"));
-
-        tagList = new ArrayList<String>();
-        userTags = new ArrayList<Tag>();
-
-//        for (String s : tagList) {
-//            userTags.add(new Tag(s, "red"));
-//        }
-//
-//        LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT);
-//        tagLayout.setMargins(0, 0, 10, 0);
-//
-//        for (Tag tag : userTags) {
-//            Button tagButton;
-//            tagButton = new Button(this);
-//            tagButton.setText(tag.getName());
-//            tagButton.setTextSize(10);
-//            tagButton.setMinHeight(10);
-//            tagButton.setMinimumHeight(10);
-//            tagButton.setMinWidth(100);
-//            tagButton.setMinimumWidth(200);
-//            //Adding some graphical features that are build version dependent:
-//            //Get rid of the tag button shadows by getting rid of the state list animator
-//            if (Build.VERSION.SDK_INT >= 21) tagButton.setStateListAnimator(null);
-//
-//            //Change the shape to be more capsule or rounded rectangle.
-//            if (Build.VERSION.SDK_INT >= 16) {
-//                GradientDrawable tagShape = new GradientDrawable();
-//                tagShape.setCornerRadius(100);
-//                tagShape.setColor(Color.parseColor(tag.getColor()));
-//                tagButton.setBackground(tagShape);
-//            } else {
-//                tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
-//            }
-//            tagContainer.addView(tagButton, tagLayout);
-//        }
+        //Set up member  variables.
+        mTagJSON = new ArrayList<>();
+        mSelectedTags = new ArrayList<>();
+        mTagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
+        mTagList = new ArrayList<>();
+        mUserTags = new ArrayList<>();
     }
 
     /** Retrieves the user posts when this activity is resumed. */
     @Override
     protected void onResume() {
         super.onResume();
-        //new PostsTask().execute(getString(R.string.getposttags));
-        tagIDs = new ArrayList<String>();
+        mTagIDs = new ArrayList<>();
         new PostsTask().execute(getString(R.string.taglist));
         new PostsTask().execute(getString(R.string.getuserposts) + "?Email=" + mUserEmail);
         new PostsTask().execute(getString(R.string.getprofile) + "?Email=" + mUserEmail);
@@ -219,7 +193,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Used to retrieve user posts and profile description.
+     * Used to retrieve user posts, profile description, and user tags.
      */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
@@ -263,7 +237,8 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         /**
-         * Creates a Get request to retrieve the user's posts from the database.
+         * Creates a Get request to retrieve the user's posts, profile description, and user tags
+         * from the database.
          * @param s
          */
         @Override
@@ -279,30 +254,32 @@ public class UserProfileActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(s);
 
                 if (jsonObject.getBoolean("success")) {
-
+                    // Get Users Posts.
                     if (jsonObject.has("posts")) {
                         mPostList = Post.parsePostJson(jsonObject.getString("posts"));
                         new PostsTask().execute(getString(R.string.getposttags));
-//                        if (!mPostList.isEmpty()) {
-//                            setupRecyclerView((RecyclerView) mRecyclerView);
-//                        }
-
-                    } else if (jsonObject.has("profData")) {
-                        mAboutMe.setText(new JSONObject(jsonObject.getString("profData"))
+                    }
+                    // Get users profile description.
+                    else if (jsonObject.has("profData")) {
+                        mDescriptionEditText.setText(new JSONObject(jsonObject.getString("profData"))
                                 .getString("profiledescription"));
-
-                    } else if (jsonObject.has("tags")) {
+                    }
+                    // Get tags associated with users posts.
+                    else if (jsonObject.has("tags")) {
                         Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
                         if (!mPostList. isEmpty()) {
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
-                    } else if (jsonObject.has("tagnames")) {
-                        tagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
-                    } else if (jsonObject.has("taglist")) {
-                        tagList = Tag.parseTagIDJson(jsonObject.getString("taglist"));
+                    }
+                    // Get list of available tags for tag selection view.
+                    else if (jsonObject.has("tagnames")) {
+                        mTagIDs = Tag.parseTagIDJson(jsonObject.getString("tagnames"));
+                    }
+                    // Get list of users profile tags.
+                    else if (jsonObject.has("taglist")) {
+                        mTagList = Tag.parseTagIDJson(jsonObject.getString("taglist"));
                         displayUserTags();
                     }
-
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
@@ -330,8 +307,11 @@ public class UserProfileActivity extends AppCompatActivity {
                     OutputStreamWriter wr =
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
-
-                    wr.write(mProfileJSON.toString());
+                    if (mAddTags) {
+                        wr.write(mTagJSON.get(mTagsProcessed++).toString());
+                    } else {
+                        wr.write(mProfileJSON.toString());
+                    }
 
                     wr.flush();
                     wr.close();
@@ -343,9 +323,8 @@ public class UserProfileActivity extends AppCompatActivity {
                     while ((s = buffer.readLine()) != null) {
                         response += s;
                     }
-
                 } catch (Exception e) {
-                    response = "Unable to add the new profile description, Reason: " + e.getMessage();
+                    response = "Unable to add the new profile data, Reason: " + e.getMessage();
                 } finally {
                     if (urlConnection != null)
                         urlConnection.disconnect();
@@ -368,7 +347,10 @@ public class UserProfileActivity extends AppCompatActivity {
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-
+                    // Create new Tags based on tags selected by users.
+                    for (String tagName : mSelectedTags) {
+                        addUserTags(mUserEmail, "", tagName);
+                    }
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Parsing error on adding profile"
@@ -417,7 +399,7 @@ public class UserProfileActivity extends AppCompatActivity {
             //If not anonymous, show the displayname
             if (!mValues.get(position).mIsAnonymous())
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());
-                //If anonymous, hide the displayname
+            //If anonymous, hide the displayname
             else
                 holder.mIdView.setText("Anonymous");
 
@@ -454,9 +436,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
                 //tagContainer.addView(tagButton, tagLayout);
                 holder.mTagContainer.addView(tagButton, tagLayout);
-
             }
-
             holder.itemView.setTag(mValues.get(position));
         }
 
@@ -487,7 +467,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Required modify view of card view.
+     * Required to modify view of card view.
      */
     public static class VerticalSpaceItem extends RecyclerView.ItemDecoration {
         private final int space;
@@ -527,7 +507,7 @@ public class UserProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else if (item.getItemId() == R.id.edit_userprofile) {
-            mAboutMe.setEnabled(true);
+            mDescriptionEditText.setEnabled(true);
             mEditButton.setVisibility(View.VISIBLE);
             mTagButton.setVisibility(View.VISIBLE);
         }
@@ -554,17 +534,21 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates layout for profile Tags and adds to profile.
+     */
     private void displayUserTags() {
 
-        for (String s : tagList) {
-            userTags.add(new Tag(s, "red"));
+        //TODO - Remove once we get the appropriate tag colors from the database.
+        for (String s : mTagList) {
+            mUserTags.add(new Tag(s, "red"));
         }
 
         LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         tagLayout.setMargins(0, 0, 10, 0);
 
-        for (Tag tag : userTags) {
+        for (Tag tag : mUserTags) {
             Button tagButton;
             tagButton = new Button(this);
             tagButton.setText(tag.getName());
@@ -586,7 +570,31 @@ public class UserProfileActivity extends AppCompatActivity {
             } else {
                 tagButton.setBackgroundColor(Color.parseColor(tag.getColor()));
             }
-            tagContainer.addView(tagButton, tagLayout);
+            mTagContainer.addView(tagButton, tagLayout);
+        }
+    }
+
+    /**
+     * Builds JSON object for a Tag and sends it to the users profile.
+     * @param email , users email.
+     * @param newtags , new tags.
+     * @param tagid , the tag id.
+     */
+    public void addUserTags(String email, String newtags, String tagid) {
+        StringBuilder url = new StringBuilder(getString(R.string.adduserstags));
+        JSONObject tagJSON = new JSONObject();
+        mAddTags = true;
+
+        try {
+            tagJSON.put("email", email);
+            tagJSON.put("newtags", newtags);
+            tagJSON.put("tagid", tagid);
+            mTagJSON.add(tagJSON);
+            new AddProfileAsyncTask().execute(url.toString());
+        } catch (JSONException e) {
+            Toast.makeText(this, "Error with JSON creation for profile tags" + e.getMessage()
+                    , Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 }

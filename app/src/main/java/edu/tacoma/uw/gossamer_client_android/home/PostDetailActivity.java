@@ -75,7 +75,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
     private boolean writeComment = false;
     private boolean addTags = false;
     private boolean lastTag = false;
-
     private int tagsProcessed = 0;
 
     public ArrayList<String> tagList;
