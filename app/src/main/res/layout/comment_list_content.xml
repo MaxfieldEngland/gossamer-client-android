@@ -20,14 +20,38 @@
             android:paddingTop="0dp"
             android:paddingBottom="0dp">
 
-            <TextView
-                android:id="@+id/id_text"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/maxBlue"
-                android:textSize="18sp" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/id_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/text_margin"
+                    android:layout_marginLeft="@dimen/text_margin"
+                    android:layout_marginTop="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/text_margin"
+                    android:layout_marginRight="@dimen/text_margin"
+                    android:layout_marginBottom="@dimen/text_margin"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/maxBlue"
+                    android:textSize="18sp" />
+
+                <Button
+                    android:id="@+id/deleteCommentbutton"
+                    android:layout_width="29dp"
+                    android:layout_height="27dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="27dp"
+                    android:layout_marginRight="27dp"
+                    android:background="@android:drawable/ic_menu_delete"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/content"

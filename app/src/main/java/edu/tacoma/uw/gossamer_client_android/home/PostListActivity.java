@@ -45,6 +45,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
@@ -120,9 +121,9 @@ public class PostListActivity extends AppCompatActivity {
 
 
         mRecyclerView = findViewById(R.id.post_list);
-        assert mRecyclerView != null;
+//        assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new VerticalSpaceItem(24));
-        setupRecyclerView((RecyclerView) mRecyclerView);
+//        setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
     /** Retrieves the posts when this activity is resumed. */
@@ -147,10 +148,10 @@ public class PostListActivity extends AppCompatActivity {
      * @param recyclerView
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
-        if (mPostList != null) {
+//        if (mPostList != null) {
             mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
                     (this, mPostList, mTwoPane));
-        }
+//        }
     }
 
     /**
@@ -391,12 +392,16 @@ public class PostListActivity extends AppCompatActivity {
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
             ArrayList<Tag> tags = mValues.get(position).getTags();
+            //Use a hashset to make sure we don't duplicate tags
+            HashSet<Tag> tagsContained = new HashSet<Tag>();
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             tagLayout.setMargins(0, 0, 10, 0);
 
             for (Tag tag : tags) {
-                Button tagButton;
+                if (tagsContained.contains(tag)) continue;
+                tagsContained.add(tag);
+                final Button tagButton;
                 tagButton = new Button(mParentActivity);
                 tagButton.setText(tag.getName());
                 tagButton.setTextSize(10);
@@ -404,6 +409,14 @@ public class PostListActivity extends AppCompatActivity {
                 tagButton.setMinimumHeight(10);
                 tagButton.setMinWidth(100);
                 tagButton.setMinimumWidth(200);
+
+                tagButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mParentActivity.launchSearchActivity(tagButton.getText().toString());
+                    }
+                });
+
                 //Adding some graphical features that are build version dependent:
                 //Get rid of the tag button shadows by getting rid of the state list animator
                 if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);

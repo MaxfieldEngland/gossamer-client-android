@@ -10,6 +10,8 @@
     <string name="getposttags">https://gossamer-backend.herokuapp.com/posts/getposttags</string>
     <string name="addpostcomment">https://gossamer-backend.herokuapp.com/posts/addpostcomment</string>
     <string name="getpostcomments">https://gossamer-backend.herokuapp.com/posts/getpostcomments</string>
+    <string name="deletepost">https://gossamer-backend.herokuapp.com/posts/delete</string>
+    <string name="deletecomment">https://gossamer-backend.herokuapp.com/posts/deletecomment</string>
     <string name="getuserposts">https://gossamer-backend.herokuapp.com/posts/userposts</string>
     <string name="postsearch">https://gossamer-backend.herokuapp.com/posts/search</string>
     <string name="profilesearch">https://gossamer-backend.herokuapp.com/profiles/search</string>

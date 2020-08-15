@@ -28,6 +28,8 @@ public class Comment implements Serializable {
     private String mCommentDateTime;
     /** The ID of the associated post. */
     private int mPostID;
+    /** The ID of the comment. */
+    private int mCommentID;
 
     //Getters
     public String getmEmail() {
@@ -50,6 +52,10 @@ public class Comment implements Serializable {
         return mPostID;
     }
 
+    public int getmCommentID() {
+        return mCommentID;
+    }
+
     /**
      * Comment-reading constructor: Display name will be retrieved from the server, with the email serving
      * as the user foreign key, without being displayed.
@@ -59,15 +65,17 @@ public class Comment implements Serializable {
      * @param commentDateTime The date and time that the comment was published.
      * @param postID The ID of the post associated with the given comment; under which post should
      *               the comment display?
+     * @param commentID The ID of the comment itself, used to identify the comment for deletion.
      */
     public Comment(String email, String displayName, String commentBody, String commentDateTime,
-                   int postID) {
+                   int postID, int commentID) {
 
         mEmail = email;
         mDisplayName = displayName;
         mCommentBody = commentBody;
         mCommentDateTime = commentDateTime;
         mPostID = postID;
+        mCommentID = commentID;
 
     }
 
@@ -82,6 +90,14 @@ public class Comment implements Serializable {
         mPostID = postID;
     }
 
+    public String dateTime() {
+
+        String date = this.mCommentDateTime.substring(0, 10);
+        String time = this.mCommentDateTime.substring(11, 19);
+        return date + "  " + time;
+
+    }
+
     public static List<Comment> parseCommentJson(String commentJson) throws JSONException {
 
         List<Comment> commentList = new ArrayList<>();
@@ -92,7 +108,7 @@ public class Comment implements Serializable {
                 JSONObject obj = arr.getJSONObject(i);
                 Comment c = new Comment(obj.getString("email"), obj.getString("displayname")
                         , obj.getString("commentbody"), obj.getString("commentdatetime")
-                        , obj.getInt("postid"));
+                        , obj.getInt("postid"), obj.getInt("commentid"));
                 commentList.add(c);
             }
         }
