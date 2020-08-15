@@ -130,11 +130,14 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 ProfileAddTagsFragment frag = new ProfileAddTagsFragment();
+
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.linearLayout3, frag)
                         .addToBackStack(null)
                         .commit();
+
+                addTagButton.setVisibility(View.GONE);
 
             }
         });
@@ -495,6 +498,7 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.userprofile_menu, menu);
+
         return true;
     }
 

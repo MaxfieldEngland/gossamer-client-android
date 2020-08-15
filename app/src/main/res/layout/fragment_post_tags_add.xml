@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".home.PostAddFragment">
 
+    <LinearLayout
+        android:id="@+id/tagSelectorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="118dp">
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/addTags"
         android:layout_width="wrap_content"
@@ -16,16 +28,5 @@
         android:text="@string/add_tags"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/tagSelectorLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="118dp">
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

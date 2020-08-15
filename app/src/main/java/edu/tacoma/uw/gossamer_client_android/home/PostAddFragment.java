@@ -10,6 +10,7 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,7 +123,6 @@ public class  PostAddFragment extends Fragment {
                         .replace(R.id.post_detail_container, fragment)
                         .addToBackStack(null)
                         .commit();
-
             }
         });
 
