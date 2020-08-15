@@ -1,5 +1,6 @@
 package edu.tacoma.uw.gossamer_client_android.userprofile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,8 +83,8 @@ public class ProfileAddTagsFragment extends Fragment {
                 else {
                     parentActivity.mSelectedTags = profileTags;
                     parentActivity.findViewById(R.id.launchProfileAddTagsFragmentButton).setVisibility(View.VISIBLE);
-                    getFragmentManager().popBackStack();
 
+                    getFragmentManager().popBackStack();
                 }
             }
         });
