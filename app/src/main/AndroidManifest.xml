@@ -17,7 +17,7 @@
 
         <activity android:name=".userprofile.UserProfileActivity"
 
-            android:windowSoftInputMode="adjustPan"> ></activity>
+            android:windowSoftInputMode="adjustPan"> </activity>
         <activity
             android:name=".home.PostListActivity"
             android:label="@string/title_post_list"

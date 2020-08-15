@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
+import edu.tacoma.uw.gossamer_client_android.authenticate.LoginFragment;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
+import edu.tacoma.uw.gossamer_client_android.home.PostAddTagsFragment;
 import edu.tacoma.uw.gossamer_client_android.home.PostListActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
@@ -75,6 +78,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private JSONObject mProfileJSON;
 
     public ArrayList<String> tagIDs;
+
+    public ArrayList<String> tagList;
+    public ArrayList<String> selectedTags;
 
 
 
@@ -115,11 +121,30 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        final Button addTagButton = findViewById(R.id.launchProfileAddTagsFragmentButton);
+
+        //Launch the tag selection fragment, and be sure to save the post body.
+        addTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ProfileAddTagsFragment frag = new ProfileAddTagsFragment();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.linearLayout3, frag)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+
         mRecyclerView = findViewById(R.id.user_profile_RecyclerView);
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new UserProfileActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
 
+        selectedTags = new ArrayList<String>();
 
         LinearLayout tagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
         ArrayList<Tag> tags = new ArrayList<>();
@@ -153,6 +178,9 @@ public class UserProfileActivity extends AppCompatActivity {
             }
             tagContainer.addView(tagButton, tagLayout);
         }
+
+
+
     }
 
     /** Retrieves the user posts when this activity is resumed. */

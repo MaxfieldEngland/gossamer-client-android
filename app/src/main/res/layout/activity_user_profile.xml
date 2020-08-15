@@ -8,6 +8,19 @@
     android:orientation="vertical"
     tools:context=".userprofile.UserProfileActivity">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/frameLayoutID"/>
+
+
+    <Button
+        android:id="@+id/launchProfileAddTagsFragmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Tags"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/user_profile_name"
