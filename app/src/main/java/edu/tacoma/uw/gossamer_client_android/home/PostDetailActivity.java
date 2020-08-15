@@ -9,9 +9,12 @@ package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -27,6 +30,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
+import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 
@@ -80,7 +86,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
     private boolean writeComment = false;
     private boolean addTags = false;
     private boolean lastTag = false;
-
+    public boolean enableShareOption = false;
 
     public int deletePostID = -1;
     public int deleteCommentID = -1;
@@ -102,24 +108,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         selectedTags = new ArrayList<String>();
         mTagJSON = new ArrayList<JSONObject>();
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-//        toolbar.setTitle(getTitle());
-
-        // Show the Up button in the action bar.
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don"t need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
@@ -130,7 +118,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 PostDetailFragment fragment = new PostDetailFragment();
                 fragment.setArguments(arguments);
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.post_detail_container, fragment)
+                        .add(R.id.post_detail_container, fragment, "detail")
                         .commit();
             } else if (getIntent().getBooleanExtra(PostDetailActivity.ADD_POST, false)) {
 
@@ -143,30 +131,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             }
 
         }
-    }
-
-    /**
-     * Allows user to return to previous activity.
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            NavUtils.navigateUpTo(this, new Intent(this, PostListActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -275,6 +239,22 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     Toast.LENGTH_SHORT).show();
         }
 
+        //Refresh the fragment so that we don't see the deleted comment anymore
+
+
+        PostDetailFragment thisFrag = (PostDetailFragment) getSupportFragmentManager().findFragmentByTag("detail");
+        thisFrag.refresh();
+
+    }
+
+    /**
+     * Launches the search activity, using whatever text is in the search bar.
+     */
+    public void launchSearchActivity(String theQuery) {
+
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra(SearchActivity.SEARCH_QUERY, theQuery);
+        startActivity(intent);
 
     }
 
@@ -373,14 +353,10 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                         return;
                     }
 
-                    String t;
-                    if (writeComment) t = "Comment added!";
                         //Post adding: since we successfully added the post, extract the post id returned
                         //So we can add any relevant tags to the post!
-                    else {
-                        if (!s.contains("delete")) {
-                            t = "Post added!";
 
+                        if (!s.contains("delete")) {
 
                             JSONObject data = jsonObject.getJSONObject("postid");
                             int postid = data.getInt("postid");
@@ -391,19 +367,15 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                             }
                             lastTag = true;
                         }
-                        else t = "Post deleted.";
 
-                        Toast.makeText(getApplicationContext(), t,
-                                Toast.LENGTH_SHORT).show();
-                    }
+
                 }
             } catch (JSONException e) {
                 String c;
                 if (writeComment) c = "comment";
                 else c = "post";
 
-                Toast.makeText(getApplicationContext(), "JSON Parsing error on adding " + c + " "
-                        + e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("DETAILWEBERROR", e.getMessage());
             }
         }
 
@@ -442,4 +414,83 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
     }
 
+    public static class DeleteCommentConfirmDialog extends DialogFragment {
+
+        Comment mComment;
+        PostDetailActivity parent;
+
+        public DeleteCommentConfirmDialog(Comment c, PostDetailActivity par){
+            super();
+            mComment = c;
+            parent = par;
+
+        }
+
+        @Override
+        public Dialog onCreateDialog(final Bundle savedInstanceState) {
+            AlertDialog.Builder build = new AlertDialog.Builder(getActivity());
+            build.setMessage("Are you sure you want to delete the comment?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            parent.deleteCommentID = mComment.getmCommentID();
+                            parent.deleteComment();
+
+
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            return build.create();
+        }
+    }
+
+    /**
+     * Creates a menu for the toolbar.
+     * @param menu , Menu item.
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.postdetail_menu, menu);
+        MenuItem sharepost = menu.findItem(R.id.share_post);
+
+        if (enableShareOption) {
+
+            if (sharepost != null)
+                sharepost.setVisible(true);
+        }
+        return true;
+    }
+
+    /**
+    Logout and post share handler
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS),
+                    Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false).commit();
+            Intent intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else if (item.getItemId() == R.id.share_post) {
+
+            PostDetailFragment thisFrag = (PostDetailFragment) getSupportFragmentManager().findFragmentByTag("detail");
+            Post p = thisFrag.getPost();
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, p.getmDisplayName() + ":\n"+p.getmPostBody()+"\n\nvia Gossamer");
+            sendIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

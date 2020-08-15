@@ -95,6 +95,10 @@ public class PostDetailFragment extends Fragment {
      */
     public PostDetailFragment() {}
 
+    public Post getPost() {
+        return mPost;
+    }
+
     /**
      * Interface that is to be implemented by the parent activity.
      */
@@ -109,6 +113,9 @@ public class PostDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((PostDetailActivity) getActivity()).enableShareOption = true;
+
         mAddListener = (AddListener) getActivity();
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
@@ -158,8 +165,6 @@ public class PostDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
-
-
         //Create contingent delete button
 
         SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
@@ -167,13 +172,10 @@ public class PostDetailFragment extends Fragment {
 
         String email = pref.getString(getString(R.string.EMAIL), null);
         //Create a more robust admin email check; doing a hackier one for the time being.
-        boolean isPostMaster = mPost.getmEmail().equals(email) || mPost.getmEmail().equals("maxengl@uw.edu") || mPost.getmEmail().equals("elijahff@uw.edu");
+        boolean isPostMaster = mPost.getmEmail().equals(email) || pref.getBoolean(getString(R.string.isAdmin), false);
 
         //Create delete post button if the post is ours
         if (isPostMaster) {
-            //Button deletePostButton = new Button(getActivity());
-            //deletePostButton.setBackgroundResource(R.drawable.ic_menu_delete_24dp);
-
             Button deletePostButton = (Button) rootView.findViewById(R.id.deletePostButton);
 
             final PostDetailActivity parent = (PostDetailActivity) getActivity();
@@ -219,10 +221,11 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_short_desc))
                     .setText(mPost.getmPostBody());
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
-                    .setText(mPost.getmPostDateTime());
+                    .setText(mPost.dateTime());
 
 
             //TODO - Something is going wrong with this resource value.
+            //TODO: Verify the above is still an issue? (8/14/20 - Maxfield)
             LinearLayout tagCon = (LinearLayout) rootView.findViewById(R.id.det_tagContainer);
 
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -231,7 +234,7 @@ public class PostDetailFragment extends Fragment {
 
             //Populate det_tagContainer with tags
             for (Tag tag: mPost.getTags()){
-                Button tagButton;
+                final Button tagButton;
                 tagButton = new Button(getActivity());
                 tagButton.setText(tag.getName());
                 tagButton.setTextSize(10);
@@ -239,6 +242,14 @@ public class PostDetailFragment extends Fragment {
                 tagButton.setMinimumHeight(10);
                 tagButton.setMinWidth(100);
                 tagButton.setMinimumWidth(200);
+
+                tagButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((PostDetailActivity) getActivity()).launchSearchActivity(tagButton.getText().toString());
+                    }
+                });
+
                 //Adding some graphical features that are build version dependent:
                 //Get rid of the tag button shadows by getting rid of the state list animator
                 if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);
@@ -350,8 +361,7 @@ public class PostDetailFragment extends Fragment {
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success")) {
-                    mCommentList = Comment.parseCommentJson(
-                            jsonObject.getString("tags"));
+                    mCommentList = Comment.parseCommentJson(jsonObject.getString("tags"));
 
                     if (!mCommentList.isEmpty()) {
                         setupRecyclerView((RecyclerView) mRecyclerView);
@@ -362,6 +372,13 @@ public class PostDetailFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void refresh() {
+
+        FragmentTransaction refresh = getFragmentManager().beginTransaction();
+        refresh.detach(thisFrag).attach(thisFrag).commit();
+
     }
 
     public class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
@@ -394,18 +411,45 @@ public class PostDetailFragment extends Fragment {
 
         /**
          * Responsible for binding the ViewHolder.
-         *
+         *                    refresh.detach(thisFrag).attach(thisFrag).commit();
+
          * @param holder
          * @param position
          */
         @Override
         public void onBindViewHolder(final DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            //If not anonymous, show the displayname
 
             holder.mIdView.setText(mValues.get(position).getmDisplayName());
             holder.mContentView.setText(mValues.get(position).getmCommentBody());
-            holder.mDateView.setText(mValues.get(position).getmCommentDateTime());
+            holder.mDateView.setText(mValues.get(position).dateTime());
             holder.itemView.setTag(mValues.get(position));
+
+            final int pos = position;
+
+            SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                    , Context.MODE_PRIVATE);
+
+            String email = pref.getString(getString(R.string.EMAIL), null);
+            //Create a more robust admin email check; doing a hackier one for the time being.
+            boolean isPostMaster = mValues.get(position).getmEmail().equals(email) || pref.getBoolean(getString(R.string.isAdmin), false);
+
+            //Create delete post button if the post is ours
+            if (isPostMaster) {
+
+                final PostDetailActivity parent = (PostDetailActivity) getActivity();
+
+                holder.mDeleteButton.setVisibility(View.VISIBLE);
+                holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        PostDetailActivity.DeleteCommentConfirmDialog dccd = new PostDetailActivity.DeleteCommentConfirmDialog(mValues.get(pos), parent);
+                        dccd.show(parent.getSupportFragmentManager(), "DeletePost");
+
+                    }
+                });
+
+            }
         }
 
         /**
@@ -425,17 +469,18 @@ public class PostDetailFragment extends Fragment {
             final TextView mIdView;
             final TextView mContentView;
             final TextView mDateView;
+            final Button mDeleteButton;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
                 mContentView = (TextView) view.findViewById(R.id.content);
                 mDateView = (TextView) view.findViewById(R.id.datetime);
+                mDeleteButton = (Button) view.findViewById(R.id.deleteCommentbutton);
             }
         }
 
 
     }
-
 
 }

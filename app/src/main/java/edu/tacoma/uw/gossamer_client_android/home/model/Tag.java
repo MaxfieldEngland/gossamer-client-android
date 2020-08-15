@@ -82,4 +82,17 @@ public class Tag implements Serializable {
         return tags;
     }
 
+    @Override
+    public boolean equals(Object theOther) {
+
+        if (theOther == null) return false;
+        if (theOther.getClass() != this.getClass()) return false;
+        Tag o = (Tag) theOther;
+        if (o.getColor().equals(this.mColor) && o.getName().equals(this.mTagName)){
+            return true;
+        }
+        else return false;
+
+    }
+
 }

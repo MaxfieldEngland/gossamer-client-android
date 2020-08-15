@@ -10,14 +10,14 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height_post_list"
+        android:layout_height="405dp"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="347dp"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
@@ -32,34 +32,18 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-                <CalendarView
-                    android:id="@+id/calendarView"
-                    android:layout_width="221dp"
-                    android:layout_height="299dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.273" />
+                android:layout_height="345dp">
 
                 <TextView
                     android:id="@+id/daily_message"
-                    android:layout_width="177dp"
-                    android:layout_height="169dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginEnd="56dp"
-                    android:layout_marginRight="56dp"
+                    android:layout_width="360dp"
+                    android:layout_height="166dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginLeft="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/calendarView"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.283" />
+                    app:layout_constraintVertical_bias="0.558" />
 
                 <TextView
                     android:id="@+id/daily_message_title"
@@ -68,26 +52,27 @@
                     android:textSize="18sp"
                     app:layout_constraintBottom_toTopOf="@+id/daily_message"
                     app:layout_constraintEnd_toEndOf="@+id/daily_message"
+                    app:layout_constraintHorizontal_bias="0.536"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.84" />
+                    app:layout_constraintVertical_bias="0.947" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Learn about:"
+                    app:layout_constraintBottom_toTopOf="@+id/daily_message_title"
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <include layout="@layout/post_list" />
-
 
         <ProgressBar
             android:id="@+id/postList_progressB"
@@ -99,6 +84,17 @@
             android:max="100"
             android:padding="20dp"
             android:progress="50" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/post_list" />
+
 
     </FrameLayout>
 

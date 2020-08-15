@@ -136,11 +136,12 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      * Only on verified login, the user's sharedPreferences are made to reflect their login status,
      * and they are put through to the main activity.
      */
-    public void startMainActivity() {
+    public void startMainActivity(boolean priv) {
         mSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .putString(getString(R.string.EMAIL), loginEmail)
+                .putBoolean(getString(R.string.isAdmin), priv)
                 .apply();
 
         //If we're just registering, let the user know their registration was successful
@@ -243,8 +244,9 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 JSONObject jsonObject = new JSONObject(s);
                 //If we get 'success' back from our post, we can move on to the main screen and save login data.
                 if (jsonObject.getBoolean("success")) {
+                    boolean admin = jsonObject.getBoolean("privLoginStatus");
                     //SUCCESSFUL LOGIN
-                    startMainActivity();
+                    startMainActivity(admin);
                 }
                 //Else, we did not have a successful login:
                 else {

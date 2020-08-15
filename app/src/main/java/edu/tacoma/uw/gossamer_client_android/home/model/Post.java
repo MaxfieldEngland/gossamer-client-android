@@ -72,7 +72,7 @@ public class Post implements Serializable {
     public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName, int postID) {
         mEmail = email;
         mPostBody = postBody;
-        mPostDateTime = postDateTime.substring(0, 10);
+        mPostDateTime = postDateTime;
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
         mPostID = postID;
@@ -122,6 +122,14 @@ public class Post implements Serializable {
 
     public void addTag(Tag tag) {
         tagList.add(tag);
+
+    }
+
+    public String dateTime() {
+
+        String date = this.mPostDateTime.substring(0, 10);
+        String time = this.mPostDateTime.substring(11, 19);
+        return date + "  " + time;
 
     }
 
