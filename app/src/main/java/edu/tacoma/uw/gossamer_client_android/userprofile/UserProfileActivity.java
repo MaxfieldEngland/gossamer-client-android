@@ -17,6 +17,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +49,8 @@ import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
+import edu.tacoma.uw.gossamer_client_android.home.PostDetailActivity;
+import edu.tacoma.uw.gossamer_client_android.home.PostDetailFragment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
@@ -61,8 +64,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private List<Post> mPostList;
     /** List of user tags. */
     private ArrayList<Tag> mUserTags;
-    /** List of TagIds. */
-    private ArrayList<String> mTagList;
+    /** List of Tags. */
+    private ArrayList<Tag> mTagList;
     /** List of tags the user selected. */
     protected ArrayList<String> mSelectedTags;
     /** List of TagIds. */
@@ -280,7 +283,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     }
                     // Get list of users profile tags.
                     else if (jsonObject.has("taglist")) {
-                        mTagList = Tag.parseTagIDJson(jsonObject.getString("taglist"));
+                        mTagList = Tag.parseTagJson(jsonObject.getString("taglist"));
                         displayUserTags();
                     }
                 }
@@ -310,10 +313,17 @@ public class UserProfileActivity extends AppCompatActivity {
                     OutputStreamWriter wr =
                             new OutputStreamWriter(urlConnection.getOutputStream());
 
-                    if (mAddTags) {
-                        wr.write(mTagJSON.get(mTagsProcessed++).toString());
-                    } else {
-                        wr.write(mProfileJSON.toString());
+                    if (url.contains("delete")){
+                        Log.v("DELETETAGS", "Deleting tags from email " + mUserEmail);
+                        wr.write(new JSONObject().put("email", mUserEmail).toString());
+                    }
+                    else {
+
+                        if (mAddTags) {
+                            wr.write(mTagJSON.get(mTagsProcessed++).toString());
+                        } else {
+                            wr.write(mProfileJSON.toString());
+                        }
                     }
 
                     wr.flush();
@@ -349,11 +359,15 @@ public class UserProfileActivity extends AppCompatActivity {
             }
             try {
                 JSONObject jsonObject = new JSONObject(s);
-                if (jsonObject.getBoolean("success")) {
+                if (jsonObject.getBoolean("success") && jsonObject.has("changedProfile")) {
+
+                    new AddProfileAsyncTask().execute(getString(R.string.deleteusertags));
                     // Create new Tags based on tags selected by users.
                     for (String tagName : mSelectedTags) {
-                        addUserTags(mUserEmail, "", tagName);
+                        addUserTags(mUserEmail, tagName);
                     }
+                    finish();
+                    startActivity(getIntent());
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Parsing error on adding profile"
@@ -370,6 +384,19 @@ public class UserProfileActivity extends AppCompatActivity {
 
         private final UserProfileActivity mParentActivity;
         private final List<Post> mValues;
+
+        private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Post item = (Post) view.getTag();
+
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, PostDetailActivity.class);
+                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
+                    context.startActivity(intent);
+            }
+        };
+
 
         SimpleItemRecyclerViewAdapter(UserProfileActivity parent,
                                       List<Post> items) {
@@ -441,6 +468,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 holder.mTagContainer.addView(tagButton, tagLayout);
             }
             holder.itemView.setTag(mValues.get(position));
+            holder.itemView.setOnClickListener(mOnClickListener);
+
         }
 
         /**
@@ -553,8 +582,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private void displayUserTags() {
 
         //TODO - Remove once we get the appropriate tag colors from the database.
-        for (String s : mTagList) {
-            mUserTags.add(new Tag(s, "red"));
+        for (Tag t : mTagList) {
+            mUserTags.add(t);
         }
 
         LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -590,17 +619,15 @@ public class UserProfileActivity extends AppCompatActivity {
     /**
      * Builds JSON object for a Tag and sends it to the users profile.
      * @param email , users email.
-     * @param newtags , new tags.
      * @param tagid , the tag id.
      */
-    public void addUserTags(String email, String newtags, String tagid) {
+    public void addUserTags(String email, String tagid) {
         StringBuilder url = new StringBuilder(getString(R.string.adduserstags));
         JSONObject tagJSON = new JSONObject();
         mAddTags = true;
 
         try {
             tagJSON.put("email", email);
-            tagJSON.put("newtags", newtags);
             tagJSON.put("tagid", tagid);
             mTagJSON.add(tagJSON);
             new AddProfileAsyncTask().execute(url.toString());

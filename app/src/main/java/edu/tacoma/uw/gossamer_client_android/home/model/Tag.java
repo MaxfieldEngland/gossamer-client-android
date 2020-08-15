@@ -66,6 +66,30 @@ public class Tag implements Serializable {
 
     }
 
+    /**
+     * Receives a JSON object that contains tags as associated with a single profile, and adds each
+     * @param tagJson
+     * @throws JSONException
+     */
+    public static ArrayList<Tag> parseTagJson(String tagJson) throws JSONException {
+
+        ArrayList<Tag> tags = new ArrayList<Tag>();
+
+        if (tagJson != null) {
+            JSONArray arr = new JSONArray(tagJson);
+
+            for (int i = 0; i < arr.length(); i++){
+                JSONObject tag = arr.getJSONObject(i);
+                tags.add(new Tag(tag.getString("tagid"), tag.getString("color")));
+            }
+
+        }
+
+        return tags;
+
+
+    }
+
     public static ArrayList<String> parseTagIDJson(String tagJson) throws JSONException {
 
         ArrayList<String> tags = new ArrayList<String>();

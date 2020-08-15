@@ -19,4 +19,5 @@
     <string name="getprofile">https://gossamer-backend.herokuapp.com/profiles/get</string>
     <string name="getuserstags">https://gossamer-backend.herokuapp.com/profiles/getusertags</string>
     <string name="adduserstags">https://gossamer-backend.herokuapp.com/profiles/addusertag</string>
+    <string name="deleteusertags">https://gossamer-backend.herokuapp.com/profiles/deleteusertags</string>
 </resources>
