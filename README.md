@@ -5,10 +5,6 @@ By Maxfield England and Elijah Freeman
 
 This app serves as a social community for users identifying as LGBTQIA+.
 
-Currently working on: 
-Implementing user management via account creation.
-
-
 # Tasks remaining on backlog:
 
 ## High Priority:
@@ -16,7 +12,6 @@ Implementing user management via account creation.
 ###### Backend:
 
 ###### Frontend:
-* Post sharing to external social media.
 
 ## Medium Priority:
 ###### Backend:
@@ -34,7 +29,6 @@ Implementing user management via account creation.
 * Find a way to coordinate random DailyMessage selection in a manner that’s consistent for all users.
 
 ###### Frontend:
-* Include administrative user delete options on posts. 
 * Search profiles based on DisplayName and/or UserTags.
 * Create an Event calendar to display upcoming events. 
 * Create a location button to filter events based on location. 
@@ -43,7 +37,7 @@ Implementing user management via account creation.
 * Create an option to save posts. 
 * Allow pictures to be appended to text posts.  
 * Create a direct messaging screen with messaging ability. 
-* Create an option to add image to profile page. 
+* Create an option to add an image to profile page. 
 
 Extended goals and information found below:
 https://drive.google.com/file/d/1pt1YAZmzE9lKDM3LY34Cr_6uacWDptwm/view?usp=sharing
