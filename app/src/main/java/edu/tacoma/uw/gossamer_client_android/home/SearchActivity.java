@@ -1,6 +1,12 @@
+/*
+ * Elijah Freeman
+ * Maxfield England
+ *
+ * TCSS 450 - Mobile App Programming
+ * Gossamer
+ */
 package edu.tacoma.uw.gossamer_client_android.home;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,8 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +50,9 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
 import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
 
+/**
+ * Search activity that provides the user the ability to search base on texts.
+ */
 public class SearchActivity extends AppCompatActivity {
 
     /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
@@ -54,27 +61,23 @@ public class SearchActivity extends AppCompatActivity {
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
-
     /** The actual query received to use to search to filter posts/profiles */
     private String searchQuery;
-
     /**Key for putExtra to give us the query. */
     public static final String SEARCH_QUERY = "SEARCH_QUERY";
 
-
+    /**
+     * Default onCreate method.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
-
         searchQuery = getIntent().getStringExtra(SEARCH_QUERY);
         setTitle("Search: " + searchQuery);
-
-        //CollapsingToolbarLayout toolbar = findViewById(R.id.toolbar_layout);
-        //toolbar.setTitle("Search - " + searchQuery);
 
         if (findViewById(R.id.post_detail_container) != null) {
             // The detail container view will be present only in the
@@ -90,10 +93,12 @@ public class SearchActivity extends AppCompatActivity {
         setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
+    /**
+     * Default onResume method.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-
         //Determine whether we're in profile search mode or post search mode
         //if ()
         new SearchTask().execute(getString(R.string.postsearch) + "?searchterm=" + searchQuery);
@@ -114,14 +119,16 @@ public class SearchActivity extends AppCompatActivity {
      * Launches the search activity, using whatever text is in the search bar.
      */
     private void launchSearchActivity(String theQuery) {
-
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra(SearchActivity.SEARCH_QUERY, theQuery);
         startActivity(intent);
-
     }
 
 
+    /**
+     * Inner class responsible for connecting to the database to allow for
+     * search functionality.
+     */
     private class SearchTask extends AsyncTask<String, Void, String> {
 
         ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.search_progressB);
@@ -154,14 +161,20 @@ public class SearchActivity extends AppCompatActivity {
             return response;
         }
 
+        /**
+         * Overridden method to allow for progress bar.
+         * @param progress
+         */
         @Override
         protected void onProgressUpdate(Void... progress) {
             mProgressBar.setProgress(10);
             mProgressBar.setBackgroundColor(Color.BLACK);
-
         }
 
-
+        /**
+         * Overridden onPostExecute method.
+         * @param s
+         */
         @Override
         protected void onPostExecute(String s) {
             mProgressBar.setVisibility(View.GONE);
@@ -193,21 +206,14 @@ public class SearchActivity extends AppCompatActivity {
                         }
 
                     }
-                    //Searching profiles
-                    else {
-
-                    }
-
-
-
+                    //TODO - Searching profiles (blank else statement).
+                    else {}
                 }
             }
             catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
-
             }
-
         }
     }
 
@@ -328,7 +334,6 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 holder.mTagContainer.addView(tagButton, tagLayout);
             }
-
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -380,16 +385,9 @@ public class SearchActivity extends AppCompatActivity {
              */
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 searchQuery = query;
                 setTitle("Search: " + searchQuery);
-
-                //searchQuery = ((SearchView) findViewById(R.id.app_bar_search)).getQuery().toString();
-                //new SearchTask().execute(getString(R.string.postsearch) + "?searchterm=" + searchQuery);
-
                 launchSearchActivity(query);
-
-
                 return true;
             }
 
@@ -398,7 +396,6 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         return true;
     }
 
@@ -430,6 +427,4 @@ public class SearchActivity extends AppCompatActivity {
             outRect.bottom = space;
         }
     }
-
-
 }

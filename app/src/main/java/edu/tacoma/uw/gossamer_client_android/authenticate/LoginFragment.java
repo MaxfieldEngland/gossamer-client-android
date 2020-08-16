@@ -9,7 +9,6 @@ package edu.tacoma.uw.gossamer_client_android.authenticate;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;

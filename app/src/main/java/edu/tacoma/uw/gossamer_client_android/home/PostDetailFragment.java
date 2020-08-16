@@ -8,10 +8,7 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -23,7 +20,6 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,29 +60,20 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
  * @author maxfield england
  */
 public class PostDetailFragment extends Fragment {
+    /** Constant. */
     public static final String ARG_ITEM_ID = "item_id";
 
+    /** Add Listener to add comment. */
     private AddListener mAddListener;
-
     /** The content this fragment is presenting. */
     private Post mPost;
-
-    /**
-     * The recycler view of the detail fragment; shows comments for a given post.
-     */
+    /** The recycler view of the detail fragment; shows comments for a given post. */
     private RecyclerView mRecyclerView;
-
-    /**
-     * The list of comments to be displayed in recyclerview.
-     */
+    /** The list of comments to be displayed in recyclerview. */
     private List<Comment> mCommentList;
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
     private boolean mTwoPane;
-
+    /** Post Detail Fragment. */
     PostDetailFragment thisFrag = this;
 
     /**
@@ -95,15 +82,14 @@ public class PostDetailFragment extends Fragment {
      */
     public PostDetailFragment() {}
 
-    public Post getPost() {
-        return mPost;
-    }
+    /** Getter method for post object. */
+    public Post getPost() { return mPost; }
 
     /**
      * Interface that is to be implemented by the parent activity.
      */
     public interface AddListener {
-        public void addComment(Comment comment);
+        void addComment(Comment comment);
     }
 
     /**
@@ -132,11 +118,10 @@ public class PostDetailFragment extends Fragment {
         }
     }
 
+    /** Default onResume method. Update the Comments. */
     public void onResume() {
         super.onResume();
-
         new CommentsTask().execute(getString(R.string.getpostcomments) + "?PostID=" + mPost.getmPostID());
-
     }
 
     /**
@@ -144,7 +129,6 @@ public class PostDetailFragment extends Fragment {
      * @param recyclerview
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerview){
-
         if (mCommentList != null) {
             mRecyclerView.setAdapter(new DetItemRecyclerViewAdapter
                     (this, mCommentList, mTwoPane));
@@ -166,7 +150,6 @@ public class PostDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.post_detail, container, false);
 
         //Create contingent delete button
-
         SharedPreferences pref = getActivity().getSharedPreferences(getString(R.string.LOGIN_PREFS)
                 , Context.MODE_PRIVATE);
 
@@ -187,16 +170,14 @@ public class PostDetailFragment extends Fragment {
 
                     PostDetailActivity.DeletePostConfirmDialog dpcd = new PostDetailActivity.DeletePostConfirmDialog(mPost, parent);
                     dpcd.show(parent.getSupportFragmentManager(), "DeletePost");
-
                 }
             });
-
         }
-
 
         //Get post content
         final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
 
+        // If user is not anonymous, make user name clickable and navigate to users profile.
         if (!mPost.mIsAnonymous()) {
             userProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -222,7 +203,6 @@ public class PostDetailFragment extends Fragment {
                     .setText(mPost.getmPostBody());
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.dateTime());
-
 
             //TODO - Something is going wrong with this resource value.
             //TODO: Verify the above is still an issue? (8/14/20 - Maxfield)
@@ -266,7 +246,6 @@ public class PostDetailFragment extends Fragment {
                 }
                 tagCon.addView(tagButton, tagLayout);
             }
-
         }
 
         //Get comment add fields
@@ -301,17 +280,20 @@ public class PostDetailFragment extends Fragment {
                     //Detach and reattach the fragment to reload after the comment was added.
                     FragmentTransaction refresh = getFragmentManager().beginTransaction();
                     refresh.detach(thisFrag).attach(thisFrag).commit();
-
                 }
                 if (commentBody.equals(""))
                     Toast.makeText(getContext(), "You cannot submit empty comments!", Toast.LENGTH_SHORT)
                             .show();
                 }
             });
-
         return rootView;
     }
 
+    /**
+     * onViewCreated sets up the recyclerview.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -319,10 +301,12 @@ public class PostDetailFragment extends Fragment {
         mRecyclerView = getView().findViewById(R.id.detRecyclerView);
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
-
         setupRecyclerView((RecyclerView) mRecyclerView);
-
     }
+
+    /**
+     * Inner class responsible for getting the comments.
+     */
     private class CommentsTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -351,6 +335,10 @@ public class PostDetailFragment extends Fragment {
             return response;
         }
 
+        /**
+         * Determine whether GET request was successful.
+         * @param s
+         */
         @Override
         protected void onPostExecute(String s) {
             if (s.startsWith("Unable to")) {
@@ -374,13 +362,15 @@ public class PostDetailFragment extends Fragment {
         }
     }
 
+    /** Refresh current fragment. */
     public void refresh() {
-
         FragmentTransaction refresh = getFragmentManager().beginTransaction();
         refresh.detach(thisFrag).attach(thisFrag).commit();
-
     }
 
+    /**
+     * Sets up recycler view adapter.
+     */
     public class DetItemRecyclerViewAdapter extends RecyclerView.Adapter<DetItemRecyclerViewAdapter.ViewHolder> {
         private final PostDetailFragment mParentActivity;
         private final List<Comment> mValues;
@@ -396,7 +386,6 @@ public class PostDetailFragment extends Fragment {
 
         /**
          * Inflates the view for each posts.
-         *
          * @param parent
          * @param viewType
          * @return
@@ -412,7 +401,6 @@ public class PostDetailFragment extends Fragment {
         /**
          * Responsible for binding the ViewHolder.
          *                    refresh.detach(thisFrag).attach(thisFrag).commit();
-
          * @param holder
          * @param position
          */
@@ -435,9 +423,7 @@ public class PostDetailFragment extends Fragment {
 
             //Create delete post button if the post is ours
             if (isPostMaster) {
-
                 final PostDetailActivity parent = (PostDetailActivity) getActivity();
-
                 holder.mDeleteButton.setVisibility(View.VISIBLE);
                 holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -445,10 +431,8 @@ public class PostDetailFragment extends Fragment {
 
                         PostDetailActivity.DeleteCommentConfirmDialog dccd = new PostDetailActivity.DeleteCommentConfirmDialog(mValues.get(pos), parent);
                         dccd.show(parent.getSupportFragmentManager(), "DeletePost");
-
                     }
                 });
-
             }
         }
 
@@ -479,8 +463,5 @@ public class PostDetailFragment extends Fragment {
                 mDeleteButton = (Button) view.findViewById(R.id.deleteCommentbutton);
             }
         }
-
-
     }
-
 }

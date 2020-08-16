@@ -67,20 +67,15 @@ import edu.tacoma.uw.gossamer_client_android.userprofile.UserProfileActivity;
  */
 public class PostListActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    /** Whether or not the activity is in two-pane mode, i.e. running on a tablet device. */
     private boolean mTwoPane;
     /** A list of Post objects to be added to the feed. */
     private List<Post> mPostList;
     /** Recycler view object to hold the Post. */
     private RecyclerView mRecyclerView;
-
-    //Daily message details
+    /** Daily message details. */
     private String dmTopic, dmBody = ""; //dmLink
-
-    //The array of downloaded string IDs
+    /** The array of downloaded string IDs. */
     public ArrayList<String> tagIDs;
 
     /**
@@ -108,7 +103,6 @@ public class PostListActivity extends AppCompatActivity {
             }
         });
 
-
         if (findViewById(R.id.post_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
@@ -116,14 +110,9 @@ public class PostListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
         new PostsTask().execute(getString(R.string.dailymessage));
-
-
         mRecyclerView = findViewById(R.id.post_list);
-//        assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new VerticalSpaceItem(24));
-//        setupRecyclerView((RecyclerView) mRecyclerView);
     }
 
     /** Retrieves the posts when this activity is resumed. */
@@ -139,8 +128,6 @@ public class PostListActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
             ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
         }
-        //else new PostsTask().execute(getString(R.string.dailymessage));
-
     }
 
     /**
@@ -148,10 +135,8 @@ public class PostListActivity extends AppCompatActivity {
      * @param recyclerView
      */
     private void setupRecyclerView(@NonNull RecyclerView recyclerView){
-//        if (mPostList != null) {
-            mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
-                    (this, mPostList, mTwoPane));
-//        }
+        mRecyclerView.setAdapter(new SimpleItemRecyclerViewAdapter
+                (this, mPostList, mTwoPane));
     }
 
     /**
@@ -176,11 +161,9 @@ public class PostListActivity extends AppCompatActivity {
      * Launches the search activity, using whatever text is in the search bar.
      */
     private void launchSearchActivity(String theQuery) {
-
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra(SearchActivity.SEARCH_QUERY, theQuery);
         startActivity(intent);
-
     }
 
     /**
@@ -191,6 +174,11 @@ public class PostListActivity extends AppCompatActivity {
         /** Loading bar to make the page less uncomfortable as posts are loaded. */
         ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.postList_progressB);
 
+        /**
+         * Default doInBackground method responsible for connecting to database.
+         * @param urls
+         * @return
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -204,6 +192,7 @@ public class PostListActivity extends AppCompatActivity {
 
                     BufferedReader buffer = new BufferedReader(new InputStreamReader(content));
                     String s = "";
+                    //Progress bar.
                     publishProgress();
                     while ((s = buffer.readLine()) != null) {
                         response += s;
@@ -218,11 +207,14 @@ public class PostListActivity extends AppCompatActivity {
             return response;
         }
 
+        /**
+         * Required for progress bar.
+         * @param progress
+         */
         @Override
         protected void onProgressUpdate(Void... progress) {
             mProgressBar.setProgress(10);
             mProgressBar.setBackgroundColor(Color.BLACK);
-
         }
 
         /**
@@ -292,9 +284,7 @@ public class PostListActivity extends AppCompatActivity {
                                             " Please reload the app and try again.",
                                     Toast.LENGTH_LONG).show();
                             break;
-
                     }
-
                 }
             } catch (JSONException e) {
                 Toast.makeText(getApplicationContext(), "JSON Error: " + e.getMessage(),
@@ -309,11 +299,13 @@ public class PostListActivity extends AppCompatActivity {
     public static class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
+        /** Parent Activity. */
         private final PostListActivity mParentActivity;
+        /** List of Posts. */
         private final List<Post> mValues;
+        /** Required for two pane devices. */
         private final boolean mTwoPane;
-
-
+        /** onClickListener that allows individual posts to be clickable. */
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -433,7 +425,6 @@ public class PostListActivity extends AppCompatActivity {
                 }
                 holder.mTagContainer.addView(tagButton, tagLayout);
             }
-
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -477,21 +468,18 @@ public class PostListActivity extends AppCompatActivity {
         final SearchView search = (SearchView) MenuItemCompat.getActionView(searchItem);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+            /** Launches the Search Activity. */
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                //String sq = search.getQuery().toString();
-
                 launchSearchActivity(query);
                 return true;
             }
-
+            /** Return true by default. */
             @Override
             public boolean onQueryTextChange(String newText) {
                 return true;
             }
         });
-
         return true;
     }
 
@@ -511,13 +499,16 @@ public class PostListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Required to enhance the layout of the recylerview.
+     */
     public static class VerticalSpaceItem extends RecyclerView.ItemDecoration {
         private final int space;
-
+        /** Default constructor. */
         public VerticalSpaceItem(int sp) {
             space = sp;
         }
-
+        /** Returns rectangle separation distance. */
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
             outRect.bottom = space;

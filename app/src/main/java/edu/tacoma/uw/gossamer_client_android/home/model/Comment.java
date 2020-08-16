@@ -76,7 +76,6 @@ public class Comment implements Serializable {
         mCommentDateTime = commentDateTime;
         mPostID = postID;
         mCommentID = commentID;
-
     }
 
     /**
@@ -90,14 +89,23 @@ public class Comment implements Serializable {
         mPostID = postID;
     }
 
+    /**
+     * Returns the date and time of this particular comment.
+     * @return String , Date and Time.
+     */
     public String dateTime() {
-
         String date = this.mCommentDateTime.substring(0, 10);
         String time = this.mCommentDateTime.substring(11, 19);
         return date + "  " + time;
-
     }
 
+    /**
+     * Receives a JSON object that contains comments and related information and converts it into
+     * a list of Comment objects.
+     * @param commentJson post information stored in the database.
+     * @return commentList, a list of Comment objects.
+     * @throws JSONException exception
+     */
     public static List<Comment> parseCommentJson(String commentJson) throws JSONException {
 
         List<Comment> commentList = new ArrayList<>();
@@ -115,5 +123,4 @@ public class Comment implements Serializable {
         Log.e("CommentsRead", commentList.toString());
         return commentList;
     }
-
 }

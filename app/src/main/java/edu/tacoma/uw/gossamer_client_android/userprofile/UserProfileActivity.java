@@ -7,7 +7,6 @@
  */
 package edu.tacoma.uw.gossamer_client_android.userprofile;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -131,7 +130,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 mDescriptionEditText.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
-
             }
         });
 
@@ -150,7 +148,6 @@ public class UserProfileActivity extends AppCompatActivity {
                         .replace(R.id.linearLayout3, frag)
                         .addToBackStack(null)
                         .commit();
-
                 //Hide buttons.
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
@@ -169,8 +166,6 @@ public class UserProfileActivity extends AppCompatActivity {
         mTagContainer = (LinearLayout) findViewById(R.id.profile_tagContainer);
         mTagList = new ArrayList<>();
         mUserTags = new ArrayList<>();
-
-
     }
 
     /** Retrieves the user posts when this activity is resumed. */
@@ -201,7 +196,7 @@ public class UserProfileActivity extends AppCompatActivity {
      */
     private class PostsTask extends AsyncTask<String, Void, String> {
 
-        ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.userprofile_progressB);
+        private ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.userprofile_progressB);
 
         @Override
         protected String doInBackground(String... urls) {
@@ -395,7 +390,6 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         };
 
-
         SimpleItemRecyclerViewAdapter(UserProfileActivity parent,
                                       List<Post> items) {
             mValues = items;
@@ -467,7 +461,6 @@ public class UserProfileActivity extends AppCompatActivity {
             }
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
-
         }
 
         /**

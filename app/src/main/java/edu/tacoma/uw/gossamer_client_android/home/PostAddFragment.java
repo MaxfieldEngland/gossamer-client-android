@@ -10,7 +10,6 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.util.Calendar;
 
@@ -35,7 +32,6 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  *
  * @author elijah freeman
  * @author maxfield england
- *
  * @version 1.0 (Aug 3, 2020)
  */
 public class  PostAddFragment extends Fragment {
@@ -44,10 +40,8 @@ public class  PostAddFragment extends Fragment {
     private AddListener mAddListener;
     /** A post and related information. */
     private Post mPost;
-
     /** Current text in post body (saved when tags are selected) */
     private String currPostBody;
-
     /** Determines whether a post is anonymous. */
     private boolean isAnonymous;
 
@@ -69,24 +63,17 @@ public class  PostAddFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAddListener = (AddListener) getActivity();
-
-        //Change the title of the collapsing toolbar.
         Activity activity = this.getActivity();
         assert activity != null;
-        //CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
-        //if (appBarLayout != null) {
-        //    appBarLayout.setTitle("Write a new post");
-        //}
     }
 
+    /** Default onResume method. Sets the the post body upon resume. */
     @Override
     public void onResume() {
-
         super.onResume();
         if (currPostBody != null) {
             TextView postBody = (TextView) getView().findViewById(R.id.add_post_body);
             postBody.setText(currPostBody);
-
         }
     }
 
@@ -141,7 +128,6 @@ public class  PostAddFragment extends Fragment {
                     return;
                 }
                 String postBody = postBodyEditText.getText().toString();
-
                 String postDateTime = Calendar.getInstance().getTime().toString();
 
                 //Used to determine whether the Anon toggle is On or Off.

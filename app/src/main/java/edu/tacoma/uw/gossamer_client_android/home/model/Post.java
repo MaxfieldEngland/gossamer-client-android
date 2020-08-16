@@ -33,12 +33,12 @@ public class Post implements Serializable {
     private String mPostDateTime;
     /** Whether or not the post was set to be anonymous (without their name attached).*/
     private boolean mIsAnonymous;
-
+    /** List of tags. */
     private ArrayList<Tag> tagList;
-
     /** The ID of the post, used to find associated comments. */
     private int mPostID;
 
+    //Getters
     public String getmEmail() {
         return mEmail;
     }
@@ -58,7 +58,6 @@ public class Post implements Serializable {
         return mPostID;
     }
 
-
     /**
      * Constructor used for reading posts. Displayname is retrieved from the server to be displayed
      * on posts, while email serves as the user primary key, and does not need to be displayed.
@@ -76,8 +75,7 @@ public class Post implements Serializable {
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
         mPostID = postID;
-
-        tagList = new ArrayList<Tag>();
+        tagList = new ArrayList<>();
     }
 
     /**
@@ -94,8 +92,7 @@ public class Post implements Serializable {
         mPostDateTime = postDateTime;
         mIsAnonymous = isAnonymous;
         mDisplayName = "WriteMode";
-
-        tagList = new ArrayList<Tag>();
+        tagList = new ArrayList<>();
     }
 
     /**
@@ -120,27 +117,28 @@ public class Post implements Serializable {
         return postList;
     }
 
+    /** Adds tag to list of tags. */
     public void addTag(Tag tag) {
         tagList.add(tag);
-
     }
 
+    /**
+     * Returns the date and time this post.
+     * @return date&time , string
+     */
     public String dateTime() {
-
         String date = this.mPostDateTime.substring(0, 10);
         String time = this.mPostDateTime.substring(11, 19);
         return date + "  " + time;
-
     }
 
+    /** Clears the tag list. */
     public void clearTags() {
         tagList.clear();
     }
 
+    /** Getter for list of tags. */
     public ArrayList<Tag> getTags() {
         return tagList;
     }
-
-
-
 }

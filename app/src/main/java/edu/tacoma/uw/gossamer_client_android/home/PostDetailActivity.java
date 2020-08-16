@@ -9,8 +9,6 @@ package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,23 +17,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.ActionBar;
-import androidx.core.app.NavUtils;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -48,7 +38,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
@@ -66,41 +55,43 @@ import edu.tacoma.uw.gossamer_client_android.home.model.Post;
  */
 public class PostDetailActivity extends AppCompatActivity implements PostAddFragment.AddListener, PostDetailFragment.AddListener {
 
-    /**
-     * Constant required for adding a post
-     */
+    /** Constant required for adding a post. */
     public static final String ADD_POST = "ADD_POST";
-
-    /**
-     * Constant required for receiving tag list
-     */
+    /** Constant required for receiving tag list. */
     public static final String TAG_LIST = "TAG_LIST";
 
-    /**
-     * Member variable for a JSON Post object.
-     */
+    /** JSON Post object. */
     private JSONObject mPostJSON;
+    /** List of JSON Tag objects. */
     private ArrayList<JSONObject> mTagJSON;
+    /** JSON Comment object. */
     private JSONObject mCommentJSON;
+    /** JSON Delete object. */
     private JSONObject deleteJSON;
+    /** Conditional flag value. */
     private boolean writeComment = false;
+    /** Conditional flag values. */
     private boolean addTags = false;
+    /** Conditional flag values. */
     private boolean lastTag = false;
-
+    /** Conditional flag values. */
     public boolean enableShareOption = false;
-
+    /** Delete Post ID int value. */
     public int deletePostID = -1;
+    /** Delete Comment ID int value. */
     public int deleteCommentID = -1;
+    /** Number of tags processed. */
     private int tagsProcessed = 0;
-
+    /** List of tags. */
     public ArrayList<String> tagList;
+    /** List of user selected tags. */
     public ArrayList<String> selectedTags;
 
     /**
      * Default onCreate view required to instantiating the Post Detail layout,
      * and inflating associated fragment.
-     *
-     * @param savedInstanceState     */
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,13 +120,11 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.post_detail_container, fragment).commit();
             }
-
         }
     }
 
     /**
      * Sends a JSON post object which is sent to the database.
-     *
      * @param post
      */
     @Override
@@ -158,6 +147,11 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         finish();
     }
 
+    /**
+     * Creates JSON Tag objects and sends to database.
+     * @param tagName , name of the tag.
+     * @param PostID , ID for associated post.
+     */
     public void commitTag(String tagName, int PostID) {
 
         Log.e("COMMITTAG","ENTERING COMMIT TAG LOOP");
@@ -176,11 +170,13 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             Toast.makeText(this, "Error with JSON creation on adding tags: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
-
         if (lastTag) finish();
-
     }
 
+    /**
+     * Creates Comment JSON Object and adds comments to database.
+     * @param comment , Comment object to be added.
+     */
     @Override
     public void addComment(Comment comment) {
 
@@ -195,7 +191,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mCommentJSON.put("CommentDateTime", comment.getmCommentDateTime());
             mCommentJSON.put("PostID", comment.getmPostID());
             new AddPostAsyncTask().execute(url.toString());
-
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation on adding a comment: "
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -218,8 +213,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             Toast.makeText(this, "Error with JSON creation on post deletion: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     /**
@@ -240,25 +233,18 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
 
         //Refresh the fragment so that we don't see the deleted comment anymore
-
-
         PostDetailFragment thisFrag = (PostDetailFragment) getSupportFragmentManager().findFragmentByTag("detail");
         thisFrag.refresh();
-
     }
 
     /**
      * Launches the search activity, using whatever text is in the search bar.
      */
     public void launchSearchActivity(String theQuery) {
-
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra(SearchActivity.SEARCH_QUERY, theQuery);
         startActivity(intent);
-
     }
-
-
 
     /**
      * Adds the post to the database. Also will be used to add comments.
@@ -347,7 +333,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                         Log.v("POSTCOMMENTDELETE", s);
                         return;
                     }
-
                     if (addTags) {
                         Log.v("TAGADDRESPONSE", s);
                         return;
@@ -355,7 +340,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
                         //Post adding: since we successfully added the post, extract the post id returned
                         //So we can add any relevant tags to the post!
-
                         if (!s.contains("delete")) {
 
                             JSONObject data = jsonObject.getJSONObject("postid");
@@ -367,32 +351,35 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                             }
                             lastTag = true;
                         }
-
-
                 }
             } catch (JSONException e) {
                 String c;
                 if (writeComment) c = "comment";
                 else c = "post";
-
                 Log.e("DETAILWEBERROR", e.getMessage());
             }
         }
-
     }
 
+    /** Inner class that handles the Delete Post Confirm Dialog. */
     public static class DeletePostConfirmDialog extends DialogFragment {
-
+        /** Post that is to be deleted. */
         Post mPost;
+        /** Parent Activity. */
         PostDetailActivity parent;
 
+        /** Constructor for this class. */
         public DeletePostConfirmDialog(Post p, PostDetailActivity par){
             super();
             mPost = p;
             parent = par;
-
         }
 
+        /**
+         * Creates the dialog object.
+         * @param savedInstanceState
+         * @return
+         */
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder build = new AlertDialog.Builder(getActivity());
@@ -400,7 +387,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-
                             parent.deletePostID = mPost.getmPostID();
                             parent.deletePost();
                             parent.finish();
@@ -414,18 +400,26 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         }
     }
 
+    /** Inner class that handles the Delete Comment Confirm Dialog. */
     public static class DeleteCommentConfirmDialog extends DialogFragment {
 
+        /** Comment that is to be deleted. */
         Comment mComment;
+        /** Parent Activity. */
         PostDetailActivity parent;
 
+        /** Constructor for this class. */
         public DeleteCommentConfirmDialog(Comment c, PostDetailActivity par){
             super();
             mComment = c;
             parent = par;
-
         }
 
+        /**
+         * Creates the dialog object.
+         * @param savedInstanceState
+         * @return
+         */
         @Override
         public Dialog onCreateDialog(final Bundle savedInstanceState) {
             AlertDialog.Builder build = new AlertDialog.Builder(getActivity());
@@ -433,10 +427,8 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-
                             parent.deleteCommentID = mComment.getmCommentID();
                             parent.deleteComment();
-
 
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -458,7 +450,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         MenuItem sharepost = menu.findItem(R.id.share_post);
 
         if (enableShareOption) {
-
             if (sharepost != null)
                 sharepost.setVisible(true);
         }
