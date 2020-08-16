@@ -63,7 +63,7 @@ public class UserProfileActivity extends AppCompatActivity {
     /** List of Post objects to be added to the feed. */
     private List<Post> mPostList;
     /** List of user tags. */
-    private ArrayList<Tag> mUserTags;
+    public ArrayList<Tag> mUserTags;
     /** List of Tags. */
     private ArrayList<Tag> mTagList;
     /** List of tags the user selected. */
@@ -132,8 +132,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
 
-                //TODO - We need to refresh this activity after we click the done button
-                // so that the new tag appears on the profile immediately.
             }
         });
 
@@ -581,7 +579,6 @@ public class UserProfileActivity extends AppCompatActivity {
      */
     private void displayUserTags() {
 
-        //TODO - Remove once we get the appropriate tag colors from the database.
         for (Tag t : mTagList) {
             mUserTags.add(t);
         }

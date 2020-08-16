@@ -87,7 +87,6 @@ public class Tag implements Serializable {
 
         return tags;
 
-
     }
 
     public static ArrayList<String> parseTagIDJson(String tagJson) throws JSONException {
@@ -104,6 +103,21 @@ public class Tag implements Serializable {
             }
         }
         return tags;
+    }
+
+    /**
+     * Return a list of String names corresponding to a list of tag objects
+     * @param tags an arraylist of of tags
+     * @return A corresponding arraylist only of strings representing tag text.
+     */
+    public static ArrayList<String> getTagNames(ArrayList<Tag> tags){
+        ArrayList<String> names = new ArrayList<String>();
+        for (Tag tag : tags) {
+
+            names.add(tag.getName());
+        }
+        return names;
+
     }
 
     @Override

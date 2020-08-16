@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import edu.tacoma.uw.gossamer_client_android.R;
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * Allows a user to add tags to their profile page.
@@ -56,11 +57,13 @@ public class ProfileAddTagsFragment extends Fragment {
         LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
 
+        ArrayList<String> userCurrentTags = Tag.getTagNames(parentActivity.mUserTags);
+
         for (String tagName : parentActivity.mTagIDs) {
             CheckBox tagCB = new CheckBox(v.getContext());
             buttonList.add(tagCB);
             tagCB.setText(tagName);
-            if (parentActivity.mSelectedTags.contains(tagName))
+            if (userCurrentTags.contains(tagName))
                 tagCB.toggle();
             tagCon.addView(tagCB);
         }
