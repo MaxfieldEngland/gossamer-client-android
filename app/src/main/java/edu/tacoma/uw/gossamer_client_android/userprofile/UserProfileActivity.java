@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.tacoma.uw.gossamer_client_android.R;
@@ -154,13 +156,18 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 ProfileAddTagsFragment frag = new ProfileAddTagsFragment();
+
+                mEditButton.setVisibility(View.GONE);
+
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.linearLayout3, frag)
+                        .replace(R.id.profiletag_replace, frag)
                         .addToBackStack(null)
                         .commit();
                 //Hide buttons.
-                mEditButton.setVisibility(View.GONE);
+
+                findViewById(R.id.prof_inner_view).setVisibility(View.GONE);
+
                 mTagButton.setVisibility(View.GONE);
                 mTagsChanged = true;
             }
@@ -454,7 +461,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
-            LinearLayout tagContainer = (LinearLayout) mParentActivity.findViewById(R.id.profile_tagContainer);
             ArrayList<Tag> tags = mValues.get(position).getTags();
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -605,6 +611,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private void displayUserTags() {
 
         for (Tag t : mTagList) {
+            if (!mUserTags.contains(t))
             mUserTags.add(t);
         }
 
@@ -612,7 +619,12 @@ public class UserProfileActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         tagLayout.setMargins(0, 0, 10, 0);
 
+        HashSet<Tag> tagsContained = new HashSet<Tag>();
+
         for (Tag tag : mUserTags) {
+            if (tagsContained.contains(tag)) continue;
+            if (mTagContainer.getChildCount() > mUserTags.size()) continue;
+            tagsContained.add(tag);
             Button tagButton;
             tagButton = new Button(this);
             tagButton.setText(tag.getName());

@@ -88,6 +88,9 @@ public class ProfileAddTagsFragment extends Fragment {
                     parentActivity.mSelectedTags = profileTags;
                     parentActivity.findViewById(R.id.launchProfileAddTagsFragmentButton).setVisibility(View.VISIBLE);
 
+                    getActivity().findViewById(R.id.prof_inner_view).setVisibility(View.VISIBLE);
+
+
                     getFragmentManager().popBackStack();
                 }
             }
