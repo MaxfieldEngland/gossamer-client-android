@@ -78,16 +78,37 @@ public class RegisterFragment extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                boolean successfulLogin = true;
+
                 String userName = userNameEText.getText().toString();
                 String email = emailEText.getText().toString();
                 String pwd = pwdEText.getText().toString();
                 String confirmPwd = pwdConfirmEText.getText().toString();
 
-                if (!validatePassword(pwd, confirmPwd)) {
-                    Toast.makeText(getContext(), "Password does not match",Toast.LENGTH_SHORT).show();
-                } else { //Sends information to the SignInActivity.
-                    mRegisterFragmentListener.register(userName, email, pwd);
+                //Check: email must have an "@" and a "."
+                if (!email.contains("@") || (!email.contains("."))) {
+                    Toast.makeText(getContext(), "Please enter a valid email.", Toast.LENGTH_SHORT).show();
+                    successfulLogin = false;
+                    return;
                 }
+
+                //Check: Displayname must exist as more than whitespace
+                if (userName.trim().length() < 1) {
+                    Toast.makeText(getContext(), "Please enter a display name.", Toast.LENGTH_SHORT).show();
+                    successfulLogin = false;
+                    return;
+                }
+
+                //Check: passwords must match
+                if (!validatePassword(pwd, confirmPwd)) {
+                    Toast.makeText(getContext(), "Password does not match", Toast.LENGTH_SHORT).show();
+                    successfulLogin = false;
+                }
+                    if (successfulLogin)
+                    //Sends information to the SignInActivity.
+                    mRegisterFragmentListener.register(userName, email, pwd);
+
 
             }
         });

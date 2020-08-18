@@ -4,6 +4,8 @@ import org.json.JSONException;
 import org.junit.Test;
 
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 
@@ -44,6 +46,8 @@ public class CommentTest {
                 " I\'m making a comment on your post!\",\"commentdatetime\":\"" +
                 "2020-08-04T12:01:24.000Z\",\"displayname\":\"Another test user\",\"" +
                 "postid\":1,\"commentid\":1}]";
+
+
 
         //List<Comment> test = Comment.parseCommentJson(s);
         //List<Comment> test = Comment.parseCommentJson("[{email:test2@uw.edu, commentbody:Hello! Im making a comment on your post!, commentdatetime:2020-08-04T12:01:24.000Z, displayname:Another test user,postid:1,commentid:1}]");
