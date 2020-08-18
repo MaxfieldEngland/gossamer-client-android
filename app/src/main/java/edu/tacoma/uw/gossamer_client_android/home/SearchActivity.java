@@ -168,7 +168,6 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... progress) {
             mProgressBar.setProgress(10);
-            mProgressBar.setBackgroundColor(Color.BLACK);
         }
 
         /**
@@ -231,20 +230,23 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Post item = (Post) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putSerializable(PostDetailFragment.ARG_ITEM_ID, item);
-                    PostDetailFragment fragment = new PostDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.post_detail_container, fragment)
-                            .commit();
-                }
-                else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, PostDetailActivity.class);
-                    intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
-                    context.startActivity(intent);
+
+                //PostID -1 is used for the empty search results post layout. We don't want it to have a listener.
+                if (item.getmPostID() > 0) {
+                    if (mTwoPane) {
+                        Bundle arguments = new Bundle();
+                        arguments.putSerializable(PostDetailFragment.ARG_ITEM_ID, item);
+                        PostDetailFragment fragment = new PostDetailFragment();
+                        fragment.setArguments(arguments);
+                        mParentActivity.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.post_detail_container, fragment)
+                                .commit();
+                    } else {
+                        Context context = view.getContext();
+                        Intent intent = new Intent(context, PostDetailActivity.class);
+                        intent.putExtra(PostDetailFragment.ARG_ITEM_ID, item);
+                        context.startActivity(intent);
+                    }
                 }
             }
         };
