@@ -36,10 +36,6 @@ public class CommentTest {
                 , "2020-08-04  12:01:24");
     }
 
-    /*
-
-    NOT TESTING METHODS THAT REQUIRE JSON.
-
     @Test
     public void testparseCommentJson() throws JSONException {
         Comment testComment = new Comment("test@uw.edu", "User"
@@ -51,17 +47,18 @@ public class CommentTest {
                 "2020-08-04T12:01:24.000Z\",\"displayname\":\"Another test user\",\"" +
                 "postid\":1,\"commentid\":1}]";
 
-        List<Comment> test = Comment.parseCommentJson(s);
-        List<Comment> test = Comment.parseCommentJson("[{email:test2@uw.edu, commentbody:Hello! Im making a comment on your post!, commentdatetime:2020-08-04T12:01:24.000Z, displayname:Another test user,postid:1,commentid:1}]");
 
-        Comment testMethodComment = test.get(0);
 
-        //parseCommentJson method works correctly on correct input.
-        assertEquals(testComment.getmEmail(), testMethodComment.getmEmail());
-        assertEquals(testComment.getmCommentBody(), testMethodComment.getmCommentBody());
-        assertEquals(testComment.getmCommentDateTime(), testMethodComment.getmCommentDateTime());
-        assertEquals(testComment.getmPostID(), testMethodComment.getmPostID());
-        assertEquals(testComment.getmCommentID(), testMethodComment.getmCommentID());
+        //List<Comment> test = Comment.parseCommentJson(s);
+        //List<Comment> test = Comment.parseCommentJson("[{email:test2@uw.edu, commentbody:Hello! Im making a comment on your post!, commentdatetime:2020-08-04T12:01:24.000Z, displayname:Another test user,postid:1,commentid:1}]");
+
+       // Comment testMethodComment = test.get(0);
+//
+//        //parseCommentJson method works correctly on correct input.
+//        assertEquals(testComment.getmEmail(), testMethodComment.getmEmail());
+//        assertEquals(testComment.getmCommentBody(), testMethodComment.getmCommentBody());
+//        assertEquals(testComment.getmCommentDateTime(), testMethodComment.getmCommentDateTime());
+//        assertEquals(testComment.getmPostID(), testMethodComment.getmPostID());
+//        assertEquals(testComment.getmCommentID(), testMethodComment.getmCommentID());
     }
-     */
 }
