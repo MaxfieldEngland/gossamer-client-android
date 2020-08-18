@@ -167,7 +167,7 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
         //Set up the recycler view for the users posts.
-        mRecyclerView = findViewById(R.id.user_profile_RecyclerView);
+        mRecyclerView = findViewById(R.id.user_post_list);
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new UserProfileActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
@@ -276,8 +276,14 @@ public class UserProfileActivity extends AppCompatActivity {
                         JSONObject profData = jsonObject.getJSONObject("profData");
                         mUser = profData.getString("displayname");
 
-                        mDescriptionEditText.setText(new JSONObject(jsonObject.getString("profData"))
-                                .getString("profiledescription"));
+                        String desc = profData.getString("profiledescription");
+
+                        //Replace the description to a default value in case the value doesn't seem to exist.
+                        if (desc == null || desc.equals("null")) {
+                            desc = "I am a new user of Gossamer.";
+                        }
+
+                        mDescriptionEditText.setText(desc);
                         mUsernameEditText.setText(mUser);
 
                     }
@@ -454,7 +460,11 @@ public class UserProfileActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             tagLayout.setMargins(0, 0, 10, 0);
 
+            ArrayList<Tag> tagsContained = new ArrayList<Tag>();
+
             for (Tag tag : tags) {
+                if (tagsContained.contains(tag)) continue;
+                tagsContained.add(tag);
                 Button tagButton;
                 tagButton = new Button(mParentActivity);
                 tagButton.setText(tag.getName());

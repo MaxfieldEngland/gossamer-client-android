@@ -75,7 +75,7 @@ public class ProfileAddTagsFragment extends Fragment {
             public void onClick(View view) {
                 getActivity().findViewById(R.id.edit_done).setVisibility(View.VISIBLE);
                 for (CheckBox check : buttonList) {
-                    if (check.isChecked())
+                    if (check.isChecked() && !profileTags.contains(check.getText().toString()))
                         profileTags.add(check.getText().toString());
                     if (!check.isChecked())
                         profileTags.remove(check.getText().toString());
