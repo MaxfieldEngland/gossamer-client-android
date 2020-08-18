@@ -408,6 +408,23 @@ public class PostDetailFragment extends Fragment {
         public void onBindViewHolder(final DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
 
             holder.mIdView.setText(mValues.get(position).getmDisplayName());
+
+            final int currIndex = position;
+
+            holder.mIdView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    String e = mValues.get(currIndex).getmEmail();
+                    String u = mValues.get(currIndex).getmDisplayName();
+                    Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+                    intent.putExtra("email", e);
+                    intent.putExtra("username", u);
+                    startActivity(intent);
+
+                }
+            });
+
             holder.mContentView.setText(mValues.get(position).getmCommentBody());
             holder.mDateView.setText(mValues.get(position).dateTime());
             holder.itemView.setTag(mValues.get(position));
