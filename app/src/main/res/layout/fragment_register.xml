@@ -107,6 +107,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/registration_button"
+        android:background="@drawable/blue_rect_button"
+        android:backgroundTint="@color/maxBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

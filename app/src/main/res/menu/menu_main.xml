@@ -2,16 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_viewprofile"
+        android:title="@string/view_profile" />
+    <item
         android:id="@+id/action_logout"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:title="@string/action_logout"
-        app:showAsAction="ifRoom"/>
-
+        app:showAsAction="never" />
     <item
         android:id="@+id/app_bar_search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:orderInCategory="102"
-        android:title="Search"
+        android:orderInCategory="103"
+        android:title="@string/search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
+
 </menu>

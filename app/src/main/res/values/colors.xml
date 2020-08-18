@@ -5,11 +5,16 @@
     <color name="colorAccent">@color/maxBlue</color>
 
     <!-- App colors (suggest): decided with coolers.co -->
+    <!-- -->
     <color name="kobi">#F699CD</color>
     <color name="persianPink">#F58CC9</color>
+    <color name="mimiPink">#FCD9ED</color>
     <color name="jet">#343434</color>
     <color name="maxBlue">#53B3CB</color>
+    <color name="blueMunsell">#2F879D</color>
     <color name="lightYellow">#FEFEE3</color>
+    <color name="lightCyan">#D1EEF0</color>
+    <color name="powderBlue">#CAE2E3</color>
     <color name="eggshell">#F9F5E3</color>
 
 

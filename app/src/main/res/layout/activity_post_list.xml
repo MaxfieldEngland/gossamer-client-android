@@ -7,17 +7,19 @@
     android:fitsSystemWindows="true"
     tools:context=".home.PostListActivity">
 
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="405dp"
+        android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="347dp"
+            android:layout_height="wrap_content"
+            android:minHeight="0dp"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
@@ -32,45 +34,56 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="345dp">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/daily_message"
-                    android:layout_width="360dp"
-                    android:layout_height="166dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginLeft="24dp"
+                    android:layout_width="319dp"
+                    android:layout_height="158dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginRight="32dp"
+                    android:layout_marginBottom="32dp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.558" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                    app:layout_constraintVertical_bias="1.0" />
 
                 <TextView
                     android:id="@+id/daily_message_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
                     android:textSize="18sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/daily_message"
-                    app:layout_constraintEnd_toEndOf="@+id/daily_message"
-                    app:layout_constraintHorizontal_bias="0.536"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.561"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.947" />
+                    app:layout_constraintVertical_bias="0.942" />
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="Learn about:"
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="77dp"
+                    android:layout_height="105dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintBottom_toTopOf="@+id/daily_message_title"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/gos1" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -88,6 +101,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
+        android:layout_marginTop="8dp"
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -105,8 +119,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@color/colorPrimary"
-        app:backgroundTint="@color/colorAccent"
+        android:background="@color/maxBlue"
+        app:backgroundTint="@color/maxBlue"
         app:backgroundTintMode="add"
         app:srcCompat="@drawable/ic_input_add_white" />
 

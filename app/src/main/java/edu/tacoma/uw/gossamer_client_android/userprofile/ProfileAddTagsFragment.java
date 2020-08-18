@@ -25,6 +25,8 @@ public class ProfileAddTagsFragment extends Fragment {
     private ArrayList<String> profileTags;
     /** Required empty constructor for fragment. */
     public ProfileAddTagsFragment() {}
+    /** Maximum amount of tags allowed in a profile. */
+    public static final int MAX_TAGS = 5;
 
     /**
      * Default onCreate method. Instantiates profile tags & parentActivity.
@@ -78,9 +80,9 @@ public class ProfileAddTagsFragment extends Fragment {
                     if (!check.isChecked())
                         profileTags.remove(check.getText().toString());
                 }
-                if (profileTags.size() > 5) {
+                if (profileTags.size() > MAX_TAGS) {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "Please select at most 5 tags!", Toast.LENGTH_SHORT).show();
+                            "Please select at most " + MAX_TAGS + " tags!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     parentActivity.mSelectedTags = profileTags;

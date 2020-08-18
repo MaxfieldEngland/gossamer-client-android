@@ -89,11 +89,13 @@ public class PostListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_list);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
+//        getSupportActionBar().setIcon(R.mipmap.app_image_gossamer);
         setTitle("Gossamer");
 
+
+
         CollapsingToolbarLayout toolbar =  findViewById(R.id.toolbar_layout);
-        toolbar.setTitle("Posts");
+        toolbar.setTitle("");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +128,7 @@ public class PostListActivity extends AppCompatActivity {
 
         if (!dmBody.isEmpty() && !dmTopic.isEmpty()){
             ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
-            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
+            ((TextView) findViewById(R.id.daily_message_title)).setText("What does " + dmTopic + " mean?");
         }
     }
 
@@ -275,7 +277,7 @@ public class PostListActivity extends AppCompatActivity {
 
                             //Then make them appear properly in the app
                             ((TextView) findViewById(R.id.daily_message)).setText(dmBody);
-                            ((TextView) findViewById(R.id.daily_message_title)).setText(dmTopic);
+                            ((TextView) findViewById(R.id.daily_message_title)).setText("What does " + dmTopic + " mean?");
                             break;
 
                         //We didn't get anything we wanted!
@@ -488,14 +490,27 @@ public class PostListActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS),
+                Context.MODE_PRIVATE);
+
         if (item.getItemId() == R.id.action_logout) {
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.LOGIN_PREFS),
-                    Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(getString(R.string.LOGGEDIN), false).commit();
             Intent intent = new Intent(this, SignInActivity.class);
             startActivity(intent);
             finish();
         }
+
+        if (item.getItemId() == R.id.action_viewprofile) {
+            String email = sharedPreferences.getString(getString(R.string.EMAIL), null);
+
+            Intent intent = new Intent(this, UserProfileActivity.class);
+            intent.putExtra("email", email);
+            intent.putExtra("username", " ");
+            startActivity(intent);
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -8,6 +8,7 @@
 package edu.tacoma.uw.gossamer_client_android.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ public class PostAddTagsFragment extends Fragment {
     private ArrayList<String> postTags;
     /** Parent activity. */
     PostDetailActivity parentActivity;
+    /** The amount of tags allowed to be applied to a given post */
+    public static final int TAG_LIMIT = 4;
 
     /** Default empty constructor. */
     public PostAddTagsFragment() {
@@ -87,14 +90,15 @@ public class PostAddTagsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 for (CheckBox check : buttonList) {
-                    if (check.isChecked())
+                    if (check.isChecked() && !postTags.contains(check.getText().toString()))
                         postTags.add(check.getText().toString());
                     if (!check.isChecked())
                         postTags.remove(check.getText().toString());
                 }
-                if (postTags.size() > 5) {
+                if (postTags.size() > TAG_LIMIT) {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "Please select at most 5 tags!", Toast.LENGTH_SHORT).show();
+                            "Please select at most " + TAG_LIMIT + " tags!", Toast.LENGTH_SHORT).show();
+                    Log.v("POSTTAGLIMIT", postTags.size() + " : " + postTags.toString());
                 }
                 else {
                     parentActivity.selectedTags = postTags;

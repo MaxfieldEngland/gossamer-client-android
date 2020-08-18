@@ -8,8 +8,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardBackgroundColor="@color/eggshell"
-        app:cardCornerRadius="4dp"
+        app:cardBackgroundColor="@color/powderBlue"
+        app:cardCornerRadius="20dp"
         app:cardElevation="0dp"
         app:cardMaxElevation="0dp">
 
@@ -35,7 +35,7 @@
                     android:layout_marginRight="@dimen/text_margin"
                     android:layout_marginBottom="@dimen/text_margin"
                     android:textAppearance="?attr/textAppearanceListItem"
-                    android:textColor="@color/maxBlue"
+                    android:textColor="@color/jet"
                     android:textSize="18sp" />
 
                 <Button
@@ -66,9 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
-                android:gravity="end"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/jet" />
+                android:gravity="end"/>
 
         </LinearLayout>
 

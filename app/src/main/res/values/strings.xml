@@ -8,7 +8,7 @@
     <string name="create_account">Create Account</string>
 
     <!-- Register Fragment Strings -->
-    <string name="username_text">Enter a Username</string>
+    <string name="username_text">Enter a display name</string>
     <string name="new_pwd_text">Enter a password</string>
     <string name="pwd_length_hint">Password must be longer than 6 characters</string>
     <string name="register_welcome_message">Welcome to Gossamer</string>
@@ -43,6 +43,10 @@
 
     <string name="learn_more">Learn More</string>
     <string name="share_post">Share Post</string>
+    <string name="search">Search</string>
+    <string name="view_profile">View Profile</string>
+    <string name="learn_about">Learn about:</string>
+    <string name="gossamer_logo">Gossamer logo</string>
 
 
 </resources>

@@ -81,6 +81,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private String mProfileDescription;
     /** EditText view to display profile description. */
     private EditText mDescriptionEditText;
+    /** EditText view to display profile display name. */
+    private EditText mUsernameEditText;
+
     /** Done button. */
     private Button mEditButton;
     /** Tag button. */
@@ -91,8 +94,11 @@ public class UserProfileActivity extends AppCompatActivity {
     private LinearLayout mTagContainer;
     /** Flag value adding tags. */
     private boolean mAddTags = false;
+    /** Flag value for whether the Tags button was pressed on the edit screen. */
+    private boolean mTagsChanged = false;
     /** Number of tags that have been processed. */
     private int mTagsProcessed = 0;
+
 
     /**
      * Default onCreate method. Provides functionality for to the UserProfile Activity.
@@ -111,13 +117,16 @@ public class UserProfileActivity extends AppCompatActivity {
         }
         setTitle("Profile");
 
-        //Sets users name.
-        TextView userName = findViewById(R.id.user_profile_name);
-        userName.setText(mUser);
-
         //Profile Description EditText.
         mDescriptionEditText = findViewById(R.id.user_profile_abt_me);
         mDescriptionEditText.setEnabled(false);
+
+        mUsernameEditText = findViewById(R.id.user_profile_name);
+        mUsernameEditText.setEnabled(false);
+
+        //Sets users name.
+        mUsernameEditText.setText(mUser);
+
 
         // Done button - user presses they finish editing their profile.
         mEditButton = findViewById(R.id.edit_done);
@@ -126,8 +135,10 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mProfileDescription = mDescriptionEditText.getText().toString();
+                mUser = mUsernameEditText.getText().toString();
                 addProfile(mUser, mProfileDescription, mUserEmail);
                 mDescriptionEditText.setEnabled(false);
+                mUsernameEditText.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
             }
@@ -151,6 +162,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 //Hide buttons.
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
+                mTagsChanged = true;
             }
         });
 
@@ -260,13 +272,19 @@ public class UserProfileActivity extends AppCompatActivity {
                     }
                     // Get users profile description.
                     else if (jsonObject.has("profData")) {
+
+                        JSONObject profData = jsonObject.getJSONObject("profData");
+                        mUser = profData.getString("displayname");
+
                         mDescriptionEditText.setText(new JSONObject(jsonObject.getString("profData"))
                                 .getString("profiledescription"));
+                        mUsernameEditText.setText(mUser);
+
                     }
                     // Get tags associated with users posts.
                     else if (jsonObject.has("tags")) {
                         Tag.parseTagJson(mPostList, jsonObject.getString("tags"));
-                        if (!mPostList. isEmpty()) {
+                        if (!mPostList.isEmpty()) {
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
                     }
@@ -354,10 +372,13 @@ public class UserProfileActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(s);
                 if (jsonObject.getBoolean("success") && jsonObject.has("changedProfile")) {
 
-                    new AddProfileAsyncTask().execute(getString(R.string.deleteusertags));
-                    // Create new Tags based on tags selected by users.
-                    for (String tagName : mSelectedTags) {
-                        addUserTags(mUserEmail, tagName);
+                    if (mTagsChanged) {
+                        new AddProfileAsyncTask().execute(getString(R.string.deleteusertags));
+                        // Create new Tags based on tags selected by users.
+                        for (String tagName : mSelectedTags) {
+                            addUserTags(mUserEmail, tagName);
+                        }
+                        mTagsChanged = false;
                     }
                     finish();
                     startActivity(getIntent());
@@ -541,6 +562,7 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         } else if (item.getItemId() == R.id.edit_userprofile) {
             mDescriptionEditText.setEnabled(true);
+            mUsernameEditText.setEnabled(true);
             mEditButton.setVisibility(View.VISIBLE);
             mTagButton.setVisibility(View.VISIBLE);
         }

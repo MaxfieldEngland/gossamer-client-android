@@ -128,4 +128,13 @@ public class Tag implements Serializable {
         }
         else return false;
     }
+
+    /**
+     * Overridden toString method; returns the name associated with the tag.
+     * @return mTagName; the associated text of the tag.
+     */
+    @Override
+    public String toString() {
+        return mTagName;
+    }
 }
