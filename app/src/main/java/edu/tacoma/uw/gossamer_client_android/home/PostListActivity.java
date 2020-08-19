@@ -393,7 +393,7 @@ public class PostListActivity extends AppCompatActivity {
 
             for (Tag tag : tags) {
                 if (tagsContained.contains(tag)) continue;
-                if (holder.mTagContainer.getChildCount() > tags.size()) continue;
+                if (holder.mTagContainer.getChildCount() >= tags.size()) continue;
                 tagsContained.add(tag);
                 final Button tagButton;
                 tagButton = new Button(mParentActivity);
@@ -410,6 +410,7 @@ public class PostListActivity extends AppCompatActivity {
                         mParentActivity.launchSearchActivity(tagButton.getText().toString());
                     }
                 });
+
 
                 //Adding some graphical features that are build version dependent:
                 //Get rid of the tag button shadows by getting rid of the state list animator

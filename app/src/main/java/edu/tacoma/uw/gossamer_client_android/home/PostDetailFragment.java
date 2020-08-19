@@ -178,10 +178,10 @@ public class PostDetailFragment extends Fragment {
         final TextView userProfile = rootView.findViewById(R.id.post_detail_id);
 
         // If user is not anonymous, make user name clickable and navigate to users profile.
-        if (!mPost.mIsAnonymous()) {
-            userProfile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        userProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mPost.mIsAnonymous()) {
                     String e = mPost.getmEmail();
                     String u = mPost.getmDisplayName();
                     Intent intent = new Intent(getActivity(), UserProfileActivity.class);
@@ -189,8 +189,8 @@ public class PostDetailFragment extends Fragment {
                     intent.putExtra("username", u);
                     startActivity(intent);
                 }
-            });
-        }
+            }
+        });
 
         // Show the dummy content as text in a TextView.
         if (mPost != null) {
@@ -204,8 +204,6 @@ public class PostDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))
                     .setText(mPost.dateTime());
 
-            //TODO - Something is going wrong with this resource value.
-            //TODO: Verify the above is still an issue? (8/14/20 - Maxfield)
             LinearLayout tagCon = (LinearLayout) rootView.findViewById(R.id.det_tagContainer);
 
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,

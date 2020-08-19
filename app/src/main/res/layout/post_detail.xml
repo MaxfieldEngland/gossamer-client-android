@@ -23,8 +23,7 @@
             android:textAppearance="?attr/textAppearanceListItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textIsSelectable="true" />
+            android:padding="16dp"/>
 
         <Button
             android:id="@+id/deletePostButton"
