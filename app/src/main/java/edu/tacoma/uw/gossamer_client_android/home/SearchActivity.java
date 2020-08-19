@@ -312,6 +312,7 @@ public class SearchActivity extends AppCompatActivity {
             tagLayout.setMargins(0, 0, 10, 0);
 
             for (Tag tag : tags) {
+                if (holder.mTagContainer.getChildCount() > tags.size()) continue;
                 Button tagButton;
                 tagButton = new Button(mParentActivity);
                 tagButton.setText(tag.getName());

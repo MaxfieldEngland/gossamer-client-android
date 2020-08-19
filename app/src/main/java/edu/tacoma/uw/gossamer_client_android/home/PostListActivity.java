@@ -393,6 +393,7 @@ public class PostListActivity extends AppCompatActivity {
 
             for (Tag tag : tags) {
                 if (tagsContained.contains(tag)) continue;
+                if (holder.mTagContainer.getChildCount() > tags.size()) continue;
                 tagsContained.add(tag);
                 final Button tagButton;
                 tagButton = new Button(mParentActivity);
