@@ -23,6 +23,35 @@ import java.util.List;
  */
 public class Post implements Serializable {
 
+    /**Represents email in JSON parsing and putExtra */
+    public static final String EMAIL = "email";
+    /**Represents display name in some contexts */
+    public static final String USER_NAME = "username";
+    /**Represents display name in parsing and putExtra */
+    public static final String DISPLAY_NAME = "displayname";
+    /**Represents post body in JSON parsing */
+    public static final String POST_BODY = "postbody";
+    /**Represents post' date time in JSON parsing */
+    public static final String POST_DATE_TIME = "postdatetime";
+    /**Represents anonymity boolean (isAnonymous) in JSON parsing */
+    public static final String IS_ANONYMOUS = "isanonymous";
+    /**Represents post ID in JSON parsing and putextra */
+    public static final String POST_ID = "postid";
+
+    /**Represents email in JSON post */
+    public static final String EMAIL_CAP = "Email";
+    /**Represents display name in JSON post */
+    public static final String DISPLAY_NAME_CAP = "DisplayName";
+    /**Represents post body in JSON post */
+    public static final String POST_BODY_CAP = "PostBody";
+    /**Represents post id in JSON post */
+    public static final String POST_ID_CAP = "PostID";
+    /**Represents post datetime in JSON post */
+    public static final String POST_DATE_TIME_CAP = "PostDateTime";
+    /**Represents post anonymity in JSON post */
+    public static final String IS_ANONYMOUS_CAP = "isAnonymous";
+
+
     /** Email of the user.  */
     private String mEmail;
     /** Display Name of user. */
@@ -109,13 +138,14 @@ public class Post implements Serializable {
 
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                Post post = new Post(obj.getString("email"), obj.getString("postbody"),
-                        obj.getString("postdatetime"), obj.getBoolean("isanonymous"), obj.getString("displayname"), obj.getInt("postid"));
+                Post post = new Post(obj.getString(EMAIL), obj.getString(POST_BODY),
+                        obj.getString(POST_DATE_TIME), obj.getBoolean(IS_ANONYMOUS), obj.getString(DISPLAY_NAME), obj.getInt(POST_ID));
                 postList.add(post);
             }
         }
         return postList;
     }
+
 
     /** Adds tag to list of tags. Checks to make sure tag is valid */
     public void addTag(Tag tag) {
@@ -129,6 +159,7 @@ public class Post implements Serializable {
         }
     }
 
+
     /**
      * Returns the date and time this post.
      * @return date&time , string
@@ -138,7 +169,7 @@ public class Post implements Serializable {
         String time = "";
         if (mPostDateTime != null && mPostDateTime.length() >= 19) {
             date = this.mPostDateTime.substring(0, 10);
-            time = this.mPostDateTime.substring(11, 19);
+            time = this.mPostDateTime.substring(11, 16);
         } else {
             throw new IllegalArgumentException("DateTime must be valid");
         }

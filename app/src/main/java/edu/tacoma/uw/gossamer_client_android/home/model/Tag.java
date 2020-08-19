@@ -15,6 +15,18 @@ import java.util.List;
  */
 public class Tag implements Serializable {
 
+    /**Represents tag id in JSON parsing */
+    public static final String TAG_ID = "tagid";
+    /**Represents Post id in JSON parsing */
+    public static final String POST_ID = "postid";
+    /**Represents Color in JSON parsing */
+    public static final String COLOR = "color";
+    /**Represents Tag ID in JSON parsing on post */
+    public static final String TAG_ID_CAP = "TagID";
+    /**represents Post ID in JSON parsing on post */
+    public static final String POST_ID_CAP = "PostID";
+
+
     /** Color of the tag. */
     private String mColor;
     /** Name of the tag. */
@@ -49,9 +61,9 @@ public class Tag implements Serializable {
 
                 //Find the post associated with that tag,
                 for (Post post : postList) {
-                    if (post.getmPostID() == obj.getInt("postid")) {
+                    if (post.getmPostID() == obj.getInt(POST_ID)) {
                         //And add that tag to the post's tag list.
-                        post.addTag(new Tag(obj.getString("tagid"), obj.getString("color")));
+                        post.addTag(new Tag(obj.getString(TAG_ID), obj.getString(COLOR)));
                         break;
                     }
                 }
@@ -73,7 +85,7 @@ public class Tag implements Serializable {
 
             for (int i = 0; i < arr.length(); i++){
                 JSONObject tag = arr.getJSONObject(i);
-                tags.add(new Tag(tag.getString("tagid"), tag.getString("color")));
+                tags.add(new Tag(tag.getString(TAG_ID), tag.getString(COLOR)));
             }
         }
         return tags;
@@ -94,7 +106,7 @@ public class Tag implements Serializable {
 
             for (int i =0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                tags.add(obj.getString("tagid"));
+                tags.add(obj.getString(TAG_ID));
             }
         }
         return tags;

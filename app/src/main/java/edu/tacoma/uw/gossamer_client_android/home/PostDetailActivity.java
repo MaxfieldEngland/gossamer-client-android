@@ -43,6 +43,7 @@ import edu.tacoma.uw.gossamer_client_android.R;
 import edu.tacoma.uw.gossamer_client_android.authenticate.SignInActivity;
 import edu.tacoma.uw.gossamer_client_android.home.model.Comment;
 import edu.tacoma.uw.gossamer_client_android.home.model.Post;
+import edu.tacoma.uw.gossamer_client_android.home.model.Tag;
 
 /**
  * An activity representing a single Post detail screen. This
@@ -135,10 +136,10 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         writeComment = false;
 
         try {
-            mPostJSON.put("Email", post.getmEmail());
-            mPostJSON.put("PostBody", post.getmPostBody());
-            mPostJSON.put("PostDateTime", post.getmPostDateTime());
-            mPostJSON.put("isAnonymous", post.mIsAnonymous());
+            mPostJSON.put(Post.EMAIL_CAP, post.getmEmail());
+            mPostJSON.put(Post.POST_BODY_CAP, post.getmPostBody());
+            mPostJSON.put(Post.POST_DATE_TIME_CAP, post.getmPostDateTime());
+            mPostJSON.put(Post.IS_ANONYMOUS_CAP, post.mIsAnonymous());
             new AddPostAsyncTask().execute(url.toString());
         } catch (Exception e) {
             Toast.makeText(this, "Error with JSON creation on adding a post: "
@@ -162,8 +163,8 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         addTags = true;
 
         try {
-            tagJSON.put("TagID", tagName);
-            tagJSON.put("PostID", PostID);
+            tagJSON.put(Tag.TAG_ID_CAP, tagName);
+            tagJSON.put(Tag.POST_ID_CAP, PostID);
             mTagJSON.add(tagJSON);
             new AddPostAsyncTask().execute(url);
         } catch (Exception e) {
@@ -186,10 +187,10 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
         addTags = false;
 
         try {
-            mCommentJSON.put("Email", comment.getmEmail());
-            mCommentJSON.put("CommentBody", comment.getmCommentBody());
-            mCommentJSON.put("CommentDateTime", comment.getmCommentDateTime());
-            mCommentJSON.put("PostID", comment.getmPostID());
+            mCommentJSON.put(Post.EMAIL_CAP, comment.getmEmail());
+            mCommentJSON.put(Comment.COMMENT_BODY_CAP, comment.getmCommentBody());
+            mCommentJSON.put(Comment.COMMENT_DATE_TIME_CAP, comment.getmCommentDateTime());
+            mCommentJSON.put(Post.POST_ID_CAP, comment.getmPostID());
             new AddPostAsyncTask().execute(url.toString());
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation on adding a comment: "
@@ -206,7 +207,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         deleteJSON = new JSONObject();
         try {
-            deleteJSON.put("PostID", deletePostID);
+            deleteJSON.put(Post.POST_ID_CAP, deletePostID);
             new AddPostAsyncTask().execute(url.toString());
         }
         catch (JSONException e) {
@@ -224,7 +225,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
 
         deleteJSON = new JSONObject();
         try {
-            deleteJSON.put("CommentID", deleteCommentID);
+            deleteJSON.put(Comment.COMMENT_ID_CAP, deleteCommentID);
             new AddPostAsyncTask().execute(url.toString());
         }
         catch (JSONException e) {

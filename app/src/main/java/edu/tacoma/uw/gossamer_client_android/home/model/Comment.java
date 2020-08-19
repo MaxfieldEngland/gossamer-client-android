@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,6 +17,25 @@ import java.util.List;
  * and the comment itself.
  */
 public class Comment implements Serializable {
+
+    /**Represents comment email in JSON parsing and putExtra */
+    public static final String EMAIL = "email";
+    /**Represents display name in parsing and putExtra */
+    public static final String DISPLAY_NAME = "displayname";
+    /**Represents comment body in JSON parsing */
+    public static final String COMMENT_BODY = "commentbody";
+    /**Represents post' date time in JSON parsing */
+    public static final String COMMENT_DATE_TIME = "commentdatetime";
+    /**Represents post ID in JSON parsing and putextra */
+    public static final String POST_ID = "postid";
+    /**Represents comment ID in JSON parsing */
+    public static final String COMMENT_ID = "commentid";
+    /**Represents comment body in JSON post */
+    public static final String COMMENT_BODY_CAP = "CommentBody";
+    /**Represents comment date time in JSON post */
+    public static final String COMMENT_DATE_TIME_CAP = "CommentDateTime";
+    /**Represents comment id in JSON post */
+    public static final String COMMENT_ID_CAP = "CommentID";
 
     /** Email of the user.  */
     private String mEmail;
@@ -95,8 +113,14 @@ public class Comment implements Serializable {
      * @return String , Date and Time.
      */
     public String dateTime() {
-        String date = this.mCommentDateTime.substring(0, 10);
-        String time = this.mCommentDateTime.substring(11, 19);
+        String date = "";
+        String time = "";
+        if (mCommentDateTime != null && mCommentDateTime.length() >= 19) {
+            date = this.mCommentDateTime.substring(0, 10);
+            time = this.mCommentDateTime.substring(11, 16);
+        } else {
+            throw new IllegalArgumentException("DateTime must be valid");
+        }
         return date + "  " + time;
     }
 
@@ -115,9 +139,9 @@ public class Comment implements Serializable {
 
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
-                Comment c = new Comment(obj.getString("email"), obj.getString("displayname")
-                        , obj.getString("commentbody"), obj.getString("commentdatetime")
-                        , obj.getInt("postid"), obj.getInt("commentid"));
+                Comment c = new Comment(obj.getString(EMAIL), obj.getString(DISPLAY_NAME)
+                        , obj.getString(COMMENT_BODY), obj.getString(COMMENT_DATE_TIME)
+                        , obj.getInt(POST_ID), obj.getInt(COMMENT_ID));
                 commentList.add(c);
             }
         }

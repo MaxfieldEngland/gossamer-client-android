@@ -368,8 +368,8 @@ public class PostListActivity extends AppCompatActivity {
                         String e = mValues.get(position).getmEmail();
                         String u = mValues.get(position).getmDisplayName();
                         Intent intent = new Intent(context, UserProfileActivity.class);
-                        intent.putExtra("email", e);
-                        intent.putExtra("username", u);
+                        intent.putExtra(Post.EMAIL, e);
+                        intent.putExtra(Post.DISPLAY_NAME, u);
                         context.startActivity(intent);
                     }
                 });
@@ -504,8 +504,9 @@ public class PostListActivity extends AppCompatActivity {
             String email = sharedPreferences.getString(getString(R.string.EMAIL), null);
 
             Intent intent = new Intent(this, UserProfileActivity.class);
-            intent.putExtra("email", email);
-            intent.putExtra("username", " ");
+            intent.putExtra(Post.EMAIL, email);
+            //We plan on loading the displayname after we get to the profile
+            intent.putExtra(Post.DISPLAY_NAME, " ");
             startActivity(intent);
 
         }
