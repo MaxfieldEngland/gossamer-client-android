@@ -392,6 +392,7 @@ public class PostListActivity extends AppCompatActivity {
             tagLayout.setMargins(0, 0, 10, 0);
 
             for (Tag tag : tags) {
+
                 if (tagsContained.contains(tag)) continue;
                 if (holder.mTagContainer.getChildCount() >= tags.size()) continue;
                 tagsContained.add(tag);
@@ -439,6 +440,22 @@ public class PostListActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mValues.size();
+        }
+
+        /**
+         * Override recyclerview getitemid method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        /**
+         * Override recyclerview getitemviewtype method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         /**

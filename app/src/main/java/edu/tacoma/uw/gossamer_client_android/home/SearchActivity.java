@@ -205,7 +205,8 @@ public class SearchActivity extends AppCompatActivity {
                         }
 
                     }
-                    //TODO - Searching profiles (blank else statement).
+
+                    //Profile search behavior can go here
                     else {}
                 }
             }
@@ -348,6 +349,22 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mValues.size();
+        }
+
+        /**
+         * Override recyclerview getitemid method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        /**
+         * Override recyclerview getitemviewtype method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         /**

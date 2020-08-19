@@ -509,6 +509,23 @@ public class UserProfileActivity extends AppCompatActivity {
         }
 
         /**
+         * Override recyclerview getitemid method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        /**
+         * Override recyclerview getitemviewtype method; disable problematic behavior with tag container retrieval
+         */
+        @Override
+        public int getItemViewType(int position) {
+            return position;
+        }
+
+
+        /**
          * View holder that contains the information present in the Recycler view.
          */
         class ViewHolder extends RecyclerView.ViewHolder {
