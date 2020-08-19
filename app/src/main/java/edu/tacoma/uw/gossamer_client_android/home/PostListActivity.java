@@ -216,7 +216,6 @@ public class PostListActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... progress) {
             mProgressBar.setProgress(10);
-            mProgressBar.setBackgroundColor(Color.BLACK);
         }
 
         /**
