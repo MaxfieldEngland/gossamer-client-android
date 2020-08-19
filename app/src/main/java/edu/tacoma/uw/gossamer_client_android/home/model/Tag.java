@@ -123,6 +123,7 @@ public class Tag implements Serializable {
         if (theOther == null) return false;
         if (theOther.getClass() != this.getClass()) return false;
         Tag o = (Tag) theOther;
+        if (o.getColor() == null || o.getName() == null) { return false; }
         if (o.getColor().equals(this.mColor) && o.getName().equals(this.mTagName)){
             return true;
         }

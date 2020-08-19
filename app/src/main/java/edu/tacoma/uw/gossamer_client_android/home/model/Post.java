@@ -117,9 +117,16 @@ public class Post implements Serializable {
         return postList;
     }
 
-    /** Adds tag to list of tags. */
+    /** Adds tag to list of tags. Checks to make sure tag is valid */
     public void addTag(Tag tag) {
-        tagList.add(tag);
+        if ((tag.getColor() != null && tag.getName() != null )) {
+            if (!tag.getColor().equals("") || !tag.getName().equals("")) {
+                tagList.add(tag);
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Cannot have null tags");
+        }
     }
 
     /**
@@ -127,8 +134,14 @@ public class Post implements Serializable {
      * @return date&time , string
      */
     public String dateTime() {
-        String date = this.mPostDateTime.substring(0, 10);
-        String time = this.mPostDateTime.substring(11, 19);
+        String date = "";
+        String time = "";
+        if (mPostDateTime != null && mPostDateTime.length() >= 19) {
+            date = this.mPostDateTime.substring(0, 10);
+            time = this.mPostDateTime.substring(11, 19);
+        } else {
+            throw new IllegalArgumentException("DateTime must be valid");
+        }
         return date + "  " + time;
     }
 
