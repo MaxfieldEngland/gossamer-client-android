@@ -7,38 +7,43 @@
     android:fitsSystemWindows="true"
     tools:context=".home.PostListActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:orientation="vertical">
 
-        <include layout="@layout/post_list" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center_horizontal"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        <ProgressBar
+            android:id="@+id/search_progressB"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="304dp"
+            android:layout_height="77dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_horizontal"
+            android:indeterminate="true"
+            android:max="100"
+            android:padding="20dp"
+            android:progress="50" />
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <include layout="@layout/post_list" />
 
 
-    </FrameLayout>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/detail_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_collapseMode="pin"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    <ProgressBar
-        android:id="@+id/search_progressB"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="304dp"
-        android:layout_height="77dp"
-        android:background="@android:color/transparent"
-        android:gravity="center_horizontal"
-        android:indeterminate="true"
-        android:max="100"
-        android:padding="20dp"
-        android:progress="50"
-        app:layout_anchor="@+id/detail_toolbar"
-        app:layout_anchorGravity="bottom|center" />
+        </FrameLayout>
+    </LinearLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

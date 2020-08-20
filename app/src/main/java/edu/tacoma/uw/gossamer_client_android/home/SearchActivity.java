@@ -91,6 +91,7 @@ public class SearchActivity extends AppCompatActivity {
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
+
     }
 
     /**
@@ -124,12 +125,12 @@ public class SearchActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     /**
      * Inner class responsible for connecting to the database to allow for
      * search functionality.
      */
     private class SearchTask extends AsyncTask<String, Void, String> {
+
 
         ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.search_progressB);
 
@@ -314,7 +315,7 @@ public class SearchActivity extends AppCompatActivity {
 
             for (Tag tag : tags) {
                 if (holder.mTagContainer.getChildCount() > tags.size()) continue;
-                Button tagButton;
+                final Button tagButton;
                 tagButton = new Button(mParentActivity);
                 tagButton.setText(tag.getName());
                 tagButton.setTextSize(10);
@@ -322,6 +323,14 @@ public class SearchActivity extends AppCompatActivity {
                 tagButton.setMinimumHeight(10);
                 tagButton.setMinWidth(100);
                 tagButton.setMinimumWidth(200);
+
+                tagButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mParentActivity.launchSearchActivity(tagButton.getText().toString());
+                    }
+                });
+
                 //Adding some graphical features that are build version dependent:
                 //Get rid of the tag button shadows by getting rid of the state list animator
                 if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);

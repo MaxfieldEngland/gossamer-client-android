@@ -412,7 +412,6 @@ public class PostListActivity extends AppCompatActivity {
                     }
                 });
 
-
                 //Adding some graphical features that are build version dependent:
                 //Get rid of the tag button shadows by getting rid of the state list animator
                 if (Build.VERSION.SDK_INT>=21) tagButton.setStateListAnimator(null);
