@@ -416,6 +416,7 @@ public class PostDetailFragment extends Fragment {
         public void onBindViewHolder(final DetItemRecyclerViewAdapter.ViewHolder holder, int position) {
 
             holder.mIdView.setText(mValues.get(position).getmDisplayName());
+            holder.mPronounView.setText(mValues.get(position).getmCommentPronouns());
 
             final int currIndex = position;
 
@@ -477,12 +478,14 @@ public class PostDetailFragment extends Fragment {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mContentView;
+            final TextView mPronounView;
             final TextView mDateView;
             final Button mDeleteButton;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
+                mPronounView = (TextView) view.findViewById(R.id.comment_pronoun_text);
                 mContentView = (TextView) view.findViewById(R.id.content);
                 mDateView = (TextView) view.findViewById(R.id.datetime);
                 mDeleteButton = (Button) view.findViewById(R.id.deleteCommentbutton);

@@ -28,6 +28,8 @@ public class Comment implements Serializable {
     public static final String COMMENT_DATE_TIME = "commentdatetime";
     /**Represents post ID in JSON parsing and putextra */
     public static final String POST_ID = "postid";
+    /**Represents pronouns of user in JSON parsing */
+    public static final String PRONOUNS =  "pronouns";
     /**Represents comment ID in JSON parsing */
     public static final String COMMENT_ID = "commentid";
     /**Represents comment body in JSON post */
@@ -49,6 +51,8 @@ public class Comment implements Serializable {
     private int mPostID;
     /** The ID of the comment. */
     private int mCommentID;
+    /** The pronouns of the commenter */
+    private String mCommentPronouns;
 
     //Getters
     public String getmEmail() {
@@ -75,6 +79,10 @@ public class Comment implements Serializable {
         return mCommentID;
     }
 
+    public String getmCommentPronouns() {
+        return mCommentPronouns;
+    }
+
     /**
      * Comment-reading constructor: Display name will be retrieved from the server, with the email serving
      * as the user foreign key, without being displayed.
@@ -87,7 +95,7 @@ public class Comment implements Serializable {
      * @param commentID The ID of the comment itself, used to identify the comment for deletion.
      */
     public Comment(String email, String displayName, String commentBody, String commentDateTime,
-                   int postID, int commentID) {
+                   int postID, int commentID, String pronouns) {
 
         mEmail = email;
         mDisplayName = displayName;
@@ -95,6 +103,7 @@ public class Comment implements Serializable {
         mCommentDateTime = commentDateTime;
         mPostID = postID;
         mCommentID = commentID;
+        mCommentPronouns = pronouns;
     }
 
     /**
@@ -141,7 +150,7 @@ public class Comment implements Serializable {
                 JSONObject obj = arr.getJSONObject(i);
                 Comment c = new Comment(obj.getString(EMAIL), obj.getString(DISPLAY_NAME)
                         , obj.getString(COMMENT_BODY), obj.getString(COMMENT_DATE_TIME)
-                        , obj.getInt(POST_ID), obj.getInt(COMMENT_ID));
+                        , obj.getInt(POST_ID), obj.getInt(COMMENT_ID), obj.getString(PRONOUNS));
                 commentList.add(c);
             }
         }

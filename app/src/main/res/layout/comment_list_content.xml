@@ -33,10 +33,20 @@
                     android:layout_marginTop="@dimen/text_margin"
                     android:layout_marginEnd="@dimen/text_margin"
                     android:layout_marginRight="@dimen/text_margin"
-                    android:layout_marginBottom="@dimen/text_margin"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:textColor="@color/jet"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/comment_pronoun_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/id_text"
+                    android:layout_marginLeft="24sp"
+                    android:layout_marginTop="0dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/pronounGray"
+                    android:textSize="16sp" />
 
                 <Button
                     android:id="@+id/deleteCommentbutton"
