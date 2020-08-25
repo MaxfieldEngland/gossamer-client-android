@@ -24,14 +24,27 @@
                 android:id="@+id/id_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/text_margin"
+                android:layout_marginLeft="16sp"
+                android:layout_marginTop="16sp"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/jet"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/pronoun_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24sp"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/pronounGray"
+                android:textSize="16sp"
+                />
+
+
             <LinearLayout
                 android:id="@+id/tagContainer"
                 android:layout_width="match_parent"
+                android:layout_marginTop = "8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"></LinearLayout>

@@ -37,6 +37,8 @@ public class Post implements Serializable {
     public static final String IS_ANONYMOUS = "isanonymous";
     /**Represents post ID in JSON parsing and putextra */
     public static final String POST_ID = "postid";
+    /** Represents pronouns in JSON parsing and putextra */
+    public static final String PRONOUNS = "pronouns";
 
     /**Represents email in JSON post */
     public static final String EMAIL_CAP = "Email";
@@ -56,6 +58,8 @@ public class Post implements Serializable {
     private String mEmail;
     /** Display Name of user. */
     private String mDisplayName;
+    /** Pronouns of the user. */
+    private String mPronouns;
     /** The text that makes up the bulk of a post.*/
     private String mPostBody;
     /** The date and time that the post was published.*/
@@ -70,6 +74,9 @@ public class Post implements Serializable {
     //Getters
     public String getmEmail() {
         return mEmail;
+    }
+    public String getmPronouns() {
+        return mPronouns;
     }
     public String getmPostBody() {
         return mPostBody;
@@ -97,12 +104,13 @@ public class Post implements Serializable {
      * @param isAnonymous Whether or not the post is to be displayed anonymously.
      * @param displayName The profile name of the user who displays the post.
      */
-    public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName, int postID) {
+    public Post(String email, String postBody, String postDateTime, boolean isAnonymous, String displayName, int postID, String pronouns) {
         mEmail = email;
         mPostBody = postBody;
         mPostDateTime = postDateTime;
         mIsAnonymous = isAnonymous;
         mDisplayName = displayName;
+        mPronouns = pronouns;
         mPostID = postID;
         tagList = new ArrayList<>();
     }
@@ -139,7 +147,7 @@ public class Post implements Serializable {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject obj = arr.getJSONObject(i);
                 Post post = new Post(obj.getString(EMAIL), obj.getString(POST_BODY),
-                        obj.getString(POST_DATE_TIME), obj.getBoolean(IS_ANONYMOUS), obj.getString(DISPLAY_NAME), obj.getInt(POST_ID));
+                        obj.getString(POST_DATE_TIME), obj.getBoolean(IS_ANONYMOUS), obj.getString(DISPLAY_NAME), obj.getInt(POST_ID), obj.getString("pronouns"));
                 postList.add(post);
             }
         }

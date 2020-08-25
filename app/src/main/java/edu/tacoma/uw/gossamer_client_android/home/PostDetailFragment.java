@@ -192,13 +192,23 @@ public class PostDetailFragment extends Fragment {
             }
         });
 
-        // Show the dummy content as text in a TextView.
         if (mPost != null) {
-           //If not anonymous, show thes displayname
-            if (!mPost.mIsAnonymous())
-            ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName());
-            else
+           //If not anonymous, show the displayname
+            if (!mPost.mIsAnonymous()) {
+                ((TextView) rootView.findViewById(R.id.post_detail_id)).setText(mPost.getmDisplayName());
+
+                TextView pronounDisplay = (TextView) rootView.findViewById(R.id.post_detail_pronouns);
+                String pronounText = mPost.getmPronouns();
+
+                if (pronounText.trim().equals(""))
+                    pronounDisplay.setVisibility(View.GONE);
+                else
+                    pronounDisplay.setText("("+mPost.getmPronouns()+")");
+            }
+            else {
                 ((TextView) rootView.findViewById(R.id.post_detail_id)).setText("Anonymous");
+                ((TextView) rootView.findViewById(R.id.post_detail_pronouns)).setVisibility(View.GONE);
+            }
             ((TextView) rootView.findViewById(R.id.post_detail_short_desc))
                     .setText(mPost.getmPostBody());
             ((TextView) rootView.findViewById(R.id.post_detail_long_desc))

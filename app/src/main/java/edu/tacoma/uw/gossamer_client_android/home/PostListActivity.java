@@ -376,20 +376,31 @@ public class PostListActivity extends AppCompatActivity {
             }
 
             //If not anonymous, show the displayname
-            if (!mValues.get(position).mIsAnonymous())
+            if (!mValues.get(position).mIsAnonymous()) {
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());
+                holder.mPronounView.setText(mValues.get(position).getmPronouns());
+            }
             //If anonymous, hide the displayname
-            else
+            else {
                 holder.mIdView.setText("Anonymous");
-
+                holder.mPronounView.setText("");
+            }
+            //If the pronouns (after setting anonymity) is empty, remove the field so it doesn't take up space.
+            if (holder.mPronounView.getText().toString().trim().equals("")) {
+                holder.mPronounView.setVisibility(View.GONE);
+            }
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
             ArrayList<Tag> tags = mValues.get(position).getTags();
+
             //Use a hashset to make sure we don't duplicate tags
             HashSet<Tag> tagsContained = new HashSet<Tag>();
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             tagLayout.setMargins(0, 0, 10, 0);
+
+            if (tags.size() == 0)
+                holder.mTagContainer.setVisibility(View.GONE);
 
             for (Tag tag : tags) {
 
@@ -462,12 +473,14 @@ public class PostListActivity extends AppCompatActivity {
          */
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
+            final TextView mPronounView;
             final TextView mContentView;
             final LinearLayout mTagContainer;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
+                mPronounView = (TextView) view.findViewById(R.id.pronoun_text);
                 mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }

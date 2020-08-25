@@ -201,7 +201,7 @@ public class SearchActivity extends AppCompatActivity {
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
                         else {
-                            mPostList.add(new Post("NULL", "No search results matched that query.", "             ", false, "Oops!", -1));
+                            mPostList.add(new Post("NULL", "No search results matched that query.", "             ", false, "Oops!", -1, ""));
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
 
@@ -300,11 +300,19 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             //If not anonymous, show the displayname
-            if (!mValues.get(position).mIsAnonymous())
+            if (!mValues.get(position).mIsAnonymous()) {
                 holder.mIdView.setText(mValues.get(position).getmDisplayName());
-                //If anonymous, hide the displayname
-            else
+                holder.mPronounView.setText(mValues.get(position).getmPronouns());
+            }
+            //If anonymous, hide the displayname
+            else {
                 holder.mIdView.setText("Anonymous");
+                holder.mPronounView.setText("");
+            }
+            //If the pronouns (after setting anonymity) is empty, remove the field so it doesn't take up space.
+            if (holder.mPronounView.getText().toString().trim().equals("")) {
+                holder.mPronounView.setVisibility(View.GONE);
+            }
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
@@ -312,6 +320,9 @@ public class SearchActivity extends AppCompatActivity {
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             tagLayout.setMargins(0, 0, 10, 0);
+
+            if (tags.size() == 0)
+                holder.mTagContainer.setVisibility(View.GONE);
 
             for (Tag tag : tags) {
                 if (holder.mTagContainer.getChildCount() > tags.size()) continue;
@@ -381,12 +392,14 @@ public class SearchActivity extends AppCompatActivity {
          */
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
+            final TextView mPronounView;
             final TextView mContentView;
             final LinearLayout mTagContainer;
 
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
+                mPronounView = (TextView) view.findViewById(R.id.pronoun_text);
                 mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }

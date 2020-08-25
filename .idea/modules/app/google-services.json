@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "701054610701",
+    "firebase_url": "https://gossamer-client-android.firebaseio.com",
+    "project_id": "gossamer-client-android",
+    "storage_bucket": "gossamer-client-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701054610701:android:6b7005016fc149bb725444",
+        "android_client_info": {
+          "package_name": "edu.tacoma.uw.gossamer_client_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "701054610701-4khjo5k601irs24d4ttav3tlbknrvbav.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.tacoma.uw.gossamer_client_android",
+            "certificate_hash": "242c076144e684faeca95ca30e8f3abaa4eb769f"
+          }
+        },
+        {
+          "client_id": "701054610701-fdn4qlrseek6nbtlbr2k9mcrs3uhkahe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEjewaMDyl5uZ7Z6L1cm_dRqOJbZiqnII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "701054610701-fdn4qlrseek6nbtlbr2k9mcrs3uhkahe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

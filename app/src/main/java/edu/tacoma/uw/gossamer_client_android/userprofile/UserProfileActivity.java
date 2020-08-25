@@ -83,8 +83,12 @@ public class UserProfileActivity extends AppCompatActivity {
     private String mProfileDescription;
     /** EditText view to display profile description. */
     private EditText mDescriptionEditText;
+    /** User pronouns. */
+    private String mPronouns;
     /** EditText view to display profile display name. */
     private EditText mUsernameEditText;
+    /** EditText view to display user pronouns. */
+    private EditText mPronounEditText;
 
     /** Done button. */
     private Button mEditButton;
@@ -123,6 +127,9 @@ public class UserProfileActivity extends AppCompatActivity {
         mDescriptionEditText = findViewById(R.id.user_profile_abt_me);
         mDescriptionEditText.setEnabled(false);
 
+        mPronounEditText = findViewById(R.id.user_profile_pronouns);
+        mPronounEditText.setEnabled(false);
+
         mUsernameEditText = findViewById(R.id.user_profile_name);
         mUsernameEditText.setEnabled(false);
 
@@ -138,9 +145,11 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mProfileDescription = mDescriptionEditText.getText().toString();
                 mUser = mUsernameEditText.getText().toString();
-                addProfile(mUser, mProfileDescription, mUserEmail);
+                mPronouns = mPronounEditText.getText().toString();
+                addProfile(mUser, mProfileDescription, mUserEmail, mPronouns);
                 mDescriptionEditText.setEnabled(false);
                 mUsernameEditText.setEnabled(false);
+                mPronounEditText.setEnabled(false);
                 mEditButton.setVisibility(View.GONE);
                 mTagButton.setVisibility(View.GONE);
             }
@@ -281,8 +290,8 @@ public class UserProfileActivity extends AppCompatActivity {
 
                         JSONObject profData = jsonObject.getJSONObject("profData");
                         mUser = profData.getString("displayname");
-
                         String desc = profData.getString("profiledescription");
+                        String pronouns = profData.getString("pronouns");
 
                         //Replace the description to a default value in case the value doesn't seem to exist.
                         if (desc == null || desc.equals("null")) {
@@ -291,6 +300,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                         mDescriptionEditText.setText(desc);
                         mUsernameEditText.setText(mUser);
+                        mPronounEditText.setText(pronouns);
 
                     }
                     // Get tags associated with users posts.
@@ -595,6 +605,7 @@ public class UserProfileActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.edit_userprofile) {
             mDescriptionEditText.setEnabled(true);
             mUsernameEditText.setEnabled(true);
+            mPronounEditText.setEnabled(true);
             mEditButton.setVisibility(View.VISIBLE);
             mTagButton.setVisibility(View.VISIBLE);
         }
@@ -607,13 +618,14 @@ public class UserProfileActivity extends AppCompatActivity {
      * @param profileDesc ,profile description of user.
      * @param useremail ,email of user.
      */
-    public void addProfile(String username, String profileDesc, String useremail) {
+    public void addProfile(String username, String profileDesc, String useremail, String pronouns) {
         StringBuilder url = new StringBuilder(getString(R.string.setprofile));
         mProfileJSON = new JSONObject();
         try {
             mProfileJSON.put("displayname", username);
             mProfileJSON.put("profiledescription", profileDesc);
             mProfileJSON.put("email", useremail);
+            mProfileJSON.put("pronouns", pronouns);
             new AddProfileAsyncTask().execute(url.toString());
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation for profile" + e.getMessage()
