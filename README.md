@@ -5,6 +5,9 @@ By Maxfield England and Elijah Freeman
 
 This app serves as a social community for users identifying as LGBTQIA+.
 
+See the project proposal here:
+https://drive.google.com/file/d/1pt1YAZmzE9lKDM3LY34Cr_6uacWDptwm/view?usp=sharing
+
 # Tasks remaining on backlog:
 
 ## High Priority:
