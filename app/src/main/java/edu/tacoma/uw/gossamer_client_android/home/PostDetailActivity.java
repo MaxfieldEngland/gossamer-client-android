@@ -60,7 +60,6 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
     public static final String ADD_POST = "ADD_POST";
     /** Constant required for receiving tag list. */
     public static final String TAG_LIST = "TAG_LIST";
-
     /** JSON Post object. */
     private JSONObject mPostJSON;
     /** List of JSON Tag objects. */
@@ -139,6 +138,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
             mPostJSON.put(Post.EMAIL_CAP, post.getmEmail());
             mPostJSON.put(Post.POST_BODY_CAP, post.getmPostBody());
             mPostJSON.put(Post.POST_DATE_TIME_CAP, post.getmPostDateTime());
+            mPostJSON.put(Post.IMG_URL_CAP, post.getmImgUrl());
             mPostJSON.put(Post.IS_ANONYMOUS_CAP, post.mIsAnonymous());
             new AddPostAsyncTask().execute(url.toString());
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class PostDetailActivity extends AppCompatActivity implements PostAddFrag
      */
     public void commitTag(String tagName, int PostID) {
 
-        Log.e("COMMITTAG","ENTERING COMMIT TAG LOOP");
+        Log.v("COMMITTAG","ENTERING COMMIT TAG LOOP");
 
         String url = (getString(R.string.addposttag));
         JSONObject tagJSON = new JSONObject();

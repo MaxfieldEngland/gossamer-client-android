@@ -7,6 +7,7 @@
  */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -201,7 +202,7 @@ public class SearchActivity extends AppCompatActivity {
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
                         else {
-                            mPostList.add(new Post("NULL", "No search results matched that query.", "             ", false, "Oops!", -1, ""));
+                            mPostList.add(new Post("NULL", "No search results matched that query.", "             ", false, "Oops!", "", -1, ""));
                             setupRecyclerView((RecyclerView) mRecyclerView);
                         }
 
@@ -281,7 +282,7 @@ public class SearchActivity extends AppCompatActivity {
          * @param position
          */
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
             if (!mValues.get(position).mIsAnonymous()) {
                 holder.mIdView.setOnClickListener(new View.OnClickListener() {

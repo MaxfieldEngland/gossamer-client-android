@@ -7,6 +7,7 @@
  */
 package edu.tacoma.uw.gossamer_client_android.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,12 +17,14 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -357,7 +360,7 @@ public class PostListActivity extends AppCompatActivity {
          * @param position
          */
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
             if (!mValues.get(position).mIsAnonymous()) {
                 holder.mIdView.setOnClickListener(new View.OnClickListener() {
@@ -391,6 +394,10 @@ public class PostListActivity extends AppCompatActivity {
             }
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
+            boolean hasNoUrl = (mValues.get(position).getmImgUrl().contentEquals("null"));
+            if (hasNoUrl) {
+                holder.mHasImageView.setVisibility(View.GONE);
+            }
             ArrayList<Tag> tags = mValues.get(position).getTags();
 
             //Use a hashset to make sure we don't duplicate tags
@@ -474,6 +481,7 @@ public class PostListActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mPronounView;
+            final ImageView mHasImageView;
             final TextView mContentView;
             final LinearLayout mTagContainer;
 
@@ -483,6 +491,7 @@ public class PostListActivity extends AppCompatActivity {
                 mPronounView = (TextView) view.findViewById(R.id.pronoun_text);
                 mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mHasImageView = (ImageView) view.findViewById(R.id.contains_image_icon);
             }
         }
     }

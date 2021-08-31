@@ -20,26 +20,42 @@
             android:paddingTop="0dp"
             android:paddingBottom="0dp">
 
-            <TextView
-                android:id="@+id/id_text"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16sp"
-                android:layout_marginTop="16sp"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textColor="@color/jet"
-                android:textSize="18sp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/id_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16sp"
+                    android:layout_marginTop="16sp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textColor="@color/jet"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/contains_image_icon"
+                    android:layout_marginStart="20sp"
+                    android:layout_marginEnd="40sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@android:drawable/ic_menu_gallery"
+                    android:layout_marginRight="40sp"
+                    android:layout_marginLeft="20sp" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/pronoun_text"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24sp"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/pronounGray"
-                android:textSize="16sp"
-                />
-
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/tagContainer"

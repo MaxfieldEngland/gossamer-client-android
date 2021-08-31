@@ -51,6 +51,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <EditText
+        android:id="@+id/add_post_img_url"
+        android:layout_width="0dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:ems="10"
+        android:hint="@string/add_url"
+        android:inputType="textUri"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_post_body"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="8dp" />
+
     <Button
         android:id="@+id/launchAddTagsFragmentButton"
         android:layout_width="wrap_content"
@@ -64,8 +83,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.789"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_post_body"
+        app:layout_constraintTop_toBottomOf="@+id/add_post_img_url"
         app:layout_constraintVertical_bias="0.614" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

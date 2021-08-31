@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class  PostAddFragment extends Fragment {
         getActivity().setTitle("Create Post");
 
         final TextView postBodyEditText = v.findViewById(R.id.add_post_body);
+        final TextView postImgUrlEditText = v.findViewById(R.id.add_post_img_url);
         final Button addButton = v.findViewById(R.id.add_post_button);
         final Button addTagButton = v.findViewById(R.id.launchAddTagsFragmentButton);
         final Switch anonToggle = (Switch) v.findViewById(R.id.anon_toggle);
@@ -128,12 +130,14 @@ public class  PostAddFragment extends Fragment {
                     return;
                 }
                 String postBody = postBodyEditText.getText().toString();
+                String imgUrl = postImgUrlEditText.getText().toString();
+                Log.d("IMG URL DEBUG:", imgUrl);
                 String postDateTime = Calendar.getInstance().getTime().toString();
 
                 //Used to determine whether the Anon toggle is On or Off.
                 isAnonymous = anonToggle.isChecked();
 
-                Post post = new Post(email, postBody, postDateTime, isAnonymous);
+                Post post = new Post(email, postBody, imgUrl, postDateTime, isAnonymous);
                 if (mAddListener != null && !postBody.equals("")) {
                     mAddListener.addPost(post);
                 }

@@ -10,7 +10,10 @@ package edu.tacoma.uw.gossamer_client_android.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.content.Intent;
@@ -25,10 +28,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,9 +42,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
@@ -154,10 +161,10 @@ public class PostDetailFragment extends Fragment {
                 , Context.MODE_PRIVATE);
 
         String email = pref.getString(getString(R.string.EMAIL), null);
-        //Create a more robust admin email check; doing a hackier one for the time being.
+
         boolean isPostMaster = mPost.getmEmail().equals(email) || pref.getBoolean(getString(R.string.isAdmin), false);
 
-        //Create delete post button if the post is ours
+        //Create delete post button if the post is ours (or if we are admin)
         if (isPostMaster) {
             Button deletePostButton = (Button) rootView.findViewById(R.id.deletePostButton);
 
@@ -205,6 +212,7 @@ public class PostDetailFragment extends Fragment {
                 else
                     pronounDisplay.setText("("+mPost.getmPronouns()+")");
             }
+            //If anonymous, simply display "Anonymous" for the username and remove the pronoun view.
             else {
                 ((TextView) rootView.findViewById(R.id.post_detail_id)).setText("Anonymous");
                 ((TextView) rootView.findViewById(R.id.post_detail_pronouns)).setVisibility(View.GONE);
@@ -254,6 +262,18 @@ public class PostDetailFragment extends Fragment {
                 }
                 tagCon.addView(tagButton, tagLayout);
             }
+
+            //Finally load the image, if one exists.
+            ImageView postImageView = rootView.findViewById(R.id.post_img);
+                if (!mPost.getmImgUrl().contentEquals("null")) {
+                    new DownloadImgTask(postImageView).execute(mPost.getmImgUrl());
+                }
+                else {
+                    //If there's no image, hide the postimageview
+                    postImageView.setVisibility(View.GONE);
+                }
+
+
         }
 
         //Get comment add fields
@@ -310,6 +330,37 @@ public class PostDetailFragment extends Fragment {
         assert mRecyclerView != null;
         mRecyclerView.addItemDecoration(new PostListActivity.VerticalSpaceItem(24));
         setupRecyclerView((RecyclerView) mRecyclerView);
+    }
+
+    /**
+     * Inner class responsible for retrieving image from url.
+     */
+    private class DownloadImgTask extends AsyncTask<String, Void, Bitmap> {
+
+        ImageView postImg;
+
+        public DownloadImgTask(ImageView postImg) {
+            this.postImg = postImg;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            String imgUrl = urls[0];
+            Bitmap imgMap = null;
+            try {
+                InputStream in = new URL(imgUrl).openStream();
+                imgMap = BitmapFactory.decodeStream(in);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return imgMap;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            postImg.setImageBitmap(result);
+        }
     }
 
     /**
