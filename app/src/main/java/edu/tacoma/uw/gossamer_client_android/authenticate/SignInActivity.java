@@ -66,6 +66,11 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
     private String loginEmail;
 
     /**
+     * Stored to pass on to loginPrefs upon successful login or registration.
+     */
+    private String displayName;
+
+    /**
      * Sets the activity layout for SignInActivity. Performs check against SharedPreferences
      * to determine whether user has previously logged in, if so then navigates user to home view.
      * If user has not logged in previously, then navigate to login page.
@@ -118,6 +123,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
 
         StringBuilder url = new StringBuilder(getString(R.string.login));
         loginJSON = new JSONObject();
+
         isRegister = false;
         loginEmail = email;
         try {
@@ -128,7 +134,6 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
             //If something went wrong with the JSON, show an error on the screen
             Toast.makeText(this, "Error with JSON creation: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-        //Logs that the user has logged in IFF login procedure has completed successfully.
 
     }
 
@@ -136,11 +141,12 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
      * Only on verified login, the user's sharedPreferences are made to reflect their login status,
      * and they are put through to the main activity.
      */
-    public void startMainActivity(boolean priv) {
+    public void startMainActivity(boolean priv, String displayName) {
         mSharedPreferences
                 .edit()
                 .putBoolean(getString(R.string.LOGGEDIN), true)
                 .putString(getString(R.string.EMAIL), loginEmail)
+                .putString("displayname", displayName)
                 .putBoolean(getString(R.string.isAdmin), priv)
                 .apply();
 
@@ -170,6 +176,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
         loginJSON = new JSONObject();
         isRegister = true;
         loginEmail = email;
+        displayName = username;
         try {
             loginJSON.put("displayname", username);
             loginJSON.put("email", email);
@@ -245,8 +252,13 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                 //If we get 'success' back from our post, we can move on to the main screen and save login data.
                 if (jsonObject.getBoolean("success")) {
                     boolean admin = jsonObject.getBoolean("privLoginStatus");
+
+                    //If we're logging in, we get displayname from the server
+                    if (!isRegister){
+                        displayName = jsonObject.getString("displayname");
+                    }
                     //SUCCESSFUL LOGIN
-                    startMainActivity(admin);
+                    startMainActivity(admin, displayName);
                 }
                 //Else, we did not have a successful login:
                 else {
@@ -261,6 +273,7 @@ public class SignInActivity extends AppCompatActivity implements LoginFragment.L
                         //Otherwise, it's a login issue; tell the user that the login info was not
                         //a match.
                         else {
+                            Log.e("LOGINERROR", jsonObject.toString());
                             Toast.makeText(getApplicationContext(), "Login failed: Check username and password.",
                                     Toast.LENGTH_LONG).show();
                         }

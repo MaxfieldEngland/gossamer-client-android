@@ -626,6 +626,13 @@ public class UserProfileActivity extends AppCompatActivity {
             mProfileJSON.put("profiledescription", profileDesc);
             mProfileJSON.put("email", useremail);
             mProfileJSON.put("pronouns", pronouns);
+
+            //Get the sharedpreferences and use them to update the displayname
+            SharedPreferences pref = getSharedPreferences(getString(R.string.LOGIN_PREFS)
+                    , Context.MODE_PRIVATE);
+            pref.edit().putString("displayname", username);
+
+
             new AddProfileAsyncTask().execute(url.toString());
         } catch (JSONException e) {
             Toast.makeText(this, "Error with JSON creation for profile" + e.getMessage()

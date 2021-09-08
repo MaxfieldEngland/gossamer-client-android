@@ -48,6 +48,10 @@
     <string name="view_profile">View Profile</string>
     <string name="learn_about">Learn about:</string>
     <string name="gossamer_logo">Gossamer logo</string>
+    <string name="user_uploaded_image">User-uploaded image.</string>
+    <string name="chat">Chat</string>
+    <string name="enter_message">Enter message</string>
+    <string name="send">Send</string>
 
 
 </resources>

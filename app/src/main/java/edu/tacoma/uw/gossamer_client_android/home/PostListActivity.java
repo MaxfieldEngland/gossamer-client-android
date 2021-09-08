@@ -524,8 +524,12 @@ public class PostListActivity extends AppCompatActivity {
         return true;
     }
 
-    /*
-    This is responsible for the logout action.
+    /**
+     * Handles item clicks in the main menu on the home page; allows logout, personal profile view,
+     * and joining the public chat.
+     *
+     * @param item The item selected in the menu.
+     * @return false to allow normal menu processing to proceed, true to consume it here
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -538,6 +542,14 @@ public class PostListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SignInActivity.class);
             startActivity(intent);
             finish();
+        }
+
+        if (item.getItemId() == R.id.action_chat) {
+            String email = sharedPreferences.getString("email", null);
+            Intent intent = new Intent(this, ChatActivity.class);
+            intent.putExtra(Post.EMAIL, email);
+            startActivity(intent);
+
         }
 
         if (item.getItemId() == R.id.action_viewprofile) {

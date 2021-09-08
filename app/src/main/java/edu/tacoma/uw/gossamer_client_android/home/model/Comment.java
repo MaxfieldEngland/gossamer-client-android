@@ -154,7 +154,6 @@ public class Comment implements Serializable {
                 commentList.add(c);
             }
         }
-        Log.e("CommentsRead", commentList.toString());
 
         return commentList;
     }
