@@ -14,11 +14,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -62,6 +64,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        setTitle("Gossamer Chat");
 
         //Use SharedPreferences to retrieve email and displayname to use in chat.
         SharedPreferences prefsOnLaunch = getSharedPreferences(getString(R.string.LOGIN_PREFS)
@@ -297,8 +300,17 @@ public class ChatActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getContent());
             holder.mNameView.setText(mValues.get(position).getDisplayName());
-            if (position % 2 == 1) {
+
+            //If we are the messager, set align to right and background color to blue
+            if (mValues.get(position).getEmail().contentEquals(mParentActivity.email)) {
                 holder.mCardView.setCardBackgroundColor(Color.parseColor("#CAE2E3"));
+                holder.mContainerView.setGravity(Gravity.RIGHT);
+            }
+            //If the message has no email, set align to center and neutralize the background (yellow)
+            if (mValues.get(position).getEmail().equals("")) {
+                holder.mCardView.setCardBackgroundColor(Color.parseColor("#FEFEE3"));
+                holder.mContainerView.setGravity(Gravity.CENTER);
+
             }
         }
 
@@ -334,12 +346,14 @@ public class ChatActivity extends AppCompatActivity {
             final TextView mNameView;
             final TextView mContentView;
             final CardView mCardView;
+            final LinearLayout mContainerView;
             ViewHolder(View view) {
                 super(view);
 
                 mNameView = view.findViewById(R.id.msg_displayname);
                 mContentView = view.findViewById(R.id.msg_content);
                 mCardView = view.findViewById(R.id.card_msg_other);
+                mContainerView = view.findViewById(R.id.chat_message_container);
             }
         }
     }
