@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -317,6 +318,11 @@ public class SearchActivity extends AppCompatActivity {
 
             holder.mContentView.setText(mValues.get(position).getmPostBody());
 
+            boolean hasNoUrl = (mValues.get(position).getmImgUrl().contentEquals("null"));
+            if (hasNoUrl) {
+                holder.mHasImageView.setVisibility(View.GONE);
+            }
+
             ArrayList<Tag> tags = mValues.get(position).getTags();
             LinearLayout.LayoutParams tagLayout = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -394,15 +400,16 @@ public class SearchActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mIdView;
             final TextView mPronounView;
+            final ImageView mHasImageView;
             final TextView mContentView;
             final LinearLayout mTagContainer;
-
             ViewHolder(View view) {
                 super(view);
                 mIdView = (TextView) view.findViewById(R.id.id_text);
                 mPronounView = (TextView) view.findViewById(R.id.pronoun_text);
                 mTagContainer = (LinearLayout) view.findViewById(R.id.tagContainer);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mHasImageView = (ImageView) view.findViewById(R.id.contains_image_icon);
             }
         }
     }
